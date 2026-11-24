@@ -17,11 +17,14 @@
 - [x] 1.6 CI and developer documentation
 - [ ] 1.7 (optional) First cloud deploy: Neon + Render (needs product-owner accounts; `infrastructure/render.yaml` drafted)
 
-## Foundation — Phase 1b (needs approval)
-- [ ] Auth and role model ([decision 0006](decisions/0006-identity-roles-and-permissions.md): accounts, provider profiles, clinic members, staff roles)
-- [ ] Environments and secrets (dev/staging/prod)
-- [ ] Pet profiles and image upload
-- [ ] Analytics and error logging
+## Foundation — Phase 1b (see [development/phase-1b-plan.md](development/phase-1b-plan.md))
+- [x] 1b.1 Backend identity: OTP sign-in, sessions, `/me`, staff roles, audit ([0006](decisions/0006-identity-roles-and-permissions.md), [0007](decisions/0007-authentication.md))
+- [x] 1b.2 Mobile sign-in and session handling
+- [ ] 1b.3 Pet profiles (backend)
+- [ ] 1b.4 Media upload (R2 signed URLs)
+- [ ] 1b.5 Pet profiles (mobile)
+- [ ] 1b.6 Analytics, error monitoring, environments and secrets matrix
+- [ ] Provider profiles and clinic memberships (decision 0006): built with provider onboarding in Phase 2
 
 ## Core owner experience
 - [ ] Onboarding and location

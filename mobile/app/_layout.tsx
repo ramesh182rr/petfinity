@@ -2,14 +2,14 @@ import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-goog
 import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createQueryClient } from '@/api';
-import { colors, fonts } from '@/theme';
+import { bootstrapSession, useSession } from '@/features/auth/session';
+import { RootNavigator } from '@/navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
   // Already hidden (e.g. fast refresh) — safe to ignore.
@@ -24,7 +24,12 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
   });
-  const ready = fontsLoaded || fontError !== null;
+  const sessionLoading = useSession((state) => state.status === 'loading');
+  const ready = (fontsLoaded || fontError !== null) && !sessionLoading;
+
+  useEffect(() => {
+    void bootstrapSession();
+  }, []);
 
   useEffect(() => {
     if (ready) {
@@ -34,26 +39,14 @@ export default function RootLayout() {
   }, [ready]);
 
   if (!ready) {
-    return null;
+    return null; // splash screen stays visible
   }
 
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            contentStyle: { backgroundColor: colors.background },
-            headerStyle: { backgroundColor: colors.background },
-            headerShadowVisible: false,
-            headerTintColor: colors.primary,
-            headerTitleStyle: { fontFamily: fonts.displaySemiBold, color: colors.text },
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="profile" options={{ title: 'Profile' }} />
-          <Stack.Screen name="+not-found" options={{ title: 'Not found' }} />
-        </Stack>
+        <RootNavigator />
       </SafeAreaProvider>
     </QueryClientProvider>
   );

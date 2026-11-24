@@ -11,13 +11,23 @@ Base: `/api/v1`. FastAPI OpenAPI is the source of truth; the exported contract i
   {"error": {"code": "validation_error", "message": "Request validation failed.", "details": [...], "request_id": "…"}}
   ```
   Phase 1 codes: `bad_request`, `unauthorized`, `forbidden`, `not_found`, `method_not_allowed`, `conflict`, `validation_error`, `rate_limited`, `not_ready`, `internal_error`.
+- Timestamps in responses are always UTC (ISO-8601).
+
+## Implemented (Phase 1b.1 — [decision 0007](decisions/0007-authentication.md))
+| Endpoint | Auth | Notes |
+|---|---|---|
+| `POST /auth/otp/request` `{channel: email\|phone, destination}` | — | 202 `{destination_masked, expires_in_seconds, resend_after_seconds}`. Same response whether or not the account exists. 429 `rate_limited` with `details.retry_after_seconds`; 422 `invalid_identifier` |
+| `POST /auth/otp/verify` `{channel, destination, code}` | — | Signs in, creating the account on first use. Returns `{access_token, refresh_token, token_type, expires_in, refresh_expires_at, user, is_new_user}`. 400 `invalid_code`, 429 `too_many_attempts`, 403 `account_suspended` |
+| `POST /auth/refresh` `{refresh_token}` | — | Rotates the refresh token. A reused (already rotated) token revokes the session. 401 `invalid_refresh_token` |
+| `POST /auth/logout` | Bearer | 204. Revokes the current session only |
+| `GET /me`, `PATCH /me` `{display_name}` | Bearer | Profile and derived `capabilities` |
+| `GET/POST /admin/staff-roles`, `DELETE /admin/staff-roles/{id}` | Admin | Grants need a verified staff-domain email (409 `staff_email_required`). 409 `last_admin`, 409 `role_already_granted`. Audited |
+
+Phase 1b.1 error codes: `invalid_identifier`, `invalid_code`, `too_many_attempts`, `account_suspended`, `invalid_refresh_token`, `staff_email_required`, `role_already_granted`, `last_admin`, `user_not_active`.
 
 ## Auth & profile
-- `POST /auth/register`
-- `POST /auth/login` / auth-provider callback
-- `POST /auth/refresh`
-- `POST /auth/logout`
-- `GET /me`, `PATCH /me`
+- Sign-in: see "Implemented (Phase 1b.1)" above. Registration is part of `POST /auth/otp/verify`.
+- Planned: `POST /me/identifiers` (add a second, OTP-verified email or phone); account deletion/export.
 - `GET /me` includes derived capabilities (`pet_parent`, `veterinarian`, `caretaker`, `clinic_operator`, `moderator`, `admin`) and provider verification statuses ([decision 0006](decisions/0006-identity-roles-and-permissions.md))
 - `POST /me/provider-profiles` (become a veterinarian or caretaker)
 - `POST /clinics` (the creator becomes a clinic operator), `POST /clinics/{id}/members`

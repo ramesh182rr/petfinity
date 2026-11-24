@@ -1,8 +1,12 @@
 # Screen Specifications
 
 ## Consumer app — MVP screens
-### 1. Welcome / sign-in
-Value proposition, sign-in methods, terms/privacy and onboarding progress.
+### 1. Welcome / sign-in (implemented 1b.2, [decision 0007](decisions/0007-authentication.md))
+- **Sign-in** (`app/(auth)/sign-in.tsx`): brand header, Mobile number / Email switch (mobile first, `+91` prefix), inline validation, "Send code", rate-limit and network messages, terms note.
+- **Verify** (`app/(auth)/verify.tsx`): masked destination; a 6-digit field with SMS/one-time-code autofill that auto-submits; server error messages; resend countdown; "use a different number/email".
+- **Onboarding** (`app/onboarding.tsx`): "What should we call you?" display name (required once, after first sign-in).
+- **Routing:** signed-out users can reach only sign-in (deep links redirect there). New users must finish onboarding before entering the app.
+- **Still to do:** links to the Terms and Privacy pages (legal copy pending) and the location setup step (screen 2).
 
 ### 2. Location setup
 Permission explanation, allow location, or manual city/area selection; allow later change.
@@ -47,7 +51,7 @@ Text, photo, pet attachment, audience/location scope, guidelines and preview.
 Booking events, caretaker offers, community interactions and settings.
 
 ### 16. Profile/settings
-User details, roles, saved providers, location, privacy, notification settings, support, policies, logout/delete account.
+*1b.2: shows name, email/phone and Sign out.* User details, roles, saved providers, location, privacy, notification settings, support, policies, logout/delete account.
 
 ## Provider screens
 - Provider onboarding wizard

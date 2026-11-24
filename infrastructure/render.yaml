@@ -32,6 +32,18 @@ services:
         sync: false
       - key: DATABASE_PGBOUNCER
         value: 'true'
+      - key: JWT_SECRET # unique per environment
+        sync: false
+      - key: OTP_PEPPER # unique per environment
+        sync: false
+      # Dev only: the MOCK console sender writes codes to Render logs. Use test
+      # identities only. Staging/production refuse it until a real provider exists.
+      - key: OTP_DELIVERY
+        value: console
+      - key: BOOTSTRAP_ADMIN_EMAILS
+        sync: false
+      - key: STAFF_EMAIL_DOMAINS
+        sync: false
       - key: CORS_ALLOW_ORIGINS
         value: ''
       - key: ENABLE_API_DOCS

@@ -27,7 +27,9 @@ npm run doctor                  # expo-doctor
 
 ```
 app/                    # routes only (Expo Router) — do NOT create src/app/
-  _layout.tsx           # fonts, splash, QueryClient, root stack
+  _layout.tsx           # fonts, splash, session bootstrap, QueryClient, RootNavigator
+  (auth)/               # sign-in, verify (signed-out only)
+  onboarding.tsx        # display name after first sign-in
   (tabs)/               # Home, Discover, Bookings, Community, My Pets
   profile.tsx, +not-found.tsx
 src/
@@ -36,9 +38,18 @@ src/
   components/states/    # LoadingState, Skeleton, EmptyState, ErrorState
   api/                  # client (error envelope → ApiError), query client, generated/ types
   config/env.ts         # validated EXPO_PUBLIC_* config
+  features/auth/        # session store (Zustand), secure token storage, auth API, validation
   features/<name>/      # feature hooks + components (e.g. system/health)
+  navigation/           # RootNavigator: protected-route guards by session state
 __tests__/              # Jest (jest-expo) tests: *-test.ts(x)
 ```
+
+## Authentication (decision 0007)
+
+- Passwordless OTP sign-in by mobile number or email. Signed-out users can reach only `(auth)`, and signed-in users without a name only `onboarding`. This is enforced by `Stack.Protected` guards in `src/navigation/RootNavigator.tsx` (client-side only; the API enforces access itself).
+- Only the **refresh token** is persisted, in `expo-secure-store` (Keychain/Keystore, this device only). The access token lives in memory.
+- `apiClient` attaches the access token automatically. On a 401 it runs one **single-flight** refresh and retries once. Pass `auth: false` for public endpoints.
+- **Local sign-in:** the backend's mock sender prints the code in the API terminal (`MOCK OTP (not delivered) …`).
 
 ## Conventions
 

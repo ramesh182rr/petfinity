@@ -3,8 +3,10 @@
 Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete where needed, constraints and indexes. Exact schema evolves through reviewed migrations.
 
 ## Core tables
-- `users`: id, email/phone, auth_subject, display_name, avatar, status, preferences.
-- `staff_roles`: user_id, role (moderator/admin), granted_by, granted_at, revoked_at. Pet parent is implicit for every account. Provider and clinic capabilities live in the tables below ([decision 0006](decisions/0006-identity-roles-and-permissions.md)).
+- `users` (implemented 1b.1): email (citext, unique), email_verified_at, phone (E.164, unique), phone_verified_at, display_name, status (active/suspended). Check: at least one identifier. Avatar and preferences come later.
+- `otp_challenges` (implemented 1b.1): channel, destination_hash, code_hash, ip_hash (all keyed HMAC, no clear text), attempts, expires_at, consumed_at.
+- `auth_sessions` (implemented 1b.1): user_id, refresh_token_hash (unique), previous_refresh_token_hash (reuse detection), user_agent, last_used_at, expires_at (sliding), absolute_expires_at, revoked_at, revoke_reason.
+- `staff_roles` (implemented 1b.1): user_id, role (moderator/admin), granted_by_user_id, granted_at, revoked_at, revoked_by_user_id. Partial unique index: one active grant per (user, role). Pet parent is implicit for every account. Provider and clinic capabilities live in the tables below ([decision 0006](decisions/0006-identity-roles-and-permissions.md)).
 - `pets`: owner_id, name, species, breed, DOB/estimated age, sex, weight, photo, temperament, allergies, conditions, notes.
 - `pet_access`: pet_id, user_id, permission set, invited_by, expiry (shared access later).
 - `provider_profiles`: user_id, provider_type (veterinarian/caretaker; unique per user + type), bio, credentials/registration fields (vets), verification_status, service_area, profile_media, status.
@@ -25,7 +27,7 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `posts`, `post_media`, `comments`, `reactions`.
 - `reports`, `blocks`, `moderation_actions`.
 - `notifications`, `notification_preferences`.
-- `audit_logs`.
+- `audit_logs` (implemented 1b.1): actor_user_id, action, target_type, target_id, details (JSONB, no personal data), created_at.
 
 ## Relationships
 - User 1:N Pets.

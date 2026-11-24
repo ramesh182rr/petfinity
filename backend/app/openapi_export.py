@@ -29,6 +29,9 @@ def build_openapi() -> dict[str, Any]:
         app_env=Environment.TEST,
         database_url="postgresql+psycopg://openapi:openapi@localhost:5432/openapi",
         enable_api_docs=True,
+        # Placeholders: schema generation never signs tokens or hashes codes.
+        jwt_secret="openapi-export-placeholder-secret-0000000000",  # noqa: S106
+        otp_pepper="openapi-export-placeholder-pepper-000000000",
     )
     return create_app(settings).openapi()
 

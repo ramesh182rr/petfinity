@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { EmptyState } from '@/components/states/StateViews';
 import { Button, Card, IconBadge, Screen, Text, type IconBadgeTone } from '@/components/ui';
+import { useSession } from '@/features/auth/session';
 import { colors, spacing, touchTarget } from '@/theme';
 
 type Shortcut = {
@@ -21,11 +22,12 @@ const SHORTCUTS: Shortcut[] = [
 ];
 
 export default function HomeScreen() {
+  const firstName = useSession((state) => state.user?.display_name?.split(' ')[0]);
   return (
     <Screen testID="home-screen">
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text variant="title">Welcome to Petfinity</Text>
+          <Text variant="title">{firstName ? `Hi, ${firstName}` : 'Welcome to Petfinity'}</Text>
           <Text variant="body" color="textMuted">
             Every paw. Every need. Every connection.
           </Text>

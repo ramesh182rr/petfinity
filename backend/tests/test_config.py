@@ -46,3 +46,24 @@ def test_api_docs_can_be_disabled() -> None:
     with TestClient(create_app(make_settings(enable_api_docs=False))) as client:
         assert client.get("/docs").status_code == 404
         assert client.get("/api/v1/openapi.json").status_code == 404
+
+
+def test_mock_otp_sender_refused_in_hosted_environments() -> None:
+    for env in (Environment.STAGING, Environment.PRODUCTION):
+        with pytest.raises(ValidationError, match="mock console OTP sender"):
+            make_settings(app_env=env, log_json=True)
+
+
+def test_auth_secrets_must_be_long() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(jwt_secret="short")
+    with pytest.raises(ValidationError):
+        make_settings(otp_pepper="short")
+
+
+def test_staff_lists_are_normalised() -> None:
+    settings = make_settings(
+        bootstrap_admin_emails=" Founder@Gmail.com ,", staff_email_domains="@Petfinity.in, x.org"
+    )
+    assert settings.bootstrap_admin_emails == ["founder@gmail.com"]
+    assert settings.staff_email_domains == ["petfinity.in", "x.org"]

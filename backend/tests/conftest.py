@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from app.core.config import Environment, Settings
 from app.db.session import create_db_engine
 from app.main import create_app
+from app.modules.auth.otp_delivery import RecordingOtpSender
 
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEST_DATABASE_URL = os.environ.get(
@@ -33,6 +34,9 @@ def make_settings(**overrides: object) -> Settings:
         "app_env": Environment.TEST,
         "database_url": TEST_DATABASE_URL,
         "log_level": "WARNING",
+        "jwt_secret": "test-jwt-secret-" + "x" * 32,
+        "otp_pepper": "test-otp-pepper-" + "y" * 32,
+        "otp_resend_cooldown_seconds": 0,
     }
     values.update(overrides)
     return Settings(_env_file=None, **values)  # type: ignore[arg-type]
@@ -102,3 +106,65 @@ def db_session(db_engine: Engine) -> Iterator[Session]:
         session.close()
         transaction.rollback()
         connection.close()
+
+
+# --- identity / API fixtures ------------------------------------------------------
+
+IDENTITY_TABLES = "audit_logs, auth_sessions, otp_challenges, staff_roles, users"
+
+
+@pytest.fixture
+def clean_tables(db_engine: Engine) -> Iterator[None]:
+    """API tests commit real rows; wipe identity tables after each test."""
+    yield
+    with db_engine.begin() as conn:
+        conn.execute(text(f"TRUNCATE {IDENTITY_TABLES} RESTART IDENTITY CASCADE"))
+
+
+@pytest.fixture
+def otp_sender() -> RecordingOtpSender:
+    return RecordingOtpSender()
+
+
+@pytest.fixture
+def api_settings_overrides() -> dict[str, object]:
+    """Override in a test module (or via parametrisation) to tweak settings."""
+    return {}
+
+
+@pytest.fixture
+def api(
+    migrated_database: str,
+    clean_tables: None,
+    otp_sender: RecordingOtpSender,
+    api_settings_overrides: dict[str, object],
+) -> Iterator[TestClient]:
+    settings = make_settings(database_url=migrated_database, **api_settings_overrides)
+    with TestClient(create_app(settings, otp_sender=otp_sender)) as client:
+        yield client
+
+
+def sign_in(
+    client: TestClient,
+    sender: RecordingOtpSender,
+    destination: str,
+    *,
+    channel: str = "email",
+) -> dict[str, object]:
+    """Request + verify an OTP and return the sign-in response body."""
+    requested = client.post(
+        "/api/v1/auth/otp/request", json={"channel": channel, "destination": destination}
+    )
+    assert requested.status_code == 202, requested.text
+    code = list(sender.sent.values())[-1]
+    verified = client.post(
+        "/api/v1/auth/otp/verify",
+        json={"channel": channel, "destination": destination, "code": code},
+    )
+    assert verified.status_code == 200, verified.text
+    body: dict[str, object] = verified.json()
+    return body
+
+
+def bearer(token: object) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}

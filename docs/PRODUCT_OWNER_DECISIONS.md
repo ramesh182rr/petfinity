@@ -14,6 +14,7 @@ Status: approved defaults applied
 - **Booking confirmation:** instant or request per service. In-clinic is instant by default, home visits are request. Accepting a caretaker offer confirms the booking ([0004](decisions/0004-booking-confirmation-model.md)).
 - **Bookings:** one booking record for vet and caretaker services. "Appointment" is UI wording for vet bookings ([0005](decisions/0005-unified-bookings.md)).
 - **Roles:** one account and sign-in per person. Capabilities are additive (pet parent, veterinarian, caretaker, clinic operator). Moderator and admin are audited grants limited to verified staff-domain emails ([0006](decisions/0006-identity-roles-and-permissions.md)).
+- **Sign-in:** passwordless one-time codes by email or mobile number. Sign-up and sign-in are the same flow ([0007](decisions/0007-authentication.md)).
 - **Messaging:** Booking/provider communication first; general direct messaging deferred.
 - **Shopping:** Affiliate/partner links initially; native marketplace later.
 - **Brand style:** Premium, warm and playful.

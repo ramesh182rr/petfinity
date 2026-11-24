@@ -47,6 +47,11 @@ class ErrorResponse(BaseModel):
     error: ErrorBody
 
 
+def error_responses(*status_codes: int) -> dict[int | str, dict[str, Any]]:
+    """OpenAPI `responses=` entry documenting the error envelope for these statuses."""
+    return {code: {"model": ErrorResponse} for code in status_codes}
+
+
 class AppError(Exception):
     """Raise for expected, client-facing failures."""
 

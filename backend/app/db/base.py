@@ -44,5 +44,4 @@ class TimestampMixin:
     )
 
 
-# Import model modules here as they are added, so Alembic autogenerate sees them.
-# e.g. from app.modules.users import models as _users_models
+# Model modules are registered in app/db/registry.py (for Alembic and drift checks).

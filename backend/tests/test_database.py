@@ -60,7 +60,7 @@ def test_models_and_migrations_in_sync(migrated_database: str) -> None:
     from alembic.autogenerate import compare_metadata
     from alembic.runtime.migration import MigrationContext
 
-    from app.db.base import Base
+    from app.db.registry import Base
 
     engine = create_engine(migrated_database)
     try:

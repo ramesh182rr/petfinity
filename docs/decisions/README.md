@@ -10,6 +10,7 @@ Each significant product or technical decision gets one numbered file. A decisio
 | [0004](0004-booking-confirmation-model.md) | Booking confirmation: instant or request per service; unified status model | 2026-11-24 | Accepted |
 | [0005](0005-unified-bookings.md) | One `bookings` record for vet and caretaker; "appointment" is UI wording | 2026-11-24 | Accepted |
 | [0006](0006-identity-roles-and-permissions.md) | Unified account, additive capabilities, audited staff roles | 2026-11-24 | Accepted |
+| [0007](0007-authentication.md) | Passwordless OTP sign-in via email or phone; rotating refresh tokens | 2026-11-24 | Accepted |
 
 ## Template
 

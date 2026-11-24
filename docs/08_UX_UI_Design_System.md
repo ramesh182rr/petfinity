@@ -51,7 +51,8 @@ Rules:
 - Screen container (cream, safe areas) — `Screen`
 - Pill filters and status chips — `Chip`
 - Primary/secondary/tertiary buttons, plus inverse and outline-inverse for plum surfaces — `Button`
-- Form fields with visible labels and validation
+- Form fields with visible labels and validation — `TextField` (label, hint, inline error, optional prefix such as `+91`)
+- Segmented switch for 2–4 options — `SegmentedControl`
 - Pet avatar/profile cards
 - Provider cards with verification badge and rating
 - Service chips
