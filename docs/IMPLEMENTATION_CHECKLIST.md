@@ -23,7 +23,7 @@
 - [x] 1b.3 Pet profiles (backend)
 - [x] 1b.4 Media upload: signed URLs; local storage in dev, R2 adapter ready (keys pending) ([0008](decisions/0008-media-storage.md))
 - [x] 1b.5 Pet profiles (mobile): My Pets, add/edit/delete, photo, Home pet switcher
-- [ ] 1b.6 Analytics, error monitoring, environments and secrets matrix
+- [ ] 1b.6 Analytics, error monitoring, environments and secrets matrix (deferred by the product owner, 2026-11-25)
 - [ ] Provider profiles and clinic memberships (decision 0006): built with provider onboarding in Phase 2
 
 ## Core owner experience
@@ -36,6 +36,18 @@
 - [ ] Appointment booking
 - [ ] Mock payment states
 - [ ] Booking management and review
+
+## Phase 2 — vet discovery and booking (see [development/phase-2-plan.md](development/phase-2-plan.md))
+- [x] 2.1 Provider and clinic onboarding API: profiles, clinics, private verification documents, submission
+- [ ] 2.2 Admin verification (API + admin web app, [0009](decisions/0009-admin-web-app.md))
+- [ ] 2.3 Provider onboarding (app)
+- [ ] 2.4 Services and availability
+- [ ] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md))
+- [ ] 2.6 Booking engine
+- [ ] 2.7 Booking flow (app)
+- [ ] 2.8 Provider inbox (app)
+- [ ] 2.9 Notifications and reminders
+- [ ] 2.10 Reviews
 
 ## Provider/admin
 - [ ] Provider onboarding

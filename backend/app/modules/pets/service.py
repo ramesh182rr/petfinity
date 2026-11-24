@@ -114,7 +114,7 @@ def attach_photo(
     media_id: uuid.UUID,
 ) -> Pet:
     pet = get_owned_pet(db, owner_id, pet_id, for_update=True)
-    asset = media.confirm_image_upload(
+    asset = media.confirm_upload(
         db,
         settings,
         storage,

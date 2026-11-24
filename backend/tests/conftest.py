@@ -113,7 +113,8 @@ def db_session(db_engine: Engine) -> Iterator[Session]:
 # --- identity / API fixtures ------------------------------------------------------
 
 IDENTITY_TABLES = (
-    "audit_logs, auth_sessions, otp_challenges, staff_roles, pets, media_assets, users"
+    "audit_logs, auth_sessions, otp_challenges, staff_roles, pets, verification_documents, "
+    "verification_submissions, clinic_members, clinics, provider_profiles, media_assets, users"
 )
 
 

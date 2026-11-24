@@ -17,7 +17,7 @@ from pydantic import (
 from app.core.clock import utcnow
 from app.core.errors import AppError
 from app.core.types import UtcDatetime
-from app.modules.auth.identifiers import normalize_phone
+from app.modules.auth.identifiers import normalize_contact_phone
 from app.modules.pets.models import Sex, Species
 
 
@@ -81,7 +81,7 @@ class _PetFields(BaseModel):
         if value is None:
             return None
         try:
-            return normalize_phone(value)
+            return normalize_contact_phone(value)
         except AppError as exc:
             raise ValueError("enter a valid phone number") from exc
 

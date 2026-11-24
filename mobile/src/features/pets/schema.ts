@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { normalizeIndianMobile } from '@/features/auth/identifiers';
+import { normalizeIndianContact } from '@/features/auth/identifiers';
 
 import { toIsoDate } from './format';
 import type { PetCreate, Sex, Species } from './types';
@@ -52,13 +52,7 @@ export const petFormSchema = z
     emergencyContactPhone: z
       .string()
       .trim()
-      .refine(
-        (v) =>
-          v === '' ||
-          /^\+[1-9]\d{7,14}$/.test(v.replace(/[\s-]/g, '')) ||
-          normalizeIndianMobile(v) !== null,
-        'Enter a valid phone number.',
-      ),
+      .refine((v) => v === '' || normalizeIndianContact(v) !== null, 'Enter a valid phone number.'),
   })
   .refine((v) => v.species !== 'other' || v.speciesOther.length > 0, {
     path: ['speciesOther'],
@@ -107,8 +101,7 @@ export function toPetPayload(values: z.output<typeof petFormSchema>): PetCreate 
     known_conditions: nullIfEmpty(values.knownConditions),
     medications: nullIfEmpty(values.medications),
     emergency_contact_name: nullIfEmpty(values.emergencyContactName),
-    emergency_contact_phone:
-      phone === '' ? null : (normalizeIndianMobile(phone) ?? phone.replace(/[\s-]/g, '')),
+    emergency_contact_phone: phone === '' ? null : (normalizeIndianContact(phone) ?? phone),
   };
 }
 

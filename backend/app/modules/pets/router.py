@@ -140,7 +140,7 @@ def create_photo_upload(
     user: CurrentUser,
 ) -> PhotoUploadResponse:
     service.get_owned_pet(db, user.id, pet_id)
-    ticket = media.create_image_upload(
+    ticket = media.create_upload(
         db,
         settings,
         storage,

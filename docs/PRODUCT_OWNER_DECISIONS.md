@@ -15,6 +15,8 @@ Status: approved defaults applied
 - **Bookings:** one booking record for vet and caretaker services. "Appointment" is UI wording for vet bookings ([0005](decisions/0005-unified-bookings.md)).
 - **Roles:** one account and sign-in per person. Capabilities are additive (pet parent, veterinarian, caretaker, clinic operator). Moderator and admin are audited grants limited to verified staff-domain emails ([0006](decisions/0006-identity-roles-and-permissions.md)).
 - **Sign-in:** passwordless one-time codes by email or mobile number. Sign-up and sign-in are the same flow ([0007](decisions/0007-authentication.md)).
+- **Admin tools:** a separate admin web app (React + Vite) in the monorepo ([0009](decisions/0009-admin-web-app.md)).
+- **Maps:** Google Maps, with discovery built list-first ([0010](decisions/0010-maps-google.md)).
 - **Messaging:** Booking/provider communication first; general direct messaging deferred.
 - **Shopping:** Affiliate/partner links initially; native marketplace later.
 - **Brand style:** Premium, warm and playful.

@@ -66,6 +66,30 @@ def normalize_phone(raw: str) -> str:
     return value
 
 
+_INDIA_CONTACT = re.compile(r"^\+91[1-9]\d{9}$")
+
+
+def normalize_contact_phone(raw: str) -> str:
+    """Contact numbers (clinic phone, emergency contact): Indian mobiles AND landlines.
+
+    Landlines are written with a trunk 0 and STD code (044 2345 6789 -> +914423456789).
+    Sign-in still requires a mobile number (normalize_phone).
+    """
+    value = _PHONE_SEPARATORS.sub("", raw.strip())
+    if value.startswith("00"):
+        value = "+" + value[2:]
+    if not value.startswith("+"):
+        if len(value) == 11 and value.startswith("0") and value[1] != "0":
+            value = "+91" + value[1:]
+        elif len(value) == 10 and value[0] != "0":
+            value = "+91" + value
+    if not _E164.fullmatch(value):
+        raise _invalid(Channel.PHONE)
+    if value.startswith("+91") and not _INDIA_CONTACT.fullmatch(value):
+        raise _invalid(Channel.PHONE)
+    return value
+
+
 def parse_identifier(channel: Channel, raw: str) -> Identifier:
     if len(raw) > 320:
         raise _invalid(channel)

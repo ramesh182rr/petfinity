@@ -22,7 +22,7 @@
 ## Decisions to confirm before coding beyond foundation
 1. Launch areas and initial service radii within Tamil Nadu, Kerala and Bengaluru.
 2. ~~User auth strategy~~: **decided.** Passwordless OTP via email or phone ([0007](decisions/0007-authentication.md)). Delivery providers are still open under #15.
-3. Map provider (cost, India coverage, geocoding, routing, licensing).
+3. ~~Map provider~~: **decided.** Google Maps, list-first discovery ([0010](decisions/0010-maps-google.md)).
 4. Provider verification process and evidence sources.
 5. ~~Booking policy~~: **decided.** Instant or request per service ([0004](decisions/0004-booking-confirmation-model.md)).
 6. Vet booking monetisation: commission, lead fee, subscription, or hybrid.
@@ -32,7 +32,7 @@
 10. Community moderation policy and age restrictions.
 11. Terms, privacy, consent and data retention.
 12. Petfinity trademark, domain and app-store/social-handle clearance.
-13. Admin/provider web technology (would live in the monorepo as `admin/`). Needed before Milestone 2.
+13. ~~Admin/provider web technology~~: **decided.** React + Vite admin web app in `admin/` ([0009](decisions/0009-admin-web-app.md)).
 14. MVP community media scope and upload limits.
 15. SMS/email/push notification provider. **Needed before staging:** OTP delivery (SMS needs India DLT registration; start early).
 

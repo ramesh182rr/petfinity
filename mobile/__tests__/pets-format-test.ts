@@ -67,6 +67,15 @@ describe('pet form conversion', () => {
     });
   });
 
+  it('accepts landline emergency contacts', () => {
+    const values = petFormSchema.parse({
+      ...emptyPetForm,
+      name: 'Rex',
+      emergencyContactPhone: '044 2345 6789',
+    });
+    expect(toPetPayload(values).emergency_contact_phone).toBe('+914423456789');
+  });
+
   it('round-trips an existing pet through the form', () => {
     const pet = {
       ...PET,

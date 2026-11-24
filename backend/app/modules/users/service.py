@@ -59,8 +59,18 @@ def mark_verified(user: User, identifier: Identifier, verified_at: datetime) -> 
 
 
 def capabilities(db: Session, user: User) -> list[str]:
-    """Derived capabilities (decision 0006). Provider/clinic capabilities arrive in Phase 2."""
+    """Derived capabilities (decision 0006).
+
+    A capability means the person *can act* in that role (e.g. set up a clinic).
+    Whether they're publicly listed or bookable is a separate verification gate.
+    """
+    from app.modules.clinics import service as clinics  # local: avoid import cycle
+    from app.modules.providers import service as providers
+
     caps = [PET_PARENT]
+    caps.extend(sorted(providers.active_types(db, user.id)))
+    if clinics.is_operator_anywhere(db, user.id):
+        caps.append("clinic_operator")
     caps.extend(sorted(staff.active_role_names(db, user.id)))
     return caps
 

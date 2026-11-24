@@ -99,6 +99,7 @@ class Settings(BaseSettings):
         None  # override; default https://<account>.r2.cloudflarestorage.com
     )
     media_max_image_bytes: int = Field(default=8_000_000, ge=100_000, le=25_000_000)
+    media_max_document_bytes: int = Field(default=10_000_000, ge=100_000, le=50_000_000)
     media_upload_url_ttl_seconds: int = Field(default=600, ge=60, le=3600)
     media_download_url_ttl_seconds: int = Field(default=3600, ge=60, le=86_400)
 

@@ -15,11 +15,37 @@ from app.core.config import Settings
 from app.core.errors import AppError
 from app.modules.media.models import MediaAsset, MediaPurpose, MediaStatus
 from app.modules.storage.base import ObjectStorage, PresignedUpload
-from app.modules.storage.sniff import ALLOWED_IMAGE_TYPES, EXTENSIONS, SNIFF_BYTES, sniff_image_type
+from app.modules.storage.sniff import (
+    ALLOWED_IMAGE_TYPES,
+    EXTENSIONS,
+    SNIFF_BYTES,
+    sniff_content_type,
+)
 
 logger = logging.getLogger(__name__)
 
 MAX_PENDING_PER_HOUR = 30
+
+
+@dataclass(frozen=True)
+class UploadPolicy:
+    allowed_types: tuple[str, ...]
+    max_bytes: int
+    unsupported_message: str
+
+
+def policy_for(settings: Settings, purpose: MediaPurpose) -> UploadPolicy:
+    if purpose is MediaPurpose.VERIFICATION_DOCUMENT:
+        return UploadPolicy(
+            allowed_types=(*ALLOWED_IMAGE_TYPES, "application/pdf"),
+            max_bytes=settings.media_max_document_bytes,
+            unsupported_message="Please upload a PDF, JPEG, PNG or WebP file.",
+        )
+    return UploadPolicy(
+        allowed_types=ALLOWED_IMAGE_TYPES,
+        max_bytes=settings.media_max_image_bytes,
+        unsupported_message="Please choose a JPEG, PNG or WebP image.",
+    )
 
 
 @dataclass(frozen=True)
@@ -29,7 +55,7 @@ class UploadTicket:
     expires_at: datetime
 
 
-def create_image_upload(
+def create_upload(
     db: Session,
     settings: Settings,
     storage: ObjectStorage,
@@ -40,19 +66,20 @@ def create_image_upload(
     content_type: str,
     size_bytes: int,
 ) -> UploadTicket:
-    if content_type not in ALLOWED_IMAGE_TYPES:
+    policy = policy_for(settings, purpose)
+    if content_type not in policy.allowed_types:
         raise AppError(
             "unsupported_media_type",
-            "Please choose a JPEG, PNG or WebP image.",
+            policy.unsupported_message,
             status_code=415,
-            details={"allowed": list(ALLOWED_IMAGE_TYPES)},
+            details={"allowed": list(policy.allowed_types)},
         )
-    if size_bytes <= 0 or size_bytes > settings.media_max_image_bytes:
+    if size_bytes <= 0 or size_bytes > policy.max_bytes:
         raise AppError(
             "file_too_large",
-            "That image is too large.",
+            "That file is too large.",
             status_code=413,
-            details={"max_bytes": settings.media_max_image_bytes},
+            details={"max_bytes": policy.max_bytes},
         )
     now = utcnow()
     recent = db.scalar(
@@ -89,7 +116,7 @@ def create_image_upload(
     return UploadTicket(asset=asset, upload=upload, expires_at=now + timedelta(seconds=ttl))
 
 
-def confirm_image_upload(
+def confirm_upload(
     db: Session,
     settings: Settings,
     storage: ObjectStorage,
@@ -120,17 +147,17 @@ def confirm_image_upload(
             status_code=409,
         )
 
-    detected = sniff_image_type(storage.read_prefix(asset.storage_key, SNIFF_BYTES))
+    detected = sniff_content_type(storage.read_prefix(asset.storage_key, SNIFF_BYTES))
     if (
-        info.size > settings.media_max_image_bytes
+        info.size > policy_for(settings, purpose).max_bytes
         or info.size != asset.declared_size_bytes
         or detected != asset.content_type
     ):
         discard(db, storage, asset)
         db.commit()  # persist the rejection even though the request fails
         raise AppError(
-            "invalid_image",
-            "That file isn't a valid image. Please choose another.",
+            "invalid_file",
+            "That file isn't valid or doesn't match its type. Please choose another.",
             status_code=422,
         )
 

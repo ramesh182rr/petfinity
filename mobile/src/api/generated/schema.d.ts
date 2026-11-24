@@ -110,6 +110,41 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/clinics': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create a clinic (you become its operator; starts unverified) */
+    post: operations['create_clinic_api_v1_clinics_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/clinics/{clinic_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Clinic (members only) */
+    get: operations['get_clinic_api_v1_clinics__clinic_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update clinic (operators) */
+    patch: operations['update_clinic_api_v1_clinics__clinic_id__patch'];
+    trace?: never;
+  };
   '/api/v1/health': {
     parameters: {
       query?: never;
@@ -160,6 +195,59 @@ export interface paths {
     head?: never;
     /** Update current user profile */
     patch: operations['update_me_api_v1_me_patch'];
+    trace?: never;
+  };
+  '/api/v1/me/clinics': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Clinics I belong to */
+    get: operations['my_clinics_api_v1_me_clinics_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/provider-profiles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** My provider profiles */
+    get: operations['list_profiles_api_v1_me_provider_profiles_get'];
+    put?: never;
+    /** Become a veterinarian or caretaker (starts as an unverified draft) */
+    post: operations['create_profile_api_v1_me_provider_profiles_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me/provider-profiles/{profile_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get one */
+    get: operations['get_profile_api_v1_me_provider_profiles__profile_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update (changing credentials on a verified profile requires re-verification) */
+    patch: operations['update_profile_api_v1_me_provider_profiles__profile_id__patch'];
     trace?: never;
   };
   '/api/v1/pets': {
@@ -237,15 +325,289 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/verification/{subject_type}/{subject_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Verification status and checklist */
+    get: operations['get_overview_api_v1_verification__subject_type___subject_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verification/{subject_type}/{subject_id}/documents': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Confirm an uploaded document */
+    post: operations['confirm_document_api_v1_verification__subject_type___subject_id__documents_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verification/{subject_type}/{subject_id}/documents/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Get a short-lived URL to upload a private verification document */
+    post: operations['create_document_upload_api_v1_verification__subject_type___subject_id__documents_upload_url_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verification/{subject_type}/{subject_id}/documents/{document_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Remove a document that hasn't been submitted */
+    delete: operations['delete_document_api_v1_verification__subject_type___subject_id__documents__document_id__delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verification/{subject_type}/{subject_id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Send for admin review */
+    post: operations['submit_api_v1_verification__subject_type___subject_id__submit_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
+     * ActiveStatus
+     * @enum {string}
+     */
+    ActiveStatus: 'active' | 'suspended';
+    /**
      * Channel
      * @enum {string}
      */
     Channel: 'email' | 'phone';
+    /** ClinicCreate */
+    ClinicCreate: {
+      /** Address Line1 */
+      address_line1: string;
+      /** Address Line2 */
+      address_line2?: string | null;
+      /** City */
+      city: string;
+      /** Description */
+      description?: string | null;
+      /** Email */
+      email?: string | null;
+      /** Emergency Services */
+      emergency_services?: boolean | null;
+      /** Latitude */
+      latitude?: number | string | null;
+      /** Locality */
+      locality?: string | null;
+      /** Longitude */
+      longitude?: number | string | null;
+      /** Name */
+      name: string;
+      /** Phone */
+      phone: string;
+      /** Postal Code */
+      postal_code: string;
+      /**
+       * Practises Here
+       * @description Also list me as a veterinarian at this clinic (needs a veterinarian profile)
+       * @default false
+       */
+      practises_here: boolean;
+      /** State */
+      state: string;
+    };
+    /** ClinicResponse */
+    ClinicResponse: {
+      /** Address Line1 */
+      address_line1: string;
+      /** Address Line2 */
+      address_line2: string | null;
+      /** City */
+      city: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Description */
+      description: string | null;
+      /** Email */
+      email: string | null;
+      /** Emergency Services */
+      emergency_services: boolean;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Latitude */
+      latitude: string | null;
+      /** Locality */
+      locality: string | null;
+      /** Longitude */
+      longitude: string | null;
+      /** My Roles */
+      my_roles: components['schemas']['MemberRole'][];
+      /** Name */
+      name: string;
+      /** Phone */
+      phone: string;
+      /** Postal Code */
+      postal_code: string;
+      /** State */
+      state: string;
+      status: components['schemas']['ActiveStatus'];
+      /** Timezone */
+      timezone: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      verification_status: components['schemas']['VerificationStatus'];
+      /** Verified At */
+      verified_at: string | null;
+    };
+    /** ClinicUpdate */
+    ClinicUpdate: {
+      /** Address Line1 */
+      address_line1?: string | null;
+      /** Address Line2 */
+      address_line2?: string | null;
+      /** City */
+      city?: string | null;
+      /** Description */
+      description?: string | null;
+      /** Email */
+      email?: string | null;
+      /** Emergency Services */
+      emergency_services?: boolean | null;
+      /** Latitude */
+      latitude?: number | string | null;
+      /** Locality */
+      locality?: string | null;
+      /** Longitude */
+      longitude?: number | string | null;
+      /** Name */
+      name?: string | null;
+      /** Phone */
+      phone?: string | null;
+      /** Postal Code */
+      postal_code?: string | null;
+      /** State */
+      state?: string | null;
+    };
+    /** DocumentConfirm */
+    DocumentConfirm: {
+      doc_type: components['schemas']['DocumentType'];
+      /**
+       * Media Id
+       * Format: uuid
+       */
+      media_id: string;
+    };
+    /**
+     * DocumentResponse
+     * @description Metadata only: document contents are never returned to applicants or the public.
+     */
+    DocumentResponse: {
+      /** Content Type */
+      content_type: string;
+      doc_type: components['schemas']['DocumentType'];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Size Bytes */
+      size_bytes: number | null;
+      /** Submitted */
+      submitted: boolean;
+      /**
+       * Uploaded At
+       * Format: date-time
+       */
+      uploaded_at: string;
+    };
+    /**
+     * DocumentType
+     * @enum {string}
+     */
+    DocumentType:
+      | 'identity'
+      | 'vet_registration'
+      | 'qualification'
+      | 'clinic_registration'
+      | 'address_proof'
+      | 'other';
+    /** DocumentUploadRequest */
+    DocumentUploadRequest: {
+      /**
+       * Content Type
+       * @description application/pdf, image/jpeg, image/png or image/webp
+       */
+      content_type: string;
+      doc_type: components['schemas']['DocumentType'];
+      /** Size Bytes */
+      size_bytes: number;
+    };
+    /** DocumentUploadResponse */
+    DocumentUploadResponse: {
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /**
+       * Media Id
+       * Format: uuid
+       */
+      media_id: string;
+      upload: components['schemas']['UploadInstructions'];
+    };
     /** ErrorBody */
     ErrorBody: {
       /** Code */
@@ -309,6 +671,11 @@ export interface components {
       /** Display Name */
       display_name: string;
     };
+    /**
+     * MemberRole
+     * @enum {string}
+     */
+    MemberRole: 'operator' | 'veterinarian';
     /** OtpRequest */
     OtpRequest: {
       channel: components['schemas']['Channel'];
@@ -489,6 +856,89 @@ export interface components {
       media_id: string;
       upload: components['schemas']['UploadInstructions'];
     };
+    /** ProviderProfileCreate */
+    ProviderProfileCreate: {
+      /** Bio */
+      bio?: string | null;
+      /** City */
+      city?: string | null;
+      /** Display Name */
+      display_name: string;
+      /** Languages */
+      languages?: string[] | null;
+      provider_type: components['schemas']['ProviderType'];
+      /** Qualifications */
+      qualifications?: string | null;
+      /** Registration Council */
+      registration_council?: string | null;
+      /** Registration Number */
+      registration_number?: string | null;
+      /** Years Experience */
+      years_experience?: number | null;
+    };
+    /** ProviderProfileResponse */
+    ProviderProfileResponse: {
+      /** Bio */
+      bio: string | null;
+      /** City */
+      city: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Display Name */
+      display_name: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Languages */
+      languages: string[];
+      provider_type: components['schemas']['ProviderType'];
+      /** Qualifications */
+      qualifications: string | null;
+      /** Registration Council */
+      registration_council: string | null;
+      /** Registration Number */
+      registration_number: string | null;
+      status: components['schemas']['ActiveStatus'];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      verification_status: components['schemas']['VerificationStatus'];
+      /** Verified At */
+      verified_at: string | null;
+      /** Years Experience */
+      years_experience: number | null;
+    };
+    /** ProviderProfileUpdate */
+    ProviderProfileUpdate: {
+      /** Bio */
+      bio?: string | null;
+      /** City */
+      city?: string | null;
+      /** Display Name */
+      display_name?: string | null;
+      /** Languages */
+      languages?: string[] | null;
+      /** Qualifications */
+      qualifications?: string | null;
+      /** Registration Council */
+      registration_council?: string | null;
+      /** Registration Number */
+      registration_number?: string | null;
+      /** Years Experience */
+      years_experience?: number | null;
+    };
+    /**
+     * ProviderType
+     * @enum {string}
+     */
+    ProviderType: 'veterinarian' | 'caretaker';
     /** ReadinessResponse */
     ReadinessResponse: {
       /** Checks */
@@ -591,6 +1041,39 @@ export interface components {
        */
       user_id: string;
     };
+    /**
+     * SubjectType
+     * @enum {string}
+     */
+    SubjectType: 'provider_profile' | 'clinic';
+    /**
+     * SubmissionStatus
+     * @enum {string}
+     */
+    SubmissionStatus: 'pending' | 'approved' | 'needs_info' | 'rejected' | 'withdrawn';
+    /** SubmissionSummary */
+    SubmissionSummary: {
+      /** Decision Reason */
+      decision_reason: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Reviewed At */
+      reviewed_at: string | null;
+      status: components['schemas']['SubmissionStatus'];
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+    };
+    /** SubmitRequest */
+    SubmitRequest: {
+      /** Note */
+      note?: string | null;
+    };
     /** TokenResponse */
     TokenResponse: {
       /** Access Token */
@@ -624,6 +1107,26 @@ export interface components {
       /** Url */
       url: string;
     };
+    /** VerificationOverview */
+    VerificationOverview: {
+      /** Can Edit Documents */
+      can_edit_documents: boolean;
+      /** Documents */
+      documents: components['schemas']['DocumentResponse'][];
+      latest_submission: components['schemas']['SubmissionSummary'] | null;
+      /** Missing Documents */
+      missing_documents: components['schemas']['DocumentType'][];
+      /** Missing Fields */
+      missing_fields: string[];
+      /** Required Documents */
+      required_documents: components['schemas']['DocumentType'][];
+      verification_status: components['schemas']['VerificationStatus'];
+    };
+    /**
+     * VerificationStatus
+     * @enum {string}
+     */
+    VerificationStatus: 'draft' | 'submitted' | 'needs_info' | 'verified' | 'rejected';
   };
   responses: never;
   parameters: never;
@@ -1171,6 +1674,240 @@ export interface operations {
       };
     };
   };
+  create_clinic_api_v1_clinics_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClinicCreate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClinicResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  get_clinic_api_v1_clinics__clinic_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clinic_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClinicResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  update_clinic_api_v1_clinics__clinic_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clinic_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClinicUpdate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClinicResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
   health_api_v1_health_get: {
     parameters: {
       query?: never;
@@ -1314,6 +2051,289 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['MeResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  my_clinics_api_v1_me_clinics_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClinicResponse'][];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  list_profiles_api_v1_me_provider_profiles_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProviderProfileResponse'][];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  create_profile_api_v1_me_provider_profiles_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProviderProfileCreate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProviderProfileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  get_profile_api_v1_me_provider_profiles__profile_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profile_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProviderProfileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  update_profile_api_v1_me_provider_profiles__profile_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profile_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProviderProfileUpdate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProviderProfileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
         };
       };
       /** @description Unprocessable Content */
@@ -1900,6 +2920,537 @@ export interface operations {
       };
       /** @description Not Found */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  get_overview_api_v1_verification__subject_type___subject_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VerificationOverview'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  confirm_document_api_v1_verification__subject_type___subject_id__documents_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DocumentConfirm'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  create_document_upload_api_v1_verification__subject_type___subject_id__documents_upload_url_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DocumentUploadRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentUploadResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  delete_document_api_v1_verification__subject_type___subject_id__documents__document_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        document_id: string;
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  submit_api_v1_verification__subject_type___subject_id__submit_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubmissionSummary'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
         headers: {
           [name: string]: unknown;
         };

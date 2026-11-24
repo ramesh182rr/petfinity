@@ -139,7 +139,7 @@ def test_non_image_content_is_rejected_and_removed(
         f"{PETS}/{pet['id']}/photo", json={"media_id": ticket["media_id"]}, headers=owner
     )
     assert response.status_code == 422
-    assert response.json()["error"]["code"] == "invalid_image"
+    assert response.json()["error"]["code"] == "invalid_file"
     assert list(local_storage.root.rglob("*.jpg")) == []
     with db_engine.connect() as conn:
         assert conn.execute(text("SELECT status FROM media_assets")).scalar() == "deleted"

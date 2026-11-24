@@ -10,10 +10,11 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `pets` (implemented 1b.3): owner_id, name, species (+ species_other), breed, sex, date_of_birth (+ is_estimate), weight_kg, neutered, temperament, dietary_notes, allergies, known_conditions, medications, emergency contact name/phone, photo_media_id, deleted_at (soft delete). Checks on species, sex and weight.
 - `media_assets` (implemented 1b.4, [decision 0008](decisions/0008-media-storage.md)): owner_id, purpose (pet_photo), storage_key (unique, server-generated), content_type, declared_size_bytes, size_bytes, status (pending/ready/deleted), uploaded_at, deleted_at.
 - `pet_access`: pet_id, user_id, permission set, invited_by, expiry (shared access later).
-- `provider_profiles`: user_id, provider_type (veterinarian/caretaker; unique per user + type), bio, credentials/registration fields (vets), verification_status, service_area, profile_media, status.
-- `provider_verifications`: subject (provider_profile_id or clinic_id), verification_type, document_object_key, status, reviewer, review_reason; private storage only.
-- `clinics`: name, location, address, contact, operating hours, emergency flag, verification_status, status.
-- `clinic_members`: clinic_id, user_id, member_role (operator/veterinarian), status. A vet who runs their clinic holds both memberships.
+- `provider_profiles` (implemented 2.1): user_id, provider_type (veterinarian/caretaker; unique per user + type), display_name, bio, years_experience, languages[], city, registration_number, registration_council, qualifications, verification_status (draft/submitted/needs_info/verified/rejected), verified_at, status (active/suspended). Service area and profile media come with Phase 3 and discovery.
+- `verification_documents` (implemented 2.1): subject_type + subject_id, doc_type, media_asset_id (private storage), uploaded_by, submission_id, deleted_at.
+- `verification_submissions` (implemented 2.1): subject_type + subject_id, submitted_by, applicant_note, status (pending/approved/needs_info/rejected/withdrawn), reviewed_by, reviewed_at, decision_reason (review fields used by 2.2).
+- `clinics` (implemented 2.1): name, description, phone, email, address_line1/2, locality, city, state, postal_code, latitude/longitude, timezone (default Asia/Kolkata), emergency_services, created_by, verification_status, verified_at, status. Operating hours arrive with availability (2.4).
+- `clinic_members` (implemented 2.1): clinic_id, user_id, member_role (operator/veterinarian), added_by, created_at, removed_at. Unique active (clinic, user, role). A vet who runs their own clinic holds both memberships.
 - `services`: provider_profile_id or clinic_id, category, title, description, price, currency, duration, service_mode, confirmation_mode (instant/request), active.
 - `availability_rules`: provider_id/service_id, weekday, start/end, timezone, capacity.
 - `availability_exceptions`: provider_id, date, unavailable intervals or adjusted hours.

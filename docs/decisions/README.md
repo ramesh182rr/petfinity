@@ -12,6 +12,8 @@ Each significant product or technical decision gets one numbered file. A decisio
 | [0006](0006-identity-roles-and-permissions.md) | Unified account, additive capabilities, audited staff roles | 2026-11-24 | Accepted |
 | [0007](0007-authentication.md) | Passwordless OTP sign-in via email or phone; rotating refresh tokens | 2026-11-24 | Accepted |
 | [0008](0008-media-storage.md) | Media via signed URLs; `STORAGE_BACKEND` switch: local (dev) / Cloudflare R2 | 2026-11-24 | Accepted |
+| [0009](0009-admin-web-app.md) | Admin web app (React + Vite) in `admin/` | 2026-11-25 | Accepted |
+| [0010](0010-maps-google.md) | Google Maps; list-first discovery; capped paid APIs | 2026-11-25 | Accepted |
 
 ## Template
 

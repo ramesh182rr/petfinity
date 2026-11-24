@@ -16,6 +16,20 @@ export function normalizeIndianMobile(raw: string): string | null {
   return INDIA_MOBILE.test(digits) ? `+91${digits}` : null;
 }
 
+/** Contact numbers (not sign-in): Indian mobiles and landlines, e.g. 044 2345 6789. Mirrors the server. */
+export function normalizeIndianContact(raw: string): string | null {
+  let value = raw.replace(/[\s\-().]/g, '');
+  if (value.startsWith('00')) value = `+${value.slice(2)}`;
+  if (!value.startsWith('+')) {
+    if (value.length === 11 && value.startsWith('0') && value[1] !== '0')
+      value = `+91${value.slice(1)}`;
+    else if (value.length === 10 && value[0] !== '0') value = `+91${value}`;
+  }
+  if (!/^\+[1-9]\d{7,14}$/.test(value)) return null;
+  if (value.startsWith('+91') && !/^\+91[1-9]\d{9}$/.test(value)) return null;
+  return value;
+}
+
 export const emailFormSchema = z.object({
   destination: z
     .string()

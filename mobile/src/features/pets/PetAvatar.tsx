@@ -19,7 +19,10 @@ export function PetAvatar({ pet, size = 56 }: Props) {
 
   if (!uri || failed) {
     return (
-      <View style={{ width: size, height: size }} accessibilityLabel={`${pet.name}, no photo`}>
+      <View
+        style={[styles.fallback, { width: size, height: size }]}
+        accessibilityLabel={`${pet.name}, no photo`}
+      >
         <IconBadge name={icon.name} tone={icon.tone} size={size >= 72 ? 'lg' : 'md'} />
       </View>
     );
@@ -39,4 +42,5 @@ export function PetAvatar({ pet, size = 56 }: Props) {
 
 const styles = StyleSheet.create({
   image: { backgroundColor: colors.primaryTint },
+  fallback: { alignItems: 'center', justifyContent: 'center' },
 });

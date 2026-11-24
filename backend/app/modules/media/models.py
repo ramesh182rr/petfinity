@@ -14,6 +14,8 @@ from app.db.base import Base, UUIDPrimaryKeyMixin
 
 class MediaPurpose(StrEnum):
     PET_PHOTO = "pet_photo"
+    # Private: identity/registration documents for provider verification (doc 13).
+    VERIFICATION_DOCUMENT = "verification_document"
 
 
 class MediaStatus(StrEnum):
@@ -41,7 +43,7 @@ class MediaAsset(UUIDPrimaryKeyMixin, Base):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     __table_args__ = (
-        CheckConstraint("purpose IN ('pet_photo')", name="valid_purpose"),
+        CheckConstraint("purpose IN ('pet_photo', 'verification_document')", name="valid_purpose"),
         CheckConstraint("status IN ('pending', 'ready', 'deleted')", name="valid_status"),
         Index("ix_media_assets_owner_created", "owner_id", "created_at"),
         Index("ix_media_assets_status_created", "status", "created_at"),

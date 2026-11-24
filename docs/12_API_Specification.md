@@ -43,7 +43,7 @@ Owner only. Another user's pet returns **404**, so a pet's existence is never re
 ### Pet photos ([decision 0008](decisions/0008-media-storage.md))
 1. `POST /pets/{pet_id}/photo/upload-url` `{content_type, size_bytes}` → 201 `{media_id, upload: {url, method, headers}, expires_at}`. Errors: 415 `unsupported_media_type`, 413 `file_too_large`, 429 `rate_limited`.
 2. The client sends `upload.method` (PUT) to `upload.url` with `upload.headers` and the raw bytes. The URL is absolute for R2, or API-relative in local dev.
-3. `PUT /pets/{pet_id}/photo` `{media_id}` → the pet. The API verifies existence, size and real file type. Errors: 409 `upload_not_found` / `upload_already_used`, 422 `invalid_image`.
+3. `PUT /pets/{pet_id}/photo` `{media_id}` → the pet. The API verifies existence, size and real file type. Errors: 409 `upload_not_found` / `upload_already_used`, 422 `invalid_file`.
 - `DELETE /pets/{pet_id}/photo` → the pet, with the photo removed.
 
 ## Discovery
@@ -52,7 +52,25 @@ Owner only. Another user's pet returns **404**, so a pet's existence is never re
 - `GET /clinics/{clinic_id}`
 - `GET /services`
 
-## Clinic/provider setup
+## Provider onboarding and verification (implemented 2.1)
+Authorisation: provider profiles are owner-only; clinic edits are for operators only; non-members get 404.
+- `GET/POST /me/provider-profiles`, `GET/PATCH /me/provider-profiles/{id}`
+  - `provider_type`: veterinarian or caretaker, one each per person; profiles start as `draft`.
+  - Fields: display_name, bio, years_experience, languages, city, plus registration_number, registration_council and qualifications for vets.
+  - Changing credentials on a verified profile resets it to `draft`. They can't be changed while the profile is `submitted` (409 `under_review`).
+- `POST /clinics`: the creator becomes the **operator**. `practises_here: true` also lists them as the clinic's vet, which needs a veterinarian profile (409 `veterinarian_profile_required`). `GET /me/clinics`, `GET /clinics/{id}` (members), `PATCH /clinics/{id}` (operators).
+  - Contact phone numbers accept Indian landlines and mobiles and are stored as E.164.
+  - PIN codes must be 6 digits.
+  - Latitude and longitude are optional, but must be given together.
+- **Verification** at `/verification/{subject_type}/{subject_id}`, where `subject_type` is `provider_profile` or `clinic`:
+  - `GET`: status, required and missing documents, missing fields, document metadata and the latest submission. **Document contents and URLs are never returned to applicants.**
+  - `POST …/documents/upload-url` `{doc_type, content_type, size_bytes}`: PDF/JPEG/PNG/WebP up to 10 MB, stored under the private `verification/…` prefix. Then `POST …/documents` `{media_id, doc_type}`.
+  - `DELETE …/documents/{id}`: only while editable, and only documents not yet submitted.
+  - `POST …/submit` `{note}` → `submitted`. Errors: 422 `verification_incomplete` (with the missing items), 409 `already_submitted` / `already_verified` / `verification_locked`.
+  - Required: vet = identity + vet_registration (and registration number and council); caretaker = identity; clinic = clinic_registration.
+- `/me` `capabilities` now include `veterinarian`, `caretaker` (active profiles) and `clinic_operator`.
+
+## Clinic/provider setup (planned)
 - `POST /provider/profile`
 - `PATCH /provider/profile`
 - `POST /provider/verification-submissions`
