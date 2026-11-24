@@ -1,0 +1,45 @@
+# Admin web app CI — runs only when admin files change (monorepo path filter).
+# If admin/ is split into its own repository, move this file there and drop the
+# `paths` filters and `working-directory` defaults.
+name: admin
+
+on:
+  push:
+    branches: [main]
+    paths: ['admin/**', '.github/workflows/admin.yml']
+  pull_request:
+    paths: ['admin/**', '.github/workflows/admin.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: admin/.node-version
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Type check
+        run: npm run typecheck
+      - name: Tests
+        run: npm test
+      - name: Production build
+        run: npm run build

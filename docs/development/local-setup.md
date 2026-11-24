@@ -55,10 +55,18 @@ Run the checks:
 npm run check && npm run format:check
 ```
 
-## 4. Changing the API contract
+## 4. Admin web app (staff)
+```bash
+cd admin && npm install && npm run dev     # http://localhost:5173
+```
+- Set `BOOTSTRAP_ADMIN_EMAILS=<your email>` in `backend/.env` and restart the API.
+- Sign in at http://localhost:5173 with that email. The code appears in the API terminal.
+- The Vite dev server proxies `/api` to `localhost:8000`, so the sign-in cookie works locally.
+
+## 4b. Changing the API contract
 1. Change the backend route or schema.
 2. `cd backend && uv run python -m app.openapi_export` (this updates `backend/openapi.json`; a test fails if you forget).
-3. `cd mobile && npm run api:types` (regenerates `src/api/generated/schema.d.ts`).
+3. `cd mobile && npm run api:types` and `cd admin && npm run api:types` (regenerate `src/api/generated/schema.d.ts`).
 4. Commit both files together.
 
 ## 5. Troubleshooting
@@ -75,4 +83,4 @@ npm run check && npm run format:check
 | Gradle build fails after changing `app.json` | `npx expo prebuild --clean`, then `npm run android`. |
 
 ## 6. CI
-GitHub Actions run `.github/workflows/backend.yml` and `mobile.yml` on pushes and PRs that touch each app (path filters). The backend job uses a Postgres 16 service container.
+GitHub Actions run `.github/workflows/backend.yml`, `mobile.yml` and `admin.yml` on pushes and PRs that touch each app (path filters). The backend job uses a Postgres 16 service container.

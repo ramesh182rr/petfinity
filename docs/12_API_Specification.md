@@ -70,6 +70,20 @@ Authorisation: provider profiles are owner-only; clinic edits are for operators 
   - Required: vet = identity + vet_registration (and registration number and council); caretaker = identity; clinic = clinic_registration.
 - `/me` `capabilities` now include `veterinarian`, `caretaker` (active profiles) and `clinic_operator`.
 
+## Admin verification (implemented 2.2, admin only)
+- `GET /admin/verification/submissions?status=pending|needs_info|approved|rejected&subject_type=&limit=&before=`: pending is oldest first, the others newest first. Entries include label, kind, city and submitter contact.
+- `GET /admin/verification/submissions/{id}`: subject details, applicant, note, previous submissions, and documents with **5-minute signed URLs**. Each view writes `verification.submission_viewed` to the audit log.
+- `POST /admin/verification/submissions/{id}/decision` `{decision: approve|needs_info|reject, reason}`.
+  - A reason is required for needs_info and reject, and the applicant sees it.
+  - Approving sets the subject to `verified` with `verified_at`.
+  - Errors: 403 `self_review`, 409 `already_decided`, 422 `reason_required`.
+- `POST /admin/verification/{subject_type}/{subject_id}/status` `{status: active|suspended, reason}`: suspend or reactivate. Audited.
+
+## Browser sessions (implemented 2.2, [decision 0009](decisions/0009-admin-web-app.md))
+- `POST /auth/web/otp/verify`, `POST /auth/web/refresh`, `POST /auth/web/logout`.
+- These are the same as the mobile endpoints, except the refresh token is set as an httpOnly, Secure, SameSite=Strict cookie (`pf_web_refresh`, path `/api/v1/auth/web`) and never appears in the response body.
+- They require the header `X-Requested-With: petfinity-web` (CSRF protection). Without it the API returns 403.
+
 ## Clinic/provider setup (planned)
 - `POST /provider/profile`
 - `PATCH /provider/profile`

@@ -1,7 +1,7 @@
 # 0009 — Admin web app in the monorepo
 
 - **Date:** 2026-11-25
-- **Status:** Accepted
+- **Status:** Accepted. Implemented in milestone 2.2 (verification); `admin/`
 - **Owner:** Product owner
 - **Resolves:** Open Decision #13
 

@@ -39,7 +39,7 @@
 
 ## Phase 2 — vet discovery and booking (see [development/phase-2-plan.md](development/phase-2-plan.md))
 - [x] 2.1 Provider and clinic onboarding API: profiles, clinics, private verification documents, submission
-- [ ] 2.2 Admin verification (API + admin web app, [0009](decisions/0009-admin-web-app.md))
+- [x] 2.2 Admin verification: review queue, document viewer, decisions, suspension; admin web app in `admin/` ([0009](decisions/0009-admin-web-app.md))
 - [ ] 2.3 Provider onboarding (app)
 - [ ] 2.4 Services and availability
 - [ ] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md))

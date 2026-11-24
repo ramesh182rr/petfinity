@@ -94,3 +94,10 @@ def test_staff_lists_are_normalised() -> None:
     )
     assert settings.bootstrap_admin_emails == ["founder@gmail.com"]
     assert settings.staff_email_domains == ["petfinity.in", "x.org"]
+
+
+def test_production_requires_secure_cookies() -> None:
+    with pytest.raises(ValidationError, match="COOKIE_SECURE"):
+        make_settings(
+            app_env=Environment.PRODUCTION, log_json=True, cookie_secure=False, **R2_SETTINGS
+        )

@@ -16,11 +16,12 @@ This is a single monorepo. Each app is independent so it can later move to its o
 | `assets/` | Brand references (the moodboard is a reference, not a final logo) | ✅ |
 | `backend/` | Python FastAPI API, SQLAlchemy, Alembic ([README](backend/README.md)) | ✅ Phase 1 |
 | `mobile/` | React Native + Expo SDK 58 app (TypeScript, Expo Router) ([README](mobile/README.md)) | ✅ Phase 1 |
+| `admin/` | Staff web app: React + Vite (verification review) ([README](admin/README.md)) | ✅ 2.2 |
 | `infrastructure/` | Render/Neon/R2 configuration and deploy notes (draft) | ✅ draft |
 | `.github/workflows/` | CI per app (path-filtered) | ✅ |
 
 Rules that keep the apps split-ready:
-- No imports between `mobile/` and `backend/`.
+- No imports between `mobile/`, `admin/` and `backend/`.
 - Each app has its own dependencies, lockfile and `.env.example`.
 - The API contract is shared only through the backend's OpenAPI schema.
 

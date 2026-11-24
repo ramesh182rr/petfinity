@@ -1,0 +1,13 @@
+import type { components } from './generated/schema'
+
+type S = components['schemas']
+export type Me = S['MeResponse']
+export type WebSignIn = S['WebSignInResponse']
+export type WebSession = S['WebSession']
+export type QueuePage = S['QueuePage']
+export type QueueEntry = S['QueueEntry']
+export type SubmissionDetail = S['SubmissionDetailView']
+export type ReviewDocument = S['ReviewDocumentView']
+export type SubmissionStatus = S['SubmissionStatus']
+export type Decision = S['Decision']
+export type HistoryEntry = S['HistoryEntry']

@@ -72,6 +72,10 @@ class Settings(BaseSettings):
     # HTTP
     cors_allow_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     enable_api_docs: bool = True
+    # Browser clients (admin web app, decision 0009): CORS with credentials for the
+    # listed origins, and the refresh-token cookie's Secure flag.
+    cors_allow_credentials: bool = False
+    cookie_secure: bool = True
 
     # Authentication (decision 0007)
     jwt_secret: SecretStr = Field(min_length=32)
@@ -179,6 +183,8 @@ class Settings(BaseSettings):
         if self.app_env is Environment.PRODUCTION:
             if "*" in self.cors_allow_origins:
                 raise ValueError("wildcard CORS origins are not allowed in production")
+            if not self.cookie_secure:
+                raise ValueError("COOKIE_SECURE must be true in production")
             if not self.log_json:
                 raise ValueError("LOG_JSON must be true in production")
         if self.app_env in HOSTED_ENVIRONMENTS and self.storage_backend is StorageBackend.LOCAL:

@@ -39,6 +39,74 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/verification/submissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Verification queue (pending: oldest first; others: newest first) */
+    get: operations['list_submissions_api_v1_admin_verification_submissions_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/verification/submissions/{submission_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Review a submission (document links expire in 5 min) */
+    get: operations['get_submission_api_v1_admin_verification_submissions__submission_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/verification/submissions/{submission_id}/decision': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Approve, ask for more information, or reject */
+    post: operations['decide_api_v1_admin_verification_submissions__submission_id__decision_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/verification/{subject_type}/{subject_id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Suspend or reactivate a provider profile or clinic */
+    post: operations['change_status_api_v1_admin_verification__subject_type___subject_id__status_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/logout': {
     parameters: {
       query?: never;
@@ -104,6 +172,57 @@ export interface paths {
     put?: never;
     /** Rotate the refresh token and issue a new access token */
     post: operations['refresh_api_v1_auth_refresh_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/web/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** End the browser session and clear the cookie */
+    post: operations['web_logout_api_v1_auth_web_logout_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/web/otp/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Verify a code (browser): refresh token set as an httpOnly cookie */
+    post: operations['web_verify_api_v1_auth_web_otp_verify_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/web/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Rotate the cookie refresh token and issue a new access token */
+    post: operations['web_refresh_api_v1_auth_web_refresh_post'];
     delete?: never;
     options?: never;
     head?: never;
@@ -424,6 +543,44 @@ export interface components {
      * @enum {string}
      */
     Channel: 'email' | 'phone';
+    /** ClinicAdminView */
+    ClinicAdminView: {
+      /** Address Line1 */
+      address_line1: string;
+      /** Address Line2 */
+      address_line2: string | null;
+      /** City */
+      city: string;
+      /** Description */
+      description: string | null;
+      /** Email */
+      email: string | null;
+      /** Emergency Services */
+      emergency_services: boolean;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Latitude */
+      latitude: string | null;
+      /** Locality */
+      locality: string | null;
+      /** Longitude */
+      longitude: string | null;
+      /** Name */
+      name: string;
+      /** Phone */
+      phone: string;
+      /** Postal Code */
+      postal_code: string;
+      /** State */
+      state: string;
+      status: components['schemas']['ActiveStatus'];
+      verification_status: components['schemas']['VerificationStatus'];
+      /** Verified At */
+      verified_at: string | null;
+    };
     /** ClinicCreate */
     ClinicCreate: {
       /** Address Line1 */
@@ -540,6 +697,17 @@ export interface components {
       /** State */
       state?: string | null;
     };
+    /**
+     * Decision
+     * @enum {string}
+     */
+    Decision: 'approve' | 'needs_info' | 'reject';
+    /** DecisionRequest */
+    DecisionRequest: {
+      decision: components['schemas']['Decision'];
+      /** Reason */
+      reason?: string | null;
+    };
     /** DocumentConfirm */
     DocumentConfirm: {
       doc_type: components['schemas']['DocumentType'];
@@ -638,6 +806,24 @@ export interface components {
       /** Version */
       version: string;
     };
+    /** HistoryEntry */
+    HistoryEntry: {
+      /** Decision Reason */
+      decision_reason: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Reviewed At */
+      reviewed_at: string | null;
+      status: components['schemas']['SubmissionStatus'];
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+    };
     /** MeResponse */
     MeResponse: {
       /**
@@ -701,6 +887,20 @@ export interface components {
       code: string;
       /** Destination */
       destination: string;
+    };
+    /** PersonSummary */
+    PersonSummary: {
+      /** Display Name */
+      display_name: string | null;
+      /** Email */
+      email: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Phone */
+      phone: string | null;
     };
     /** PetCreate */
     PetCreate: {
@@ -939,6 +1139,42 @@ export interface components {
      * @enum {string}
      */
     ProviderType: 'veterinarian' | 'caretaker';
+    /** QueueEntry */
+    QueueEntry: {
+      /** City */
+      city: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Reviewed At */
+      reviewed_at: string | null;
+      status: components['schemas']['SubmissionStatus'];
+      /**
+       * Subject Id
+       * Format: uuid
+       */
+      subject_id: string;
+      /** Subject Kind */
+      subject_kind: string;
+      /** Subject Label */
+      subject_label: string;
+      subject_type: components['schemas']['SubjectType'];
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+      submitter: components['schemas']['PersonSummary'] | null;
+    };
+    /** QueuePage */
+    QueuePage: {
+      /** Items */
+      items: components['schemas']['QueueEntry'][];
+      /** Next Before */
+      next_before: string | null;
+    };
     /** ReadinessResponse */
     ReadinessResponse: {
       /** Checks */
@@ -955,6 +1191,28 @@ export interface components {
     RefreshRequest: {
       /** Refresh Token */
       refresh_token: string;
+    };
+    /** ReviewDocumentView */
+    ReviewDocumentView: {
+      /** Content Type */
+      content_type: string;
+      doc_type: components['schemas']['DocumentType'];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Size Bytes */
+      size_bytes: number | null;
+      /**
+       * Uploaded At
+       * Format: date-time
+       */
+      uploaded_at: string;
+      /** Url */
+      url: string;
+      /** Url Expires In */
+      url_expires_in: number;
     };
     /**
      * Sex
@@ -1041,11 +1299,61 @@ export interface components {
        */
       user_id: string;
     };
+    /** StatusChangeRequest */
+    StatusChangeRequest: {
+      /** Reason */
+      reason: string;
+      status: components['schemas']['ActiveStatus'];
+    };
+    /** StatusChangeResponse */
+    StatusChangeResponse: {
+      status: components['schemas']['ActiveStatus'];
+      /**
+       * Subject Id
+       * Format: uuid
+       */
+      subject_id: string;
+      subject_type: components['schemas']['SubjectType'];
+    };
     /**
      * SubjectType
      * @enum {string}
      */
     SubjectType: 'provider_profile' | 'clinic';
+    /** SubmissionDetailView */
+    SubmissionDetailView: {
+      /** Applicant Note */
+      applicant_note: string | null;
+      clinic: components['schemas']['ClinicAdminView'] | null;
+      /** Decision Reason */
+      decision_reason: string | null;
+      /** Documents */
+      documents: components['schemas']['ReviewDocumentView'][];
+      /** History */
+      history: components['schemas']['HistoryEntry'][];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      provider: components['schemas']['ProviderProfileResponse'] | null;
+      /** Reviewed At */
+      reviewed_at: string | null;
+      reviewer: components['schemas']['PersonSummary'] | null;
+      status: components['schemas']['SubmissionStatus'];
+      /**
+       * Subject Id
+       * Format: uuid
+       */
+      subject_id: string;
+      subject_type: components['schemas']['SubjectType'];
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+      submitter: components['schemas']['PersonSummary'] | null;
+    };
     /**
      * SubmissionStatus
      * @enum {string}
@@ -1127,6 +1435,43 @@ export interface components {
      * @enum {string}
      */
     VerificationStatus: 'draft' | 'submitted' | 'needs_info' | 'verified' | 'rejected';
+    /** WebSession */
+    WebSession: {
+      /** Access Token */
+      access_token: string;
+      /** Expires In */
+      expires_in: number;
+      /**
+       * Refresh Expires At
+       * Format: date-time
+       */
+      refresh_expires_at: string;
+      /**
+       * Token Type
+       * @default bearer
+       */
+      token_type: string;
+    };
+    /** WebSignInResponse */
+    WebSignInResponse: {
+      /** Access Token */
+      access_token: string;
+      /** Expires In */
+      expires_in: number;
+      /** Is New User */
+      is_new_user: boolean;
+      /**
+       * Refresh Expires At
+       * Format: date-time
+       */
+      refresh_expires_at: string;
+      /**
+       * Token Type
+       * @default bearer
+       */
+      token_type: string;
+      user: components['schemas']['MeResponse'];
+    };
   };
   responses: never;
   parameters: never;
@@ -1306,6 +1651,322 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['StaffRoleResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  list_submissions_api_v1_admin_verification_submissions_get: {
+    parameters: {
+      query?: {
+        status?: components['schemas']['SubmissionStatus'] | null;
+        subject_type?: components['schemas']['SubjectType'] | null;
+        limit?: number;
+        before?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['QueuePage'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  get_submission_api_v1_admin_verification_submissions__submission_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        submission_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubmissionDetailView'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  decide_api_v1_admin_verification_submissions__submission_id__decision_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        submission_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DecisionRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HistoryEntry'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  change_status_api_v1_admin_verification__subject_type___subject_id__status_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        subject_type: components['schemas']['SubjectType'];
+        subject_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StatusChangeRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StatusChangeResponse'];
         };
       };
       /** @description Unauthorized */
@@ -1616,6 +2277,240 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['TokenResponse'];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  web_logout_api_v1_auth_web_logout_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        'x-requested-with'?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  web_verify_api_v1_auth_web_otp_verify_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        'user-agent'?: string | null;
+        'x-requested-with'?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OtpVerify'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebSignInResponse'];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  web_refresh_api_v1_auth_web_refresh_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        'user-agent'?: string | null;
+        'x-requested-with'?: string | null;
+      };
+      path?: never;
+      cookie?: {
+        pf_web_refresh?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebSession'];
         };
       };
       /** @description Bad Request */

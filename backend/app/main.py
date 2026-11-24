@@ -64,7 +64,14 @@ def create_app(
             CORSMiddleware,
             allow_origins=settings.cors_allow_origins,
             allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-            allow_headers=["Authorization", "Content-Type", "Idempotency-Key", REQUEST_ID_HEADER],
+            allow_credentials=settings.cors_allow_credentials,
+            allow_headers=[
+                "Authorization",
+                "Content-Type",
+                "Idempotency-Key",
+                "X-Requested-With",
+                REQUEST_ID_HEADER,
+            ],
             expose_headers=[REQUEST_ID_HEADER],
         )
     # Added last so it is the outermost user middleware.
