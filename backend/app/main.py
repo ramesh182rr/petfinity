@@ -18,9 +18,18 @@ from app.core.logging import configure_logging
 from app.core.request_id import REQUEST_ID_HEADER, RequestIdMiddleware
 from app.db.session import create_db_engine, create_session_factory
 from app.modules.auth.otp_delivery import OtpSender, create_otp_sender
+from app.modules.storage.base import ObjectStorage
+from app.modules.storage.dev_router import router as dev_storage_router
+from app.modules.storage.factory import create_storage
+from app.modules.storage.local import LocalStorage
 
 
-def create_app(settings: Settings | None = None, *, otp_sender: OtpSender | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    *,
+    otp_sender: OtpSender | None = None,
+    storage: ObjectStorage | None = None,
+) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings)
 
@@ -46,6 +55,7 @@ def create_app(settings: Settings | None = None, *, otp_sender: OtpSender | None
     app.state.engine = engine
     app.state.session_factory = create_session_factory(engine)
     app.state.otp_sender = otp_sender or create_otp_sender(settings)
+    app.state.storage = storage or create_storage(settings)
 
     register_error_handlers(app)
 
@@ -61,6 +71,9 @@ def create_app(settings: Settings | None = None, *, otp_sender: OtpSender | None
     app.add_middleware(RequestIdMiddleware)
 
     app.include_router(api_router, prefix=settings.api_v1_prefix)
+    if isinstance(app.state.storage, LocalStorage):
+        # Dev-only bucket emulation; settings forbid local storage in staging/production.
+        app.include_router(dev_storage_router, prefix=settings.api_v1_prefix)
     return app
 
 

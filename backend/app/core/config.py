@@ -29,6 +29,14 @@ class OtpDelivery(StrEnum):
     CONSOLE = "console"
 
 
+class StorageBackend(StrEnum):
+    # Files on the API server's disk, served through signed /dev-storage URLs.
+    # Development only; refused in staging/production.
+    LOCAL = "local"
+    # Cloudflare R2 (S3-compatible) with presigned URLs.
+    R2 = "r2"
+
+
 HOSTED_ENVIRONMENTS = {Environment.STAGING, Environment.PRODUCTION}
 
 
@@ -80,6 +88,23 @@ class Settings(BaseSettings):
     otp_max_per_destination_per_hour: int = Field(default=5, ge=1, le=50)
     otp_max_per_ip_per_hour: int = Field(default=20, ge=1, le=500)
 
+    # Media storage (decision 0008)
+    storage_backend: StorageBackend = StorageBackend.LOCAL
+    storage_local_dir: str = ".local-storage"
+    r2_account_id: str | None = None
+    r2_bucket: str | None = None
+    r2_access_key_id: str | None = None
+    r2_secret_access_key: SecretStr | None = None
+    r2_endpoint_url: str | None = (
+        None  # override; default https://<account>.r2.cloudflarestorage.com
+    )
+    media_max_image_bytes: int = Field(default=8_000_000, ge=100_000, le=25_000_000)
+    media_upload_url_ttl_seconds: int = Field(default=600, ge=60, le=3600)
+    media_download_url_ttl_seconds: int = Field(default=3600, ge=60, le=86_400)
+
+    # Pets
+    max_pets_per_owner: int = Field(default=30, ge=1, le=200)
+
     # Staff roles (decision 0006)
     bootstrap_admin_emails: Annotated[list[str], NoDecode] = Field(default_factory=list)
     staff_email_domains: Annotated[list[str], NoDecode] = Field(default_factory=list)
@@ -90,6 +115,18 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [origin.strip() for origin in value.split(",") if origin.strip()]
         return value
+
+    @field_validator(
+        "r2_account_id",
+        "r2_bucket",
+        "r2_access_key_id",
+        "r2_secret_access_key",
+        "r2_endpoint_url",
+        mode="before",
+    )
+    @classmethod
+    def _blank_r2_is_unset(cls, value: object) -> object:
+        return None if isinstance(value, str) and not value.strip() else value
 
     @field_validator("bootstrap_admin_emails", "staff_email_domains", mode="before")
     @classmethod
@@ -124,11 +161,27 @@ class Settings(BaseSettings):
     def _production_guards(self) -> Settings:
         if self.refresh_token_absolute_ttl_days < self.refresh_token_ttl_days:
             raise ValueError("REFRESH_TOKEN_ABSOLUTE_TTL_DAYS must be >= REFRESH_TOKEN_TTL_DAYS")
+        if self.storage_backend is StorageBackend.R2:
+            missing = [
+                name
+                for name in (
+                    "r2_account_id",
+                    "r2_bucket",
+                    "r2_access_key_id",
+                    "r2_secret_access_key",
+                )
+                if getattr(self, name) is None
+            ]
+            if missing:
+                names = ", ".join(name.upper() for name in missing)
+                raise ValueError(f"STORAGE_BACKEND=r2 requires {names}")
         if self.app_env is Environment.PRODUCTION:
             if "*" in self.cors_allow_origins:
                 raise ValueError("wildcard CORS origins are not allowed in production")
             if not self.log_json:
                 raise ValueError("LOG_JSON must be true in production")
+        if self.app_env in HOSTED_ENVIRONMENTS and self.storage_backend is StorageBackend.LOCAL:
+            raise ValueError("local file storage is not allowed in staging/production; use r2")
         if self.app_env in HOSTED_ENVIRONMENTS and self.otp_delivery is OtpDelivery.CONSOLE:
             raise ValueError("the mock console OTP sender is not allowed in staging/production")
         return self

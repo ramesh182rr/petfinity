@@ -22,9 +22,18 @@ Local → development → staging → production. Each uses a **separate** datab
 - Change the scheme Neon gives you from `postgresql://` to `postgresql+psycopg://`.
 - Test restores from Neon's point-in-time recovery before the pilot.
 
-## Cloudflare R2 notes (Phase 1b)
-- A private bucket for verification documents and sensitive uploads, accessed only through short-lived signed URLs.
-- Approved public media is delivered according to privacy settings. Lifecycle rules handle deletions.
+## Cloudflare R2 ([decision 0008](../docs/decisions/0008-media-storage.md))
+The adapter is implemented. Until keys are added, development uses `STORAGE_BACKEND=local`.
+
+To switch on:
+1. Create a **private** bucket per environment (`petfinity-dev`, `petfinity-staging`, `petfinity-prod`).
+2. Create an R2 API token with **Object Read & Write**, scoped to that bucket only.
+3. Set `STORAGE_BACKEND=r2`, `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`, either in `backend/.env` or in the Render dashboard.
+4. A bucket CORS rule is needed only for web uploads; the native app doesn't need one.
+
+- Upload URLs sign the exact content type and length.
+- Downloads use 1-hour signed URLs.
+- Add a lifecycle rule later to clean up never-confirmed uploads under `pets/`.
 
 ## Secrets
 Never commit secrets. Configure them in the provider dashboards and document only variable **names** (see `backend/.env.example`).

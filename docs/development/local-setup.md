@@ -28,6 +28,8 @@ uv run uvicorn app.main:app --reload --port 8000
 ```
 Open http://localhost:8000/api/v1/health/ready. It should return `{"status":"ready",…}`.
 
+Uploaded files (pet photos) are stored in `backend/.local-storage/` (git-ignored) while `STORAGE_BACKEND=local`. To try Cloudflare R2 locally, fill in the `R2_*` values and set `STORAGE_BACKEND=r2` ([decision 0008](../decisions/0008-media-storage.md)).
+
 Run the checks:
 ```bash
 uv run ruff check . && uv run ruff format --check . && uv run mypy app tests && uv run pytest
@@ -67,6 +69,7 @@ npm run check && npm run format:check
 | `DATABASE_URL` validation error | URLs must use `postgresql+psycopg://`. |
 | API won't start: `jwt_secret` / `otp_pepper` field required | Set both in `backend/.env` (≥ 32 chars): `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
 | No OTP code arrives | Expected locally: read it from the API terminal (mock sender). |
+| Pet photo doesn't load in the app | With local storage, photo URLs point at the API (`/api/v1/dev-storage/…`), so the API must be reachable at `EXPO_PUBLIC_API_URL`. Signed links expire after 1 hour; pull to refresh. |
 | `429 rate_limited` while testing sign-in | Wait for the cooldown, or lower the limits in `backend/.env` (`OTP_RESEND_COOLDOWN_SECONDS=0`, etc.). |
 | Jest can't find a module after adding an Expo package | Install it with `npx expo install <pkg>` so peer dependencies match SDK 58. |
 | Gradle build fails after changing `app.json` | `npx expo prebuild --clean`, then `npm run android`. |

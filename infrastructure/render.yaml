@@ -44,6 +44,16 @@ services:
         sync: false
       - key: STAFF_EMAIL_DOMAINS
         sync: false
+      - key: STORAGE_BACKEND # local is refused in staging/production
+        value: r2
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_BUCKET # e.g. petfinity-dev (private)
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
       - key: CORS_ALLOW_ORIGINS
         value: ''
       - key: ENABLE_API_DOCS

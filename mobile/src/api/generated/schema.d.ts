@@ -162,6 +162,81 @@ export interface paths {
     patch: operations['update_me_api_v1_me_patch'];
     trace?: never;
   };
+  '/api/v1/pets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List my pets */
+    get: operations['list_pets_api_v1_pets_get'];
+    put?: never;
+    /** Add a pet */
+    post: operations['create_pet_api_v1_pets_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/pets/{pet_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get one of my pets */
+    get: operations['get_pet_api_v1_pets__pet_id__get'];
+    put?: never;
+    post?: never;
+    /** Remove a pet */
+    delete: operations['delete_pet_api_v1_pets__pet_id__delete'];
+    options?: never;
+    head?: never;
+    /** Update a pet */
+    patch: operations['update_pet_api_v1_pets__pet_id__patch'];
+    trace?: never;
+  };
+  '/api/v1/pets/{pet_id}/photo': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Confirm an uploaded photo and set it as the pet's photo */
+    put: operations['set_photo_api_v1_pets__pet_id__photo_put'];
+    post?: never;
+    /** Remove the pet's photo */
+    delete: operations['delete_photo_api_v1_pets__pet_id__photo_delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/pets/{pet_id}/photo/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Get a short-lived URL to upload a pet photo
+     * @description PUT the image bytes to `upload.url` with `upload.headers`, then call PUT /pets/{id}/photo.
+     */
+    post: operations['create_photo_upload_api_v1_pets__pet_id__photo_upload_url_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -260,6 +335,160 @@ export interface components {
       /** Destination */
       destination: string;
     };
+    /** PetCreate */
+    PetCreate: {
+      /** Allergies */
+      allergies?: string | null;
+      /** Breed */
+      breed?: string | null;
+      /** Date Of Birth */
+      date_of_birth?: string | null;
+      /** Date Of Birth Is Estimate */
+      date_of_birth_is_estimate?: boolean | null;
+      /** Dietary Notes */
+      dietary_notes?: string | null;
+      /** Emergency Contact Name */
+      emergency_contact_name?: string | null;
+      /** Emergency Contact Phone */
+      emergency_contact_phone?: string | null;
+      /** Known Conditions */
+      known_conditions?: string | null;
+      /** Medications */
+      medications?: string | null;
+      /** Name */
+      name: string;
+      /** Neutered */
+      neutered?: boolean | null;
+      sex?: components['schemas']['Sex'] | null;
+      species: components['schemas']['Species'];
+      /** Species Other */
+      species_other?: string | null;
+      /** Temperament */
+      temperament?: string | null;
+      /** Weight Kg */
+      weight_kg?: number | string | null;
+    };
+    /** PetResponse */
+    PetResponse: {
+      /** Allergies */
+      allergies: string | null;
+      /** Breed */
+      breed: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Date Of Birth */
+      date_of_birth: string | null;
+      /** Date Of Birth Is Estimate */
+      date_of_birth_is_estimate: boolean;
+      /** Dietary Notes */
+      dietary_notes: string | null;
+      /** Emergency Contact Name */
+      emergency_contact_name: string | null;
+      /** Emergency Contact Phone */
+      emergency_contact_phone: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Known Conditions */
+      known_conditions: string | null;
+      /** Medications */
+      medications: string | null;
+      /** Name */
+      name: string;
+      /** Neutered */
+      neutered: boolean | null;
+      /**
+       * Photo Url
+       * @description Short-lived signed URL (absolute, or API-relative in local dev)
+       */
+      photo_url: string | null;
+      sex: components['schemas']['Sex'];
+      species: components['schemas']['Species'];
+      /** Species Other */
+      species_other: string | null;
+      /** Temperament */
+      temperament: string | null;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      /** Weight Kg */
+      weight_kg: string | null;
+    };
+    /**
+     * PetUpdate
+     * @description Partial update: omitted fields are unchanged; explicit null clears optional fields.
+     */
+    PetUpdate: {
+      /** Allergies */
+      allergies?: string | null;
+      /** Breed */
+      breed?: string | null;
+      /** Date Of Birth */
+      date_of_birth?: string | null;
+      /** Date Of Birth Is Estimate */
+      date_of_birth_is_estimate?: boolean | null;
+      /** Dietary Notes */
+      dietary_notes?: string | null;
+      /** Emergency Contact Name */
+      emergency_contact_name?: string | null;
+      /** Emergency Contact Phone */
+      emergency_contact_phone?: string | null;
+      /** Known Conditions */
+      known_conditions?: string | null;
+      /** Medications */
+      medications?: string | null;
+      /** Name */
+      name?: string | null;
+      /** Neutered */
+      neutered?: boolean | null;
+      sex?: components['schemas']['Sex'] | null;
+      species?: components['schemas']['Species'] | null;
+      /** Species Other */
+      species_other?: string | null;
+      /** Temperament */
+      temperament?: string | null;
+      /** Weight Kg */
+      weight_kg?: number | string | null;
+    };
+    /** PhotoConfirm */
+    PhotoConfirm: {
+      /**
+       * Media Id
+       * Format: uuid
+       */
+      media_id: string;
+    };
+    /** PhotoUploadRequest */
+    PhotoUploadRequest: {
+      /**
+       * Content Type
+       * @description image/jpeg, image/png or image/webp
+       */
+      content_type: string;
+      /** Size Bytes */
+      size_bytes: number;
+    };
+    /** PhotoUploadResponse */
+    PhotoUploadResponse: {
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /**
+       * Media Id
+       * Format: uuid
+       */
+      media_id: string;
+      upload: components['schemas']['UploadInstructions'];
+    };
     /** ReadinessResponse */
     ReadinessResponse: {
       /** Checks */
@@ -277,6 +506,11 @@ export interface components {
       /** Refresh Token */
       refresh_token: string;
     };
+    /**
+     * Sex
+     * @enum {string}
+     */
+    Sex: 'male' | 'female' | 'unknown';
     /** SignInResponse */
     SignInResponse: {
       /** Access Token */
@@ -302,6 +536,24 @@ export interface components {
       token_type: string;
       user: components['schemas']['MeResponse'];
     };
+    /**
+     * Species
+     * @enum {string}
+     */
+    Species:
+      | 'dog'
+      | 'cat'
+      | 'bird'
+      | 'rabbit'
+      | 'guinea_pig'
+      | 'hamster'
+      | 'fish'
+      | 'turtle'
+      | 'reptile'
+      | 'horse'
+      | 'cow'
+      | 'goat'
+      | 'other';
     /** StaffRoleGrant */
     StaffRoleGrant: {
       role: components['schemas']['StaffRoleName'];
@@ -360,6 +612,17 @@ export interface components {
        * @default bearer
        */
       token_type: string;
+    };
+    /** UploadInstructions */
+    UploadInstructions: {
+      /** Headers */
+      headers: {
+        [key: string]: string;
+      };
+      /** Method */
+      method: string;
+      /** Url */
+      url: string;
     };
   };
   responses: never;
@@ -1055,6 +1318,624 @@ export interface operations {
       };
       /** @description Unprocessable Content */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  list_pets_api_v1_pets_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  create_pet_api_v1_pets_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PetCreate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  get_pet_api_v1_pets__pet_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  delete_pet_api_v1_pets__pet_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  update_pet_api_v1_pets__pet_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PetUpdate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  set_photo_api_v1_pets__pet_id__photo_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PhotoConfirm'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  delete_photo_api_v1_pets__pet_id__photo_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PetResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  create_photo_upload_api_v1_pets__pet_id__photo_upload_url_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PhotoUploadRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PhotoUploadResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Content Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
         headers: {
           [name: string]: unknown;
         };

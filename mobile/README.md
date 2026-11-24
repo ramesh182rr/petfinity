@@ -30,6 +30,7 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   _layout.tsx           # fonts, splash, session bootstrap, QueryClient, RootNavigator
   (auth)/               # sign-in, verify (signed-out only)
   onboarding.tsx        # display name after first sign-in
+  pets/                 # new, [id] (profile), [id]/edit
   (tabs)/               # Home, Discover, Bookings, Community, My Pets
   profile.tsx, +not-found.tsx
 src/
@@ -39,6 +40,7 @@ src/
   api/                  # client (error envelope → ApiError), query client, generated/ types
   config/env.ts         # validated EXPO_PUBLIC_* config
   features/auth/        # session store (Zustand), secure token storage, auth API, validation
+  features/pets/        # pet API + TanStack Query hooks, PetForm, photo picking/upload, active pet
   features/<name>/      # feature hooks + components (e.g. system/health)
   navigation/           # RootNavigator: protected-route guards by session state
 __tests__/              # Jest (jest-expo) tests: *-test.ts(x)

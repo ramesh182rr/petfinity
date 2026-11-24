@@ -22,6 +22,7 @@ Status: approved defaults applied
 - **Mobile:** React Native + Expo, Android-first, iOS-compatible.
 - **Backend:** Python + FastAPI.
 - **Infrastructure:** Neon PostgreSQL, Render, Cloudflare R2; Stripe mocked initially.
+- **Media storage:** local disk for development now. The Cloudflare R2 adapter is built and switched on with `STORAGE_BACKEND=r2` once keys and a bucket are added ([0008](decisions/0008-media-storage.md)).
 - **Repositories:** Single monorepo (`petfinity/`) with independent `mobile/` and `backend/` directories, kept easy to split later ([decision 0001](decisions/0001-monorepo.md), 2026-11-24; supersedes "separate repos").
 - **AI coding agent:** Claude; incremental work, no commits or pushes, provide suggested commit messages after features/phases.
 

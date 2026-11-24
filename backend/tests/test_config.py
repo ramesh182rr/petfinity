@@ -48,10 +48,37 @@ def test_api_docs_can_be_disabled() -> None:
         assert client.get("/api/v1/openapi.json").status_code == 404
 
 
+R2_SETTINGS = {
+    "storage_backend": "r2",
+    "r2_account_id": "acct",
+    "r2_bucket": "petfinity-test",
+    "r2_access_key_id": "key",
+    "r2_secret_access_key": "secret",
+}
+
+
 def test_mock_otp_sender_refused_in_hosted_environments() -> None:
     for env in (Environment.STAGING, Environment.PRODUCTION):
         with pytest.raises(ValidationError, match="mock console OTP sender"):
+            make_settings(app_env=env, log_json=True, **R2_SETTINGS)
+
+
+def test_local_storage_refused_in_hosted_environments() -> None:
+    for env in (Environment.STAGING, Environment.PRODUCTION):
+        with pytest.raises(ValidationError, match="local file storage"):
             make_settings(app_env=env, log_json=True)
+
+
+def test_r2_requires_credentials() -> None:
+    with pytest.raises(ValidationError, match="R2_BUCKET, R2_ACCESS_KEY_ID"):
+        make_settings(storage_backend="r2", r2_account_id="acct", r2_secret_access_key="s")
+    assert make_settings(**R2_SETTINGS).r2_bucket == "petfinity-test"
+
+
+def test_blank_r2_values_are_unset() -> None:
+    settings = make_settings(r2_bucket="  ", r2_account_id="")
+    assert settings.r2_bucket is None
+    assert settings.r2_account_id is None
 
 
 def test_auth_secrets_must_be_long() -> None:

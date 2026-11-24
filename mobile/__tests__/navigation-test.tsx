@@ -1,5 +1,9 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { Slot } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
+
+import { createQueryClient } from '@/api';
 
 import BookingsScreen from '../app/(tabs)/bookings';
 import CommunityScreen from '../app/(tabs)/community';
@@ -8,7 +12,16 @@ import HomeScreen from '../app/(tabs)/index';
 import TabsLayout from '../app/(tabs)/_layout';
 import PetsScreen from '../app/(tabs)/pets';
 
+function Root() {
+  return (
+    <QueryClientProvider client={createQueryClient()}>
+      <Slot />
+    </QueryClientProvider>
+  );
+}
+
 const routes = {
+  _layout: Root,
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': HomeScreen,
   '(tabs)/discover': DiscoverScreen,

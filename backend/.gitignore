@@ -12,3 +12,6 @@ __pycache__/
 coverage.xml
 htmlcov/
 *.log
+
+# Local dev media storage (STORAGE_BACKEND=local)
+.local-storage/

@@ -7,7 +7,8 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `otp_challenges` (implemented 1b.1): channel, destination_hash, code_hash, ip_hash (all keyed HMAC, no clear text), attempts, expires_at, consumed_at.
 - `auth_sessions` (implemented 1b.1): user_id, refresh_token_hash (unique), previous_refresh_token_hash (reuse detection), user_agent, last_used_at, expires_at (sliding), absolute_expires_at, revoked_at, revoke_reason.
 - `staff_roles` (implemented 1b.1): user_id, role (moderator/admin), granted_by_user_id, granted_at, revoked_at, revoked_by_user_id. Partial unique index: one active grant per (user, role). Pet parent is implicit for every account. Provider and clinic capabilities live in the tables below ([decision 0006](decisions/0006-identity-roles-and-permissions.md)).
-- `pets`: owner_id, name, species, breed, DOB/estimated age, sex, weight, photo, temperament, allergies, conditions, notes.
+- `pets` (implemented 1b.3): owner_id, name, species (+ species_other), breed, sex, date_of_birth (+ is_estimate), weight_kg, neutered, temperament, dietary_notes, allergies, known_conditions, medications, emergency contact name/phone, photo_media_id, deleted_at (soft delete). Checks on species, sex and weight.
+- `media_assets` (implemented 1b.4, [decision 0008](decisions/0008-media-storage.md)): owner_id, purpose (pet_photo), storage_key (unique, server-generated), content_type, declared_size_bytes, size_bytes, status (pending/ready/deleted), uploaded_at, deleted_at.
 - `pet_access`: pet_id, user_id, permission set, invited_by, expiry (shared access later).
 - `provider_profiles`: user_id, provider_type (veterinarian/caretaker; unique per user + type), bio, credentials/registration fields (vets), verification_status, service_area, profile_media, status.
 - `provider_verifications`: subject (provider_profile_id or clinic_id), verification_type, document_object_key, status, reviewer, review_reason; private storage only.

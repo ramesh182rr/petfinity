@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { EmptyState } from '@/components/states/StateViews';
 import { Button, Card, IconBadge, Screen, Text, type IconBadgeTone } from '@/components/ui';
 import { useSession } from '@/features/auth/session';
+import { PetSwitcher } from '@/features/pets/PetSwitcher';
 import { colors, spacing, touchTarget } from '@/theme';
 
 type Shortcut = {
@@ -64,6 +65,8 @@ export default function HomeScreen() {
           />
         </View>
       </Card>
+
+      <PetSwitcher />
 
       <View style={styles.section}>
         <Text variant="subheading">Explore</Text>

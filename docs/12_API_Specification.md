@@ -32,13 +32,19 @@ Phase 1b.1 error codes: `invalid_identifier`, `invalid_code`, `too_many_attempts
 - `POST /me/provider-profiles` (become a veterinarian or caretaker)
 - `POST /clinics` (the creator becomes a clinic operator), `POST /clinics/{id}/members`
 
-## Pets
-- `GET /pets`
-- `POST /pets`
-- `GET /pets/{pet_id}`
-- `PATCH /pets/{pet_id}`
-- `DELETE /pets/{pet_id}`
-- `POST /pets/{pet_id}/media-upload-url`
+## Pets (implemented 1b.3–1b.4)
+Owner only. Another user's pet returns **404**, so a pet's existence is never revealed.
+- `GET /pets`, `POST /pets` (201), `GET /pets/{pet_id}`
+- `PATCH /pets/{pet_id}`: partial update. Omitted fields are unchanged; `null` clears optional fields. `name` and `species` can't be cleared.
+- `DELETE /pets/{pet_id}` (204): soft delete; the photo is removed from storage.
+- Fields: `name` (required, ≤ 50), `species` (dog, cat, bird, rabbit, guinea_pig, hamster, fish, turtle, reptile, horse, cow, goat, other), `species_other` (required for other), `breed`, `sex` (male/female/unknown), `date_of_birth` (+ `date_of_birth_is_estimate`), `weight_kg` (0–2000, 2 decimals), `neutered`, `temperament`, `dietary_notes`, `allergies`, `known_conditions`, `medications`, `emergency_contact_name`, `emergency_contact_phone` (E.164), `photo_url` (signed, short-lived).
+- Errors: 409 `pet_limit_reached` (default 30 per owner), 422 `validation_error`.
+
+### Pet photos ([decision 0008](decisions/0008-media-storage.md))
+1. `POST /pets/{pet_id}/photo/upload-url` `{content_type, size_bytes}` → 201 `{media_id, upload: {url, method, headers}, expires_at}`. Errors: 415 `unsupported_media_type`, 413 `file_too_large`, 429 `rate_limited`.
+2. The client sends `upload.method` (PUT) to `upload.url` with `upload.headers` and the raw bytes. The URL is absolute for R2, or API-relative in local dev.
+3. `PUT /pets/{pet_id}/photo` `{media_id}` → the pet. The API verifies existence, size and real file type. Errors: 409 `upload_not_found` / `upload_already_used`, 422 `invalid_image`.
+- `DELETE /pets/{pet_id}/photo` → the pet, with the photo removed.
 
 ## Discovery
 - `GET /providers?category=&lat=&lng=&radius=&service=&price_min=&price_max=&verified=&available=`

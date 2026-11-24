@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 from alembic import command
@@ -22,6 +23,7 @@ from app.core.config import Environment, Settings
 from app.db.session import create_db_engine
 from app.main import create_app
 from app.modules.auth.otp_delivery import RecordingOtpSender
+from app.modules.storage.local import LocalStorage
 
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEST_DATABASE_URL = os.environ.get(
@@ -110,7 +112,9 @@ def db_session(db_engine: Engine) -> Iterator[Session]:
 
 # --- identity / API fixtures ------------------------------------------------------
 
-IDENTITY_TABLES = "audit_logs, auth_sessions, otp_challenges, staff_roles, users"
+IDENTITY_TABLES = (
+    "audit_logs, auth_sessions, otp_challenges, staff_roles, pets, media_assets, users"
+)
 
 
 @pytest.fixture
@@ -133,14 +137,21 @@ def api_settings_overrides() -> dict[str, object]:
 
 
 @pytest.fixture
+def local_storage(tmp_path: Path) -> LocalStorage:
+    return LocalStorage(tmp_path / "storage", "test-storage-signing-secret")
+
+
+@pytest.fixture
 def api(
     migrated_database: str,
     clean_tables: None,
     otp_sender: RecordingOtpSender,
+    local_storage: LocalStorage,
     api_settings_overrides: dict[str, object],
 ) -> Iterator[TestClient]:
     settings = make_settings(database_url=migrated_database, **api_settings_overrides)
-    with TestClient(create_app(settings, otp_sender=otp_sender)) as client:
+    app = create_app(settings, otp_sender=otp_sender, storage=local_storage)
+    with TestClient(app) as client:
         yield client
 
 

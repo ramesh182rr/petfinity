@@ -14,11 +14,21 @@ Permission explanation, allow location, or manual city/area selection; allow lat
 ### 3. Home
 Pet selector, booking CTA, caretaker CTA, upcoming booking, nearby services and community preview.
 
-### 4. Pet profile creation/edit
+### 4. Pet profile creation/edit (implemented 1b.5)
 Required name/species; optional breed, age, sex, weight, temperament, photo, care notes. Save draft; clear validation.
+- `app/pets/new.tsx` and `app/pets/[id]/edit.tsx` share `PetForm`, which has three sections:
+  - **Basics:** name, species chips (all species, plus "Other" with a description), breed, sex, date of birth with an "estimate" toggle, weight, spayed/neutered.
+  - **Health & care:** temperament, diet, allergies, conditions, medications. Marked "only visible to you".
+  - **Emergency contact.**
+- Inline validation runs before any request is made.
+- **Profile** (`app/pets/[id]/index.tsx`): photo, About and Health cards, Edit, and a confirmed Remove.
+- **Photo:** picked from the gallery (Android photo picker), square-cropped, resized to ≤ 1280 px and re-encoded as JPEG (this strips EXIF/GPS), then uploaded through a signed URL.
+- *Not yet:* save draft, and taking a photo with the camera.
 
-### 5. My Pets
+### 5. My Pets (implemented 1b.5)
 Pet cards, add pet, select active pet, health information summary.
+- Includes skeleton loading, pull-to-refresh, an empty state with "Add your first pet", and an error state with retry and a reference ID.
+- **Home pet switcher:** tap to make a pet active, long-press to open it, and "+" to add. The active pet is kept in memory only for now.
 
 ### 6. Discover search
 Search, category chips, list/map switch, filters and no-results state.

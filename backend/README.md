@@ -45,5 +45,8 @@ tests/               # pytest against real PostgreSQL
 - **Logs:** never log personal data (emails, phones, addresses, tokens, pet health details).
 - **Modules** never import each other's internals; they talk through service functions.
 
+## Media storage (decision 0008)
+`STORAGE_BACKEND=local` (default, dev only) stores files in `.local-storage/` and serves them through signed `/api/v1/dev-storage/…` URLs. `STORAGE_BACKEND=r2` uses Cloudflare R2 and needs the four `R2_*` variables. Both use the same `ObjectStorage` interface (`app/modules/storage/`), so routes and the app don't change.
+
 ## Configuration
 All settings come from environment variables; see [`.env.example`](.env.example). Hosted environments use Neon's pooled URL for `DATABASE_URL` (`DATABASE_PGBOUNCER=true`) and the direct URL for `DATABASE_MIGRATION_URL`.

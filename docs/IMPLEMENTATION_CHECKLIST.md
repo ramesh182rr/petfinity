@@ -20,9 +20,9 @@
 ## Foundation — Phase 1b (see [development/phase-1b-plan.md](development/phase-1b-plan.md))
 - [x] 1b.1 Backend identity: OTP sign-in, sessions, `/me`, staff roles, audit ([0006](decisions/0006-identity-roles-and-permissions.md), [0007](decisions/0007-authentication.md))
 - [x] 1b.2 Mobile sign-in and session handling
-- [ ] 1b.3 Pet profiles (backend)
-- [ ] 1b.4 Media upload (R2 signed URLs)
-- [ ] 1b.5 Pet profiles (mobile)
+- [x] 1b.3 Pet profiles (backend)
+- [x] 1b.4 Media upload: signed URLs; local storage in dev, R2 adapter ready (keys pending) ([0008](decisions/0008-media-storage.md))
+- [x] 1b.5 Pet profiles (mobile): My Pets, add/edit/delete, photo, Home pet switcher
 - [ ] 1b.6 Analytics, error monitoring, environments and secrets matrix
 - [ ] Provider profiles and clinic memberships (decision 0006): built with provider onboarding in Phase 2
 

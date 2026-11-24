@@ -32,6 +32,9 @@ export function RootNavigator() {
       <Stack.Protected guard={onboarded} redirectTo={home}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Profile' }} />
+        <Stack.Screen name="pets/new" options={{ title: 'Add a pet' }} />
+        <Stack.Screen name="pets/[id]/index" options={{ title: '' }} />
+        <Stack.Screen name="pets/[id]/edit" options={{ title: 'Edit pet' }} />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !onboarded} redirectTo={home}>
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
