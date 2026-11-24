@@ -10,7 +10,7 @@ A multi-role pet-care platform with consumer mobile app, provider experience and
 - **Caretaker:** provider profile, verification, care types, availability, rates, quote responses and bookings.
 - **Admin/moderator:** verification, disputes, reports, listings, user/provider status, bookings and operational analytics.
 
-Roles are additive. A person may be a pet parent and a provider; do not force mutually exclusive account types.
+Roles are additive. A person may be a pet parent and a provider; do not force mutually exclusive account types. Capability model ([decision 0006](decisions/0006-identity-roles-and-permissions.md)): one account and one sign-in per person. Pet parent is implicit. Veterinarian and caretaker are verified provider profiles. Clinic operator is a clinic membership. Moderator and admin are audited staff-role grants limited to verified staff-domain emails.
 
 ## MVP features (P0)
 ### Identity and onboarding
@@ -31,7 +31,9 @@ Roles are additive. A person may be a pet parent and a provider; do not force mu
 - Service categories: general consultation, vaccination, deworming, skin/ear, dental, surgery, diagnostics, blood test, imaging, sterilisation, emergency, preventive check; providers select offered services.
 - Booking flow: select pet → provider → service → slot → notes → confirmation → payment state (mock) → reminder → booking detail → completion → review.
 - Provider calendar: configurable hours, breaks, capacity, service duration, blackout dates and slot generation.
-- Appointment statuses: requested, confirmed, rescheduled, cancelled_by_owner, cancelled_by_provider, checked_in, completed, no_show, disputed.
+- One booking model for vet appointments and caretaker care ([decision 0005](decisions/0005-unified-bookings.md)). "Appointment" is UI wording for vet bookings.
+- Confirmation ([decision 0004](decisions/0004-booking-confirmation-model.md)): each service is `instant` (default for in-clinic) or `request` (default for home visits, with a provider response deadline). The owner sees which applies before booking.
+- Booking statuses: pending_provider, confirmed, in_progress, completed, declined, expired, cancelled_by_owner, cancelled_by_provider, cancelled_by_admin, no_show, disputed. Reschedule is a recorded event, not a status.
 - Avoid duplicate/overlapping bookings; booking confirmation should be transactional.
 
 ### Caretaker marketplace

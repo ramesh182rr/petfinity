@@ -6,7 +6,7 @@
 3. Select pet → search service and provider.
 4. Compare verified clinic/doctor, distance, service, price and availability.
 5. Select service/date/time → add symptoms/context (non-diagnostic prompt).
-6. Review booking policy → confirm with mock payment.
+6. Review booking policy → instant services confirm immediately with mock payment; request services (e.g. home visits) are sent to the clinic, which confirms by the response deadline before payment.
 7. Booking detail and notification.
 8. Visit → provider marks completed → owner review.
 

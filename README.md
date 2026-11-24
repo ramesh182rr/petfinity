@@ -14,9 +14,10 @@ This is a single monorepo. Each app is independent so it can later move to its o
 |---|---|---|
 | `docs/` | Product blueprint (00–20), decisions, development guides, diagrams | ✅ |
 | `assets/` | Brand references (the moodboard is a reference, not a final logo) | ✅ |
-| `backend/` | Python FastAPI API, SQLAlchemy, Alembic | Milestone 1.1 |
-| `mobile/` | React Native + Expo app (TypeScript, Expo Router) | Milestone 1.3 |
-| `infrastructure/` | Render/Neon/R2 configuration and deploy notes | Milestone 1.6 |
+| `backend/` | Python FastAPI API, SQLAlchemy, Alembic ([README](backend/README.md)) | ✅ Phase 1 |
+| `mobile/` | React Native + Expo SDK 58 app (TypeScript, Expo Router) ([README](mobile/README.md)) | ✅ Phase 1 |
+| `infrastructure/` | Render/Neon/R2 configuration and deploy notes (draft) | ✅ draft |
+| `.github/workflows/` | CI per app (path-filtered) | ✅ |
 
 Rules that keep the apps split-ready:
 - No imports between `mobile/` and `backend/`.
@@ -34,7 +35,7 @@ Rules that keep the apps split-ready:
 
 ## Prerequisites (summary)
 
-Full setup instructions arrive in Milestone 1.6 (`docs/development/local-setup.md`).
+Full instructions: [`docs/development/local-setup.md`](docs/development/local-setup.md).
 
 - **Node 24 LTS.** Pinned in `.node-version`; `fnm`/`nvm` switch to it automatically.
 - **Python 3.13** via [`uv`](https://docs.astral.sh/uv/). Pinned per app in `backend/.python-version`.

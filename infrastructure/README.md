@@ -1,11 +1,30 @@
 # Infrastructure
 
-Deployment configuration and operational notes for Petfinity. Nothing is deployed yet.
+Deployment configuration and operational notes for Petfinity. **Nothing is deployed yet.** The first deploy is Milestone 1.7, which needs product-owner accounts.
 
-Planned contents (Milestone 1.6 onward):
-- `render.yaml` draft: Render web service for `backend/` (`rootDir: backend`), Singapore region
-- Neon notes: project and branches per environment, pooled URL for the app, direct URL for Alembic migrations
-- Cloudflare R2 notes: private bucket for sensitive uploads, signed-URL policy, lifecycle rules
-- Environment matrix: local → dev → staging → production, each with separate databases, buckets and secrets
+| File | Purpose |
+|---|---|
+| [`render.yaml`](render.yaml) | Draft Render Blueprint for the API (`rootDir: backend`, Singapore, health check `/api/v1/health`, migrations as a pre-deploy step) |
 
-Secrets are never committed. Configure them in the hosting provider's dashboard and document variable *names* only.
+## Environments
+Local → development → staging → production. Each uses a **separate** database, storage bucket and secrets (doc 16).
+
+| | Local | Development (1.7) | Staging / Production |
+|---|---|---|---|
+| API | `uvicorn` on your Mac | Render web service (free) | Render paid instance |
+| Database | Homebrew PostgreSQL 16 | Neon branch `dev` | Neon branches `staging` / `main` |
+| Media | — | R2 bucket `petfinity-dev` (Phase 1b) | Separate buckets |
+
+## Neon notes
+- Create the project in **AWS ap-southeast-1 (Singapore)** so it sits next to Render Singapore.
+- The app uses the **pooled** connection string as `DATABASE_URL` with `DATABASE_PGBOUNCER=true` (disables prepared statements).
+- Alembic uses the **direct** connection string as `DATABASE_MIGRATION_URL`.
+- Change the scheme Neon gives you from `postgresql://` to `postgresql+psycopg://`.
+- Test restores from Neon's point-in-time recovery before the pilot.
+
+## Cloudflare R2 notes (Phase 1b)
+- A private bucket for verification documents and sensitive uploads, accessed only through short-lived signed URLs.
+- Approved public media is delivered according to privacy settings. Lifecycle rules handle deletions.
+
+## Secrets
+Never commit secrets. Configure them in the provider dashboards and document only variable **names** (see `backend/.env.example`).

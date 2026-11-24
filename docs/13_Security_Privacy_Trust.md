@@ -39,7 +39,8 @@ The platform facilitates animal care and people entering homes or leaving pets w
 - OWASP mobile/API considerations.
 - Secure storage for tokens on device.
 - TLS; secret rotation.
-- RBAC and resource ownership.
+- RBAC and resource ownership, layered as: authenticated → capability → resource scope → verification/state gate ([decision 0006](decisions/0006-identity-roles-and-permissions.md)).
+- Staff (moderator/admin) access is an explicit, audited grant, limited to verified staff-domain emails. It is never derived from the email alone. Staff MFA is required before production.
 - Rate limiting and abuse prevention.
 - Upload MIME/size limits, signed URLs, image processing and scanning strategy.
 - Audit logs for privileged actions.

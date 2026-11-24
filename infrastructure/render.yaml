@@ -1,0 +1,38 @@
+# DRAFT — not deployed. Render Blueprint for the Petfinity API (Milestone 1.7).
+#
+# Render looks for `render.yaml` at the repository root by default. When we
+# deploy, either set this file's path in the Render Blueprint settings or copy it
+# to the root. Secrets are never stored here: `sync: false` values are entered
+# in the Render dashboard.
+services:
+  - type: web
+    name: petfinity-api-dev
+    runtime: python
+    region: singapore # co-located with Neon ap-southeast-1
+    plan: free # dev only; free instances sleep when idle — use a paid plan before pilot
+    rootDir: backend
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    # Apply migrations (direct Neon URL) before starting; fails the deploy if they fail.
+    preDeployCommand: uv run alembic upgrade head
+    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /api/v1/health
+    autoDeploy: false
+    buildFilter:
+      paths: ['backend/**']
+    envVars:
+      - key: APP_ENV
+        value: development
+      - key: LOG_JSON
+        value: 'true'
+      - key: PYTHON_VERSION
+        value: '3.13'
+      - key: DATABASE_URL # Neon *pooled* connection string (postgresql+psycopg://…)
+        sync: false
+      - key: DATABASE_MIGRATION_URL # Neon *direct* connection string
+        sync: false
+      - key: DATABASE_PGBOUNCER
+        value: 'true'
+      - key: CORS_ALLOW_ORIGINS
+        value: ''
+      - key: ENABLE_API_DOCS
+        value: 'true' # set to false in production

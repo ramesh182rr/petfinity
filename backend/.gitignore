@@ -1,0 +1,14 @@
+# Backend-local ignores (kept here so backend/ stays correct if split out)
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.log

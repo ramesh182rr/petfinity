@@ -2,6 +2,7 @@
 
 **Approved:** 2026-11-24 ([decision 0003](../decisions/0003-phase-1-scope.md))
 **Goal:** a tested, documented base for both apps. No marketplace features are built in this phase.
+**Status:** 1.0–1.6 complete (2026-11-24). 1.7 is waiting on product-owner accounts.
 
 Each milestone is small, independently testable, reviewed and committed manually by the product owner.
 
@@ -23,10 +24,8 @@ Auth and roles, pet profiles, media upload, analytics and error-logging provider
 | Decision (doc 20 #) | Needed before |
 |---|---|
 | Auth method: email / phone OTP / both (#2) | Phase 1b |
-| Booking policy: instant vs request-to-confirm (#5) | Phase 2 |
 | Admin/provider web technology (#13) | Phase 2 |
 | Map provider (#3) | Phase 2 (discovery map) |
-| Single booking record vs separate appointments/bookings tables | Phase 2 |
 | Payment gateway for India marketplace payouts (#8) | Phase 7 (mock until then) |
 
 See [blueprint-audit-2026-11-24.md](blueprint-audit-2026-11-24.md) for the open consistency findings.

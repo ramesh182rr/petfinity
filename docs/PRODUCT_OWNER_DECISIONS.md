@@ -11,6 +11,9 @@ Status: approved defaults applied
 - **Caretakers:** Identity verification required; profile/experience verification; references where feasible; meet-and-greet encouraged; completed-booking reviews.
 - **Payments:** Mock flow for development; architect for future marketplace payments, commission and provider settlement.
 - **Community:** Public-in-app, local and following feeds, with moderation.
+- **Booking confirmation:** instant or request per service. In-clinic is instant by default, home visits are request. Accepting a caretaker offer confirms the booking ([0004](decisions/0004-booking-confirmation-model.md)).
+- **Bookings:** one booking record for vet and caretaker services. "Appointment" is UI wording for vet bookings ([0005](decisions/0005-unified-bookings.md)).
+- **Roles:** one account and sign-in per person. Capabilities are additive (pet parent, veterinarian, caretaker, clinic operator). Moderator and admin are audited grants limited to verified staff-domain emails ([0006](decisions/0006-identity-roles-and-permissions.md)).
 - **Messaging:** Booking/provider communication first; general direct messaging deferred.
 - **Shopping:** Affiliate/partner links initially; native marketplace later.
 - **Brand style:** Premium, warm and playful.

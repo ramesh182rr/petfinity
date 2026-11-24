@@ -14,6 +14,9 @@
 - Stack: React Native + Expo; Python FastAPI; Neon; Render; Cloudflare R2; Stripe mock.
 - Repositories: single monorepo with independent `mobile/` and `backend/`, split-ready (decision 0001, 2026-11-24).
 - Brand palette: moodboard-aligned, with plum primary and sage replacing mint (decision 0002, 2026-11-24).
+- Booking confirmation: instant or request per service; caretaker offers confirm on acceptance (decision 0004).
+- Single `bookings` record for vet and care; "appointment" is UI wording (decision 0005).
+- Unified account with additive capabilities; staff roles are audited grants limited to staff-domain emails (decision 0006).
 - Solo developer with Claude; Claude does not commit; suggests commit messages.
 
 ## Decisions to confirm before coding beyond foundation
@@ -21,7 +24,7 @@
 2. User auth strategy: email, phone OTP, or both; provider and budget.
 3. Map provider (cost, India coverage, geocoding, routing, licensing).
 4. Provider verification process and evidence sources.
-5. Booking policy: request-to-confirm vs instant booking by provider.
+5. ~~Booking policy~~: **decided.** Instant or request per service ([0004](decisions/0004-booking-confirmation-model.md)).
 6. Vet booking monetisation: commission, lead fee, subscription, or hybrid.
 7. Caretaker cancellation/refund, emergency and incident policies.
 8. Marketplace payment/payout gateway and platform capabilities for India.

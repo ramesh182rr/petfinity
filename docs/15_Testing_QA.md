@@ -20,6 +20,8 @@
 
 ## Marketplace tests
 - Slot race: two owners attempt same slot; only one confirmation.
+- Request-mode booking holds its slot; provider confirm/decline; unanswered request expires at the deadline and releases the slot.
+- Every allowed and forbidden booking status transition ([decision 0004](decisions/0004-booking-confirmation-model.md)).
 - Provider cancellation and owner cancellation.
 - No-show and completion.
 - Care request quote expiration and acceptance.
@@ -29,7 +31,9 @@
 
 ## Safety/privacy tests
 - Owner cannot view another owner's pet.
-- Provider only sees booking-related information.
+- Provider only sees booking-related information; clinic operators see only their clinic's bookings.
+- Staff roles cannot be gained by changing email; grants and revocations are audited.
+- Unverified or suspended providers are absent from search and cannot receive bookings.
 - Verification documents never appear in public endpoints.
 - Blocked users cannot interact as expected.
 - Report flow and moderation action audit.

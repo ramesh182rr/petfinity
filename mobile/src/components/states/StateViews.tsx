@@ -1,0 +1,137 @@
+import type Ionicons from '@expo/vector-icons/Ionicons';
+import { useEffect, useState, type ComponentProps } from 'react';
+import { ActivityIndicator, Animated, StyleSheet, View, type DimensionValue } from 'react-native';
+
+import { Button, IconBadge, Text, type IconBadgeTone } from '@/components/ui';
+import { colors, radius, spacing } from '@/theme';
+
+type IconName = ComponentProps<typeof Ionicons>['name'];
+
+type Action = { label: string; onPress: () => void };
+
+export function LoadingState({ message = 'Loading…' }: { message?: string }) {
+  return (
+    <View style={styles.center} accessibilityRole="progressbar" accessibilityLabel={message}>
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text variant="body" color="textMuted" align="center" accessibilityLiveRegion="polite">
+        {message}
+      </Text>
+    </View>
+  );
+}
+
+/** Pulsing placeholder block for skeleton layouts. */
+export function Skeleton({
+  width = '100%',
+  height = 16,
+  rounded = false,
+}: {
+  width?: DimensionValue;
+  height?: number;
+  rounded?: boolean;
+}) {
+  const [opacity] = useState(() => new Animated.Value(0.5));
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0.5, duration: 700, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [opacity]);
+
+  return (
+    <Animated.View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[
+        styles.skeleton,
+        { width, height, opacity, borderRadius: rounded ? radius.pill : radius.sm },
+      ]}
+    />
+  );
+}
+
+type EmptyStateProps = {
+  icon: IconName;
+  tone?: IconBadgeTone;
+  title: string;
+  message: string;
+  action?: Action;
+  testID?: string;
+};
+
+export function EmptyState({
+  icon,
+  tone = 'lavender',
+  title,
+  message,
+  action,
+  testID,
+}: EmptyStateProps) {
+  return (
+    <View style={styles.center} testID={testID}>
+      <IconBadge name={icon} tone={tone} size="lg" />
+      <View style={styles.copy}>
+        <Text variant="heading" align="center">
+          {title}
+        </Text>
+        <Text variant="body" color="textMuted" align="center">
+          {message}
+        </Text>
+      </View>
+      {action ? <Button label={action.label} onPress={action.onPress} variant="secondary" /> : null}
+    </View>
+  );
+}
+
+type ErrorStateProps = {
+  title?: string;
+  message?: string;
+  onRetry?: () => void;
+  /** Shown small so users can quote it to support. */
+  requestId?: string | null;
+  testID?: string;
+};
+
+export function ErrorState({
+  title = 'Something went wrong',
+  message = "We couldn't load this right now. Check your connection and try again.",
+  onRetry,
+  requestId,
+  testID,
+}: ErrorStateProps) {
+  return (
+    <View style={styles.center} testID={testID} accessibilityRole="alert">
+      <IconBadge name="cloud-offline-outline" tone="coral" size="lg" />
+      <View style={styles.copy}>
+        <Text variant="heading" align="center">
+          {title}
+        </Text>
+        <Text variant="body" color="textMuted" align="center">
+          {message}
+        </Text>
+      </View>
+      {onRetry ? <Button label="Try again" icon="refresh" onPress={onRetry} /> : null}
+      {requestId ? (
+        <Text variant="caption" color="textMuted" selectable>
+          Reference: {requestId}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.lg,
+  },
+  copy: { gap: spacing.sm, maxWidth: 340 },
+  skeleton: { backgroundColor: colors.primaryTint },
+});

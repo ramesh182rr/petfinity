@@ -9,16 +9,16 @@
 
 ## Foundation — Phase 1 (see [development/phase-1-plan.md](development/phase-1-plan.md))
 - [x] 1.0 Monorepo scaffold and docs relocation
-- [ ] 1.1 Backend skeleton: config, health API, error envelope, tests
-- [ ] 1.2 Database connectivity and Alembic migrations
-- [ ] 1.3 Mobile skeleton: Expo Router tab shell, lint/typecheck/tests
-- [ ] 1.4 Design tokens and UI primitives
-- [ ] 1.5 Mobile ↔ API wiring and OpenAPI-generated types
-- [ ] 1.6 CI and developer documentation
-- [ ] 1.7 (optional) First cloud deploy: Neon + Render
+- [x] 1.1 Backend skeleton: config, health API, error envelope, tests
+- [x] 1.2 Database connectivity and Alembic migrations
+- [x] 1.3 Mobile skeleton: Expo Router tab shell, lint/typecheck/tests
+- [x] 1.4 Design tokens and UI primitives
+- [x] 1.5 Mobile ↔ API wiring and OpenAPI-generated types
+- [x] 1.6 CI and developer documentation
+- [ ] 1.7 (optional) First cloud deploy: Neon + Render (needs product-owner accounts; `infrastructure/render.yaml` drafted)
 
 ## Foundation — Phase 1b (needs approval)
-- [ ] Auth and role model
+- [ ] Auth and role model ([decision 0006](decisions/0006-identity-roles-and-permissions.md): accounts, provider profiles, clinic members, staff roles)
 - [ ] Environments and secrets (dev/staging/prod)
 - [ ] Pet profiles and image upload
 - [ ] Analytics and error logging

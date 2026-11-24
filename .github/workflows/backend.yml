@@ -1,0 +1,64 @@
+# Backend CI — runs only when backend files change (monorepo path filter).
+# If backend/ is split into its own repository, move this file there and drop
+# the `paths` filters and `working-directory` defaults.
+name: backend
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**', '.github/workflows/backend.yml']
+  pull_request:
+    paths: ['backend/**', '.github/workflows/backend.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: petfinity
+          POSTGRES_PASSWORD: petfinity
+          POSTGRES_DB: petfinity_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U petfinity"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      # CI-only throwaway credentials for the ephemeral service container.
+      DATABASE_URL: postgresql+psycopg://petfinity:petfinity@localhost:5432/petfinity_test
+      TEST_DATABASE_URL: postgresql+psycopg://petfinity:petfinity@localhost:5432/petfinity_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install Python and dependencies
+        run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format check
+        run: uv run ruff format --check .
+      - name: Type check
+        run: uv run mypy app tests
+      - name: OpenAPI contract is up to date
+        run: uv run python -m app.openapi_export --check
+      - name: Migrations apply cleanly
+        run: uv run alembic upgrade head
+      - name: Tests
+        run: uv run pytest --cov --cov-report=term-missing

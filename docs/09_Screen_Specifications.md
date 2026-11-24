@@ -26,7 +26,7 @@ Provider cards, verified state, distance, rating, service summary, price range a
 Photos, verification, clinic/provider info, address, hours, services/prices, doctor profiles, reviews, map and booking CTA.
 
 ### 9. Booking flow
-Pet → service → slot → notes → policy/price review → mock payment → confirmation. Include loading, slot-conflict, failure and cancellation states.
+Pet → service → slot → notes → policy/price review → mock payment → confirmation. Request-mode services show "Clinic confirms within …" before submitting, then a pending state until the provider responds (payment follows confirmation). Include loading, slot-conflict, pending, declined/expired, failure and cancellation states. Vet bookings are labelled "appointment" in the UI.
 
 ### 10. Booking detail
 Status, date/time, provider contact, directions, pet/context, cancellation/reschedule rules and support.

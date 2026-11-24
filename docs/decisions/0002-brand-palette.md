@@ -1,7 +1,7 @@
 # 0002 — Moodboard-aligned brand palette
 
 - **Date:** 2026-11-24
-- **Status:** Accepted. Exact values are pending Milestone 1.4.
+- **Status:** Accepted. Final tokens set in Milestone 1.4 (see doc 08 and `mobile/src/theme/colors.ts`).
 - **Owner:** Product owner
 
 ## Context
@@ -21,6 +21,9 @@ Milestone 1.4 sets the exact hex values as semantic tokens and checks them for W
 
 ## Alternatives considered
 - Keep doc 08's tokens as written: these conflict with the brief and the moodboard.
+
+## Final values (Milestone 1.4)
+Plum `#6A2C7A` (primary), `#4F1F5C` (pressed), lavender `#BF97D5`, sage `#8F9D61` (decorative) / `#56663A` (text), coral `#F88F73` (decorative) / `#A8432A` (text), peach `#F9BF8F`, cream `#FFF8F0`, ink `#2A2233`. They were sampled from the moodboard swatches and adjusted for WCAG AA. Success green was darkened to `#217A54` because the original `#25835B` measured 4.45:1 on cream.
 
 ## Consequences
 - Screens use semantic tokens only (`color.primary`, `color.accentSage`, …), so later brand changes stay cheap.

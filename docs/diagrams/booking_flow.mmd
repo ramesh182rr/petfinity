@@ -1,12 +1,20 @@
+%% Vet appointment booking — decisions 0004 (confirmation model) and 0005 (unified bookings)
 flowchart TD
   A[Select Pet] --> B[Choose Provider]
   B --> C[Choose Service]
   C --> D[Select Slot]
-  D --> E[Add Notes / Review Policy]
-  E --> F[Mock Payment / Confirm]
+  D --> E[Add Notes / Review Policy & Price]
+  E --> M{Service confirmation mode}
+  M -- instant --> F[Mock Payment / Confirm]
   F --> G{Slot still available?}
   G -- No --> H[Show Conflict / Choose New Slot]
+  H --> D
   G -- Yes --> I[Booking Confirmed]
+  M -- request --> R[Submit Request: status pending_provider, slot held]
+  R --> P{Provider responds before deadline?}
+  P -- Confirms --> RP[Mock Payment] --> I
+  P -- Declines --> X[Declined: suggest alternatives]
+  P -- No response --> Y[Expired: slot released, suggest alternatives]
   I --> J[Reminder]
-  J --> K[Visit / Service Completed]
+  J --> K[Check-in / Service Completed]
   K --> L[Review]
