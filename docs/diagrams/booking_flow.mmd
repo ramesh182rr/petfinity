@@ -1,0 +1,12 @@
+flowchart TD
+  A[Select Pet] --> B[Choose Provider]
+  B --> C[Choose Service]
+  C --> D[Select Slot]
+  D --> E[Add Notes / Review Policy]
+  E --> F[Mock Payment / Confirm]
+  F --> G{Slot still available?}
+  G -- No --> H[Show Conflict / Choose New Slot]
+  G -- Yes --> I[Booking Confirmed]
+  I --> J[Reminder]
+  J --> K[Visit / Service Completed]
+  K --> L[Review]

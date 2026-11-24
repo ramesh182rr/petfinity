@@ -1,0 +1,9 @@
+flowchart LR
+  A[React Native + Expo App] -->|HTTPS REST /api/v1| B[FastAPI Modular Monolith]
+  B --> C[(Neon PostgreSQL)]
+  B --> D[Cloudflare R2]
+  B --> E[Push Notification Adapter]
+  A --> F[Map SDK / Provider]
+  B --> G[Payment Adapter - Mock]
+  B --> H[Render Web Service]
+  H -. later .-> I[Background Worker]

@@ -1,0 +1,11 @@
+flowchart TD
+  Home[Home] --- Discover[Discover]
+  Home --- Bookings[Bookings]
+  Home --- Community[Community]
+  Home --- Pets[My Pets]
+  Discover --> Search[Search / Filters]
+  Search --> Provider[Provider Detail]
+  Provider --> Booking[Booking Flow]
+  Pets --> PetProfile[Pet Profile]
+  Community --> Feed[Local / Following Feed]
+  Profile[Profile / Settings] --> ProviderOnboarding[Become a Provider]
