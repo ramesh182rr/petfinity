@@ -31,19 +31,21 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   (auth)/               # sign-in, verify (signed-out only)
   onboarding.tsx        # display name after first sign-in
   pets/                 # new, [id] (profile), [id]/edit
-  provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id]
+  provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
+                        # manage/[ownerType]/[id]/{index,service,hours,day-off} (services and availability)
   (tabs)/               # Home, Discover, Bookings, Community, My Pets
   profile.tsx, +not-found.tsx
 src/
   theme/                # design tokens: colors (semantic), typography, spacing, radius, elevation
   components/ui/        # Text, Button, Card, Chip, IconBadge, Screen, HeroHeader/HeroScreen, ActionCard,
-                        # ListRow, InfoRow, StatTile, StatusPill, InitialsAvatar, ChipGroup, FormSection, Decor
+                        # ListRow, InfoRow, StatTile, StatusPill, InitialsAvatar, ChipGroup, FormSection, Decor, TimeField
   components/states/    # LoadingState, Skeleton, EmptyState, ErrorState
   api/                  # client (error envelope → ApiError), query client, generated/ types
   config/env.ts         # validated EXPO_PUBLIC_* config
   features/auth/        # session store (Zustand), secure token storage, auth API, validation
   features/pets/        # pet API + TanStack Query hooks, PetForm, photo picking/upload, active pet
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
+  features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation
   features/<name>/      # feature hooks + components (e.g. system/health)
   navigation/           # RootNavigator: protected-route guards by session state
 __tests__/              # Jest (jest-expo) tests: *-test.ts(x)

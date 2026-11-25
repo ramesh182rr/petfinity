@@ -298,6 +298,112 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/manage/{owner_type}/{owner_id}/availability': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Hours */
+    get: operations['get_hours_api_v1_manage__owner_type___owner_id__availability_get']
+    /** Replace the weekly opening hours */
+    put: operations['put_hours_api_v1_manage__owner_type___owner_id__availability_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/exceptions': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Upcoming days off and special hours */
+    get: operations['list_exceptions_api_v1_manage__owner_type___owner_id__exceptions_get']
+    put?: never
+    /** Add Exception */
+    post: operations['add_exception_api_v1_manage__owner_type___owner_id__exceptions_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/exceptions/{exception_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete Exception */
+    delete: operations['delete_exception_api_v1_manage__owner_type___owner_id__exceptions__exception_id__delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/services': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List Services */
+    get: operations['list_services_api_v1_manage__owner_type___owner_id__services_get']
+    put?: never
+    /** Create Service */
+    post: operations['create_service_api_v1_manage__owner_type___owner_id__services_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/services/{service_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Archive Service */
+    delete: operations['archive_service_api_v1_manage__owner_type___owner_id__services__service_id__delete']
+    options?: never
+    head?: never
+    /** Update Service */
+    patch: operations['update_service_api_v1_manage__owner_type___owner_id__services__service_id__patch']
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/slots': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Preview bookable slots for a service on a date (owner's timezone) */
+    get: operations['preview_slots_api_v1_manage__owner_type___owner_id__slots_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/me': {
     parameters: {
       query?: never
@@ -698,6 +804,11 @@ export interface components {
       state?: string | null
     }
     /**
+     * ConfirmationMode
+     * @enum {string}
+     */
+    ConfirmationMode: 'instant' | 'request'
+    /**
      * Decision
      * @enum {string}
      */
@@ -794,6 +905,50 @@ export interface components {
     ErrorResponse: {
       error: components['schemas']['ErrorBody']
     }
+    /** ExceptionIn */
+    ExceptionIn: {
+      /** Capacity */
+      capacity?: number | null
+      /** End Time */
+      end_time?: string | null
+      kind: components['schemas']['ExceptionKind']
+      /** Note */
+      note?: string | null
+      /**
+       * On Date
+       * Format: date
+       */
+      on_date: string
+      /** Start Time */
+      start_time?: string | null
+    }
+    /**
+     * ExceptionKind
+     * @enum {string}
+     */
+    ExceptionKind: 'closed' | 'custom_hours'
+    /** ExceptionOut */
+    ExceptionOut: {
+      /** Capacity */
+      capacity: number | null
+      /** End Time */
+      end_time: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      kind: components['schemas']['ExceptionKind']
+      /** Note */
+      note: string | null
+      /**
+       * On Date
+       * Format: date
+       */
+      on_date: string
+      /** Start Time */
+      start_time: string | null
+    }
     /** HealthResponse */
     HealthResponse: {
       /** Service */
@@ -888,6 +1043,11 @@ export interface components {
       /** Destination */
       destination: string
     }
+    /**
+     * OwnerType
+     * @enum {string}
+     */
+    OwnerType: 'clinic' | 'provider_profile'
     /** PersonSummary */
     PersonSummary: {
       /** Display Name */
@@ -1214,6 +1374,149 @@ export interface components {
       /** Url Expires In */
       url_expires_in: number
     }
+    /** RuleIn */
+    RuleIn: {
+      /**
+       * Capacity
+       * @default 1
+       */
+      capacity: number
+      /**
+       * End Time
+       * Format: time
+       */
+      end_time: string
+      /**
+       * Start Time
+       * Format: time
+       */
+      start_time: string
+      /**
+       * Weekday
+       * @description 0 = Monday … 6 = Sunday
+       */
+      weekday: number
+    }
+    /** RuleOut */
+    RuleOut: {
+      /**
+       * Capacity
+       * @default 1
+       */
+      capacity: number
+      /**
+       * End Time
+       * Format: time
+       */
+      end_time: string
+      /**
+       * Start Time
+       * Format: time
+       */
+      start_time: string
+      /**
+       * Weekday
+       * @description 0 = Monday … 6 = Sunday
+       */
+      weekday: number
+    }
+    /**
+     * ServiceCategory
+     * @enum {string}
+     */
+    ServiceCategory:
+      | 'general_consultation'
+      | 'vaccination'
+      | 'deworming'
+      | 'skin_ear'
+      | 'dental'
+      | 'surgery'
+      | 'diagnostics'
+      | 'blood_test'
+      | 'imaging'
+      | 'sterilisation'
+      | 'emergency'
+      | 'preventive_check'
+    /** ServiceCreate */
+    ServiceCreate: {
+      /** Active */
+      active?: boolean | null
+      category: components['schemas']['ServiceCategory']
+      /** @description Defaults: in_clinic → instant, home_visit → request (decision 0004) */
+      confirmation_mode?: components['schemas']['ConfirmationMode'] | null
+      /** Description */
+      description?: string | null
+      /** Duration Minutes */
+      duration_minutes: number
+      /**
+       * Price Minor
+       * @description Price in paise (₹1 = 100)
+       */
+      price_minor: number
+      service_mode: components['schemas']['ServiceMode']
+      /** Species */
+      species?: ('dog' | 'cat' | 'other')[] | null
+      /** Title */
+      title: string
+    }
+    /**
+     * ServiceMode
+     * @enum {string}
+     */
+    ServiceMode: 'in_clinic' | 'home_visit' | 'teleconsult'
+    /** ServiceResponse */
+    ServiceResponse: {
+      /** Active */
+      active: boolean
+      category: components['schemas']['ServiceCategory']
+      confirmation_mode: components['schemas']['ConfirmationMode']
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Currency */
+      currency: string
+      /** Description */
+      description: string | null
+      /** Duration Minutes */
+      duration_minutes: number
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Price Minor */
+      price_minor: number
+      service_mode: components['schemas']['ServiceMode']
+      /** Species */
+      species: ('dog' | 'cat' | 'other')[]
+      /** Title */
+      title: string
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+    }
+    /** ServiceUpdate */
+    ServiceUpdate: {
+      /** Active */
+      active?: boolean | null
+      category?: components['schemas']['ServiceCategory'] | null
+      confirmation_mode?: components['schemas']['ConfirmationMode'] | null
+      /** Description */
+      description?: string | null
+      /** Duration Minutes */
+      duration_minutes?: number | null
+      /** Price Minor */
+      price_minor?: number | null
+      service_mode?: components['schemas']['ServiceMode'] | null
+      /** Species */
+      species?: ('dog' | 'cat' | 'other')[] | null
+      /** Title */
+      title?: string | null
+    }
     /**
      * Sex
      * @enum {string}
@@ -1243,6 +1546,43 @@ export interface components {
        */
       token_type: string
       user: components['schemas']['MeResponse']
+    }
+    /** SlotOut */
+    SlotOut: {
+      /** Capacity */
+      capacity: number
+      /**
+       * End
+       * Format: date-time
+       */
+      end: string
+      /**
+       * Local Start
+       * @description HH:MM in the owner's timezone
+       */
+      local_start: string
+      /**
+       * Start
+       * Format: date-time
+       */
+      start: string
+    }
+    /** SlotPreview */
+    SlotPreview: {
+      /**
+       * Date
+       * Format: date
+       */
+      date: string
+      /**
+       * Service Id
+       * Format: uuid
+       */
+      service_id: string
+      /** Slots */
+      slots: components['schemas']['SlotOut'][]
+      /** Timezone */
+      timezone: string
     }
     /**
      * Species
@@ -1471,6 +1811,18 @@ export interface components {
        */
       token_type: string
       user: components['schemas']['MeResponse']
+    }
+    /** WeeklyHours */
+    WeeklyHours: {
+      /** Rules */
+      rules: components['schemas']['RuleIn'][]
+    }
+    /** WeeklyHoursResponse */
+    WeeklyHoursResponse: {
+      /** Rules */
+      rules: components['schemas']['RuleOut'][]
+      /** Timezone */
+      timezone: string
     }
   }
   responses: never
@@ -2879,6 +3231,794 @@ export interface operations {
       }
       /** @description A dependency is unavailable */
       503: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  get_hours_api_v1_manage__owner_type___owner_id__availability_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['WeeklyHoursResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  put_hours_api_v1_manage__owner_type___owner_id__availability_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WeeklyHours']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['WeeklyHoursResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  list_exceptions_api_v1_manage__owner_type___owner_id__exceptions_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExceptionOut'][]
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  add_exception_api_v1_manage__owner_type___owner_id__exceptions_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExceptionIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExceptionOut']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  delete_exception_api_v1_manage__owner_type___owner_id__exceptions__exception_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        exception_id: string
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  list_services_api_v1_manage__owner_type___owner_id__services_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceResponse'][]
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  create_service_api_v1_manage__owner_type___owner_id__services_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ServiceCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  archive_service_api_v1_manage__owner_type___owner_id__services__service_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        service_id: string
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  update_service_api_v1_manage__owner_type___owner_id__services__service_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        service_id: string
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ServiceUpdate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  preview_slots_api_v1_manage__owner_type___owner_id__slots_get: {
+    parameters: {
+      query: {
+        service_id: string
+        date: string
+      }
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SlotPreview']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
         headers: {
           [name: string]: unknown
         }

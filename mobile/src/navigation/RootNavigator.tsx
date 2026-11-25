@@ -41,6 +41,19 @@ export function RootNavigator() {
         <Stack.Screen name="provider/clinic/new" options={{ title: 'Add your clinic' }} />
         <Stack.Screen name="provider/clinic/[id]" options={{ title: 'Edit clinic' }} />
         <Stack.Screen name="provider/verify/[subjectType]/[id]" options={{ title: '' }} />
+        <Stack.Screen name="provider/manage/[ownerType]/[id]/index" options={{ title: '' }} />
+        <Stack.Screen
+          name="provider/manage/[ownerType]/[id]/service"
+          options={{ title: 'Service' }}
+        />
+        <Stack.Screen
+          name="provider/manage/[ownerType]/[id]/hours"
+          options={{ title: 'Opening hours' }}
+        />
+        <Stack.Screen
+          name="provider/manage/[ownerType]/[id]/day-off"
+          options={{ title: 'Day off or special hours' }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !onboarded} redirectTo={home}>
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />

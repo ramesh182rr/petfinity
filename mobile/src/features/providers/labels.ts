@@ -30,30 +30,35 @@ export const PROVIDER_LABEL: Record<ProviderType, string> = {
 
 export const STATUS_INFO: Record<
   VerificationStatus,
-  { label: string; tone: PillTone; message: string }
+  { label: string; short: string; tone: PillTone; message: string }
 > = {
   draft: {
     label: 'Not submitted',
+    short: 'Draft',
     tone: 'neutral',
     message: 'Add the required details and documents, then submit for review.',
   },
   submitted: {
     label: 'Under review',
+    short: 'In review',
     tone: 'warning',
     message: 'Our team is checking your documents. We’ll let you know the outcome.',
   },
   needs_info: {
     label: 'Action needed',
+    short: 'Action',
     tone: 'warning',
     message: 'We need a little more information. See the note from our team below.',
   },
   verified: {
     label: 'Verified',
+    short: 'Verified',
     tone: 'success',
     message: 'Your identity and documents were checked by Petfinity.',
   },
   rejected: {
     label: 'Not approved',
+    short: 'Declined',
     tone: 'error',
     message: 'We couldn’t verify this. See the note below; you can update and resubmit.',
   },

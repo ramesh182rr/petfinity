@@ -84,10 +84,32 @@ Booking events, caretaker offers, community interactions and settings.
   - the uploaded list (Remove / Sent)
   - submit with an optional note
   - documents lock while under review, and the screen refreshes on focus
-- Provider onboarding wizard
-- Verification status/doc upload
-- Profile/service editor
-- Availability/calendar
+
+*Implemented in 2.4 (vets and clinics; the provider hub opens these instead of the checklist):*
+- **Workspace** (`app/provider/manage/[ownerType]/[id]/index.tsx`):
+  - gradient hero with stat tiles (Services, Open days, verification status)
+  - verification row, linking to the checklist
+  - service cards: icon badge, category, duration and mode, ₹ price, Instant/Request pill, Paused state
+  - opening-hours summary with Edit
+  - days off and special hours, with Remove
+  - **slot preview**: service chips, the next 14 days as date chips, and a slot grid
+  - refreshes on focus
+- **Service form** (`service.tsx`):
+  - category chips (the title auto-fills from the category)
+  - price in ₹, duration chips
+  - mode (In clinic / Home visit; teleconsult is shown as coming later), Instant or Request
+  - species chips, "Bookable" switch, Archive
+- **Opening hours** (`hours.tsx`):
+  - a card per weekday with an Open switch
+  - each time range is a tinted block: start and end time pills (5-minute steps) with remove, and an "Appointments at once" stepper
+  - Add hours (up to 6 per day), Copy Monday to Tue–Fri
+  - client-side overlap check before saving
+- **Day off or special hours** (`day-off.tsx`):
+  - date picker field (from today, up to 60 days ahead)
+  - Closed all day / Special hours (time pills and capacity), optional note
+- Editors return to the workspace even when opened from a deep link.
+
+*Still planned:*
 - Booking/request inbox
 - Booking detail and status actions
 - Care request browse/respond (caretaker)

@@ -7,6 +7,7 @@ modules here.
 from app.db.base import Base
 from app.modules.audit import models as audit_models
 from app.modules.auth import models as auth_models
+from app.modules.catalog import models as catalog_models
 from app.modules.clinics import models as clinics_models
 from app.modules.media import models as media_models
 from app.modules.pets import models as pets_models
@@ -19,6 +20,7 @@ __all__ = [
     "Base",
     "audit_models",
     "auth_models",
+    "catalog_models",
     "clinics_models",
     "media_models",
     "pets_models",

@@ -91,7 +91,13 @@ export default function ProviderHubScreen() {
                           tone={STATUS_INFO[p.verification_status].tone}
                         />
                       }
-                      onPress={() => router.push(`/provider/verify/provider_profile/${p.id}`)}
+                      onPress={() =>
+                        router.push(
+                          p.provider_type === 'veterinarian'
+                            ? `/provider/manage/provider_profile/${p.id}`
+                            : `/provider/verify/provider_profile/${p.id}`,
+                        )
+                      }
                     />
                   ))}
                 {operated.map((c) => (
@@ -108,7 +114,7 @@ export default function ProviderHubScreen() {
                         tone={STATUS_INFO[c.verification_status].tone}
                       />
                     }
-                    onPress={() => router.push(`/provider/verify/clinic/${c.id}`)}
+                    onPress={() => router.push(`/provider/manage/clinic/${c.id}`)}
                   />
                 ))}
               </Card>

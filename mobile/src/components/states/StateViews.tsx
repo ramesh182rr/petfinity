@@ -95,7 +95,14 @@ export function EmptyState({
           {message}
         </Text>
       </View>
-      {action ? <Button label={action.label} onPress={action.onPress} variant="secondary" /> : null}
+      {action ? (
+        <Button
+          label={action.label}
+          onPress={action.onPress}
+          variant="secondary"
+          style={styles.action}
+        />
+      ) : null}
     </View>
   );
 }
@@ -146,6 +153,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   compact: { paddingVertical: spacing.lg, gap: spacing.md },
+  action: { alignSelf: 'center' },
   halo: { alignItems: 'center', justifyContent: 'center' },
   haloCompact: { width: 80, height: 80 },
   haloLarge: { width: 112, height: 112 },

@@ -114,6 +114,7 @@ def db_session(db_engine: Engine) -> Iterator[Session]:
 
 IDENTITY_TABLES = (
     "audit_logs, auth_sessions, otp_challenges, staff_roles, pets, verification_documents, "
+    "services, availability_rules, availability_exceptions, "
     "verification_submissions, clinic_members, clinics, provider_profiles, media_assets, users"
 )
 

@@ -84,13 +84,32 @@ Authorisation: provider profiles are owner-only; clinic edits are for operators 
 - These are the same as the mobile endpoints, except the refresh token is set as an httpOnly, Secure, SameSite=Strict cookie (`pf_web_refresh`, path `/api/v1/auth/web`) and never appears in the response body.
 - They require the header `X-Requested-With: petfinity-web` (CSRF protection). Without it the API returns 403.
 
-## Clinic/provider setup (planned)
-- `POST /provider/profile`
-- `PATCH /provider/profile`
-- `POST /provider/verification-submissions`
-- `POST /provider/services`
-- `PATCH /provider/services/{service_id}`
-- `PUT /provider/availability`
+## Services and availability (implemented 2.4)
+All routes are under `/api/v1/manage/{owner_type}/{owner_id}`, where `owner_type` is `clinic` or `provider_profile`.
+
+Access:
+- clinic: active clinic operators only.
+- provider_profile: the profile's owner only, and only for veterinarians. Caretakers get 422 `services_not_supported`, because caretaking runs on requests and offers.
+- Non-members and non-owners get 404 (no existence leak). Clinic members who are not operators get 403 `forbidden`. Every change is written to the audit log.
+
+| Method and path | Purpose |
+|---|---|
+| `GET /services` | List services (archived ones excluded) |
+| `POST /services` | Create. Defaults: confirmation `instant` for in_clinic, `request` for home_visit; species `["cat","dog"]`. Max 50 per owner |
+| `PATCH /services/{id}` | Partial update, including `active` (bookable on/off) |
+| `DELETE /services/{id}` | Archive (204) |
+| `GET /availability` | Weekly hours plus the owner's timezone |
+| `PUT /availability` | Replace the whole week: `{"rules":[{weekday,start_time,end_time,capacity}]}` |
+| `GET /exceptions` | Upcoming days off and special hours |
+| `POST /exceptions` | Add `{on_date, kind: closed\|custom_hours, start_time?, end_time?, capacity?, note?}` |
+| `DELETE /exceptions/{id}` | Remove (204) |
+| `GET /slots?service_id&date` | Owner-side preview of generated slots for one date (UTC start/end plus local labels) |
+
+Error codes (422): `mode_unavailable` (teleconsult), `clinic_required` (in-clinic service on a vet profile), `service_limit_reached`, `overlapping_hours`, `too_many_ranges`, `already_closed`, `has_special_hours`, `invalid_date` (past or beyond 60 days), `services_not_supported`.
+
+Public read endpoints for discovery arrive in 2.5.
+
+## Provider bookings (planned, 2.8)
 - `GET /provider/bookings`
 
 ## Bookings (vet appointments and care — one model, [decision 0005](decisions/0005-unified-bookings.md))

@@ -42,7 +42,7 @@
 - [x] 2.2 Admin verification: review queue, document viewer, decisions, suspension; admin web app in `admin/` ([0009](decisions/0009-admin-web-app.md))
 - [x] 2.3 Provider onboarding (app): hub, profile and clinic forms, document upload, submit, review status and messages
 - [x] UI refresh: gradient heroes, floating tab bar, richer components; quality bar recorded in doc 08 and CLAUDE.md
-- [ ] 2.4 Services and availability
+- [x] 2.4 Services and availability: services, weekly hours with capacity, days off and special hours, slot generation in the owner's timezone; provider workspace in the app
 - [ ] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md))
 - [ ] 2.6 Booking engine
 - [ ] 2.7 Booking flow (app)
