@@ -84,3 +84,15 @@ export const colors = {
 } as const;
 
 export type ColorToken = keyof typeof colors;
+
+/** Gradient stops (top-left → bottom-right). Text on `primary`/`dusk` uses textOnPrimary. */
+export const gradients = {
+  primary: ['#7B3A90', '#5A2468', '#3F1A4A'],
+  dusk: ['#6A2C7A', '#874277', '#9A4F78'],
+  warm: ['#FFF8F0', '#FDEEDF'],
+  lavender: ['#F8F2FB', '#EFE4F7'],
+  sage: ['#F4F7EC', '#E3EAD2'],
+  coral: ['#FFF3EE', '#FDDCD1'],
+} as const satisfies Record<string, readonly [string, string, ...string[]]>;
+
+export type GradientToken = keyof typeof gradients;

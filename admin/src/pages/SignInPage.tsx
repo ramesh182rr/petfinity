@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 
 import { ApiError } from '../api/client'
 import { useSession } from '../auth/context'
+import { Logo } from '../components/Logo'
 
 export function SignInPage() {
   const { requestCode, verifyCode } = useSession()
@@ -46,9 +47,7 @@ export function SignInPage() {
     <div className="center-page">
       <div className="card auth-card stack">
         <div className="stack" style={{ gap: 6 }}>
-          <span className="logo" aria-hidden>
-            🐾
-          </span>
+          <Logo />
           <h1>Petfinity Admin</h1>
           <p className="muted">
             Staff only. Sign in with your work email; we&apos;ll send a 6-digit code.

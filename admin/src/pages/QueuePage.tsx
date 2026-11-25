@@ -18,12 +18,21 @@ export function QueuePage() {
 
   return (
     <div className="stack" style={{ gap: 20 }}>
-      <div className="row spread">
-        <div className="stack" style={{ gap: 4 }}>
-          <h1>Verification</h1>
-          <p className="muted">
-            Review vets, caretakers and clinics before they can be listed or booked.
-          </p>
+      <div className="page-hero">
+        <p className="eyebrow">Trust & safety</p>
+        <h1>Verification</h1>
+        <p className="muted">
+          Review vets, caretakers and clinics before they can be listed or booked.
+        </p>
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <strong>{status === 'pending' && query.data ? query.data.items.length : '–'}</strong>
+            <span>Waiting for review</span>
+          </div>
+          <div className="hero-stat">
+            <strong>5 min</strong>
+            <span>Document link lifetime</span>
+          </div>
         </div>
       </div>
       <div className="tabs" role="tablist" aria-label="Submission status">

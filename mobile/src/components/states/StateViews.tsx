@@ -3,7 +3,7 @@ import { useEffect, useState, type ComponentProps } from 'react';
 import { ActivityIndicator, Animated, StyleSheet, View, type DimensionValue } from 'react-native';
 
 import { Button, IconBadge, Text, type IconBadgeTone } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { colors, palette, radius, spacing } from '@/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -60,7 +60,16 @@ type EmptyStateProps = {
   title: string;
   message: string;
   action?: Action;
+  /** Tighter spacing and a smaller icon, for use inside cards. */
+  compact?: boolean;
   testID?: string;
+};
+
+const HALO: Record<IconBadgeTone, string> = {
+  lavender: palette.plum300,
+  sage: palette.sage400,
+  coral: palette.coral400,
+  peach: palette.peach400,
 };
 
 export function EmptyState({
@@ -69,11 +78,15 @@ export function EmptyState({
   title,
   message,
   action,
+  compact = false,
   testID,
 }: EmptyStateProps) {
   return (
-    <View style={styles.center} testID={testID}>
-      <IconBadge name={icon} tone={tone} size="lg" />
+    <View style={[styles.center, compact && styles.compact]} testID={testID}>
+      <View style={[styles.halo, compact ? styles.haloCompact : styles.haloLarge]}>
+        <View style={[styles.haloRing, { backgroundColor: HALO[tone] }]} />
+        <IconBadge name={icon} tone={tone} size={compact ? 'md' : 'lg'} />
+      </View>
       <View style={styles.copy}>
         <Text variant="heading" align="center">
           {title}
@@ -131,6 +144,19 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxl,
     paddingHorizontal: spacing.lg,
     gap: spacing.lg,
+  },
+  compact: { paddingVertical: spacing.lg, gap: spacing.md },
+  halo: { alignItems: 'center', justifyContent: 'center' },
+  haloCompact: { width: 80, height: 80 },
+  haloLarge: { width: 112, height: 112 },
+  haloRing: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 999,
+    opacity: 0.16,
   },
   copy: { gap: spacing.sm, maxWidth: 340 },
   skeleton: { backgroundColor: colors.primaryTint },

@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
@@ -16,6 +17,7 @@ type Props = {
 export function Screen({ children, scroll = true, edges = ['top'], testID }: Props) {
   return (
     <SafeAreaView edges={edges} style={styles.safeArea} testID={testID}>
+      <StatusBar style="dark" />
       {scroll ? (
         <ScrollView
           contentContainerStyle={styles.content}

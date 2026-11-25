@@ -64,6 +64,26 @@ Booking events, caretaker offers, community interactions and settings.
 *1b.2: shows name, email/phone and Sign out.* User details, roles, saved providers, location, privacy, notification settings, support, policies, logout/delete account.
 
 ## Provider screens
+*Implemented in 2.3:*
+- **Provider hub** (`app/provider/index.tsx`, from Profile → "Become a provider"):
+  - your profiles and clinics with verification pills
+  - start tiles for Veterinarian, Caretaker and Clinic
+  - a three-step "How verification works" guide
+- **Provider profile form**, create and edit:
+  - display name, bio, experience, city, language chips
+  - for vets: registration number, council chips and qualifications
+- **Clinic form**, create and edit:
+  - details, landline/mobile phone, email, emergency switch
+  - address with state chips (TN / Kerala / Karnataka + other) and PIN
+  - "I practise here" for vets creating their own clinic
+- **Verification checklist** (`app/provider/verify/[subjectType]/[id]`):
+  - status hero: Not submitted / Under review / Action needed / Verified / Not approved
+  - the admin's message card
+  - details completeness, with a link to edit
+  - required documents with ticks and Upload buttons (PDF or photo via the system file picker, 10 MB limit), plus optional documents
+  - the uploaded list (Remove / Sent)
+  - submit with an optional note
+  - documents lock while under review, and the screen refreshes on focus
 - Provider onboarding wizard
 - Verification status/doc upload
 - Profile/service editor

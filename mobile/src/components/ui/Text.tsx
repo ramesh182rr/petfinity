@@ -8,7 +8,7 @@ export type TextProps = RNTextProps & {
   align?: 'left' | 'center' | 'right';
 };
 
-const HEADING_VARIANTS: TextVariant[] = ['display', 'title', 'heading'];
+const HEADING_VARIANTS: TextVariant[] = ['hero', 'display', 'title', 'heading'];
 
 /**
  * Brand typography. Supports the system font-size setting (dynamic type),
@@ -27,7 +27,9 @@ export function Text({
       accessibilityRole={
         accessibilityRole ?? (HEADING_VARIANTS.includes(variant) ? 'header' : undefined)
       }
-      maxFontSizeMultiplier={variant === 'display' || variant === 'title' ? 1.4 : 1.8}
+      maxFontSizeMultiplier={
+        variant === 'hero' || variant === 'display' || variant === 'title' ? 1.4 : 1.8
+      }
       style={[typography[variant], { color: colors[color] }, align && { textAlign: align }, style]}
       {...rest}
     />

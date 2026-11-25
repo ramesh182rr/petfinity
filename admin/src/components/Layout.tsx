@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router'
 
 import { useSession } from '../auth/context'
+import { Logo } from './Logo'
 
 export function Layout() {
   const { user, signOut } = useSession()
@@ -8,9 +9,7 @@ export function Layout() {
     <div className="shell">
       <header className="topbar">
         <div className="row">
-          <span className="logo" aria-hidden>
-            🐾
-          </span>
+          <Logo />
           <strong className="brand">Petfinity Admin</strong>
           <nav className="row nav" aria-label="Main">
             <NavLink to="/verification">Verification</NavLink>

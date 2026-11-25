@@ -31,16 +31,19 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   (auth)/               # sign-in, verify (signed-out only)
   onboarding.tsx        # display name after first sign-in
   pets/                 # new, [id] (profile), [id]/edit
+  provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id]
   (tabs)/               # Home, Discover, Bookings, Community, My Pets
   profile.tsx, +not-found.tsx
 src/
   theme/                # design tokens: colors (semantic), typography, spacing, radius, elevation
-  components/ui/        # Text, Button, Card, Chip, IconBadge, Screen
+  components/ui/        # Text, Button, Card, Chip, IconBadge, Screen, HeroHeader/HeroScreen, ActionCard,
+                        # ListRow, InfoRow, StatTile, StatusPill, InitialsAvatar, ChipGroup, FormSection, Decor
   components/states/    # LoadingState, Skeleton, EmptyState, ErrorState
   api/                  # client (error envelope → ApiError), query client, generated/ types
   config/env.ts         # validated EXPO_PUBLIC_* config
   features/auth/        # session store (Zustand), secure token storage, auth API, validation
   features/pets/        # pet API + TanStack Query hooks, PetForm, photo picking/upload, active pet
+  features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
   features/<name>/      # feature hooks + components (e.g. system/health)
   navigation/           # RootNavigator: protected-route guards by session state
 __tests__/              # Jest (jest-expo) tests: *-test.ts(x)
@@ -52,6 +55,10 @@ __tests__/              # Jest (jest-expo) tests: *-test.ts(x)
 - Only the **refresh token** is persisted, in `expo-secure-store` (Keychain/Keystore, this device only). The access token lives in memory.
 - `apiClient` attaches the access token automatically. On a 401 it runs one **single-flight** refresh and retries once. Pass `auth: false` for public endpoints.
 - **Local sign-in:** the backend's mock sender prints the code in the API terminal (`MOCK OTP (not delivered) …`).
+
+## UI quality bar
+
+Every screen must look polished and distinctive (doc 08, "UI quality bar"). Use `HeroScreen` for top-level screens, tinted `ActionCard` tiles, `ListRow` / `InfoRow` and `StatusPill`. Keep shapes and alignment exact, and check changes on the emulator before calling them done.
 
 ## Conventions
 

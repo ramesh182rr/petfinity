@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, elevation, radius, spacing, type ColorToken } from '@/theme';
 
@@ -9,7 +9,7 @@ type Props = {
   onPress?: () => void;
   accessibilityLabel?: string;
   accessibilityHint?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   testID?: string;
 };
 

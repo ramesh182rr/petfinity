@@ -1,5 +1,23 @@
 # UX/UI Design System
 
+## UI quality bar (product owner, 2026-11-25; applies to all future work)
+The UI must feel like a polished, distinctive commercial product: attractive, warm and engaging, never bland.
+- **Signature look:** a plum gradient hero header with soft moodboard "bubbles" and a rounded bottom (`HeroHeader` / `HeroScreen`). The first card overlaps the hero's edge, and tinted gradient tiles (`ActionCard`) are used for actions.
+- **Hierarchy:** an eyebrow label (uppercase, tracked), then the title, then supporting text.
+- **Richer components:** `StatTile`, `ListRow` (icon tile + text + chevron or pill), `StatusPill`, `InfoRow`, `InitialsAvatar` with ring, and a floating pill tab bar. Avoid plain stacks of cards.
+- **Shapes:**
+  - cards with radius 20–24
+  - pill buttons and chips
+  - circular avatars with rings
+  - icon tiles 16–24
+- **Alignment:**
+  - 4-point grid with equal gutters (16)
+  - buttons in a row have equal heights (and widths where sensible)
+  - subtitles reserve two lines in tile grids so titles align
+  - links align with the content edge
+- **Status bar:** light icons over gradients. A cream scrim with dark icons appears once the hero scrolls away (`StatusBarScrim`). Plain screens use dark icons.
+- **Verification:** every UI change is checked on the emulator, or in the browser for admin, before it's called done.
+
 ## Brand direction
 **Balanced:** premium-modern design with warm, playful pet personality. Friendly and accessible, not childish; credible enough for veterinary services.
 
@@ -33,9 +51,18 @@ Rules:
 - Sage, coral, peach and lavender **fills are decorative**. Text on them uses `text`, and coloured text uses the `*Text` variants.
 - Moodboard icon tiles map to `IconBadge` tones: lavender, sage, coral, peach.
 
+### Gradients (`mobile/src/theme/colors.ts` → `gradients`)
+| Token | Stops | Use |
+|---|---|---|
+| `primary` | `#7B3A90 → #5A2468 → #3F1A4A` | Hero headers (white text ≥ 7.3:1 on every stop) |
+| `dusk` | `#6A2C7A → #874277 → #9A4F78` | Alternate hero (Bookings, Community) |
+| `lavender` / `sage` / `coral` / `warm` | soft tints | `ActionCard` tiles and pet cards (text uses `text` / `textMuted`) |
+
+The contrast test checks white and lavender-tint text on every dark gradient stop.
+
 ## Typography
 - Display/headings: **Poppins** 600/700. Body/UI: **Inter** 400/500/600. Both are SIL Open Font License, bundled via `@expo-google-fonts`.
-- Scale (`mobile/src/theme/tokens.ts`): display 30/38, title 24/32, heading 20/28, subheading 17/24, body 16/24, bodyStrong 16/24, label 14/20, caption 13/18.
+- Scale (`mobile/src/theme/tokens.ts`): hero 34/42, display 30/38, title 24/32, heading 20/28, subheading 17/24, body 16/24, bodyStrong 16/24, label 14/20, caption 13/18, eyebrow 12/16 uppercase +1.2 tracking.
 - Dynamic text is supported. Font scale is capped at 1.8× for body text and 1.4× for display text so layouts stay usable.
 
 ## Spacing, shape and elevation

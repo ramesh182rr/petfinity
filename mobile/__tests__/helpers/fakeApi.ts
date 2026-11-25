@@ -22,7 +22,8 @@ export function createFakeApi(): FakeApi {
     const method = init.method ?? 'GET';
     const path = new URL(url).pathname.replace('/api/v1', '');
     const headers = (init.headers ?? {}) as Record<string, string>;
-    const body = init.body ? JSON.parse(String(init.body)) : undefined;
+    // Only JSON (string) bodies are parsed; binary uploads (Blob) are passed through.
+    const body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
     calls.push({ method, path, body, headers });
     const handler = routes.get(`${method} ${path}`);
     if (!handler) {

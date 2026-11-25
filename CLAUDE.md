@@ -34,6 +34,20 @@ This file governs work in this repository. `~/Github/CLAUDE.md` describes the un
 - Backend tests run against real PostgreSQL, not SQLite.
 - After changing an API, the schema, navigation, env vars or the dev setup, update the matching docs.
 
+## UI quality bar (product owner, 2026-11-25, applies to ALL future work)
+- The UI must look like a polished, distinctive commercial product: attractive, warm and engaging, never bland.
+- Each new screen gets a deliberate visual treatment:
+  - gradient or accent headers, and soft decorative shapes in the moodboard style
+  - a clear hierarchy: eyebrow label, title, then supporting text
+  - richer components: stat tiles, icon-badge list rows, status pills
+  - no plain stacks of cards
+- Shapes and alignment must be precise:
+  - card radius 20–24, pill buttons and chips, circular avatars with rings
+  - a 4-point grid with equal gutters
+  - equal-height (and, where sensible, equal-width) buttons in a row
+  - centred icons
+- Check every UI change visually (emulator or browser screenshots) before calling it done. This applies to `mobile/` and `admin/`.
+
 ## Toolchain
 - Node 24 LTS (`.node-version`, used by fnm). The machine default stays Node 18 for other projects.
 - Python 3.13 via `uv`.

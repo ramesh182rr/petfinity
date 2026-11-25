@@ -1,120 +1,151 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { EmptyState } from '@/components/states/StateViews';
-import { Button, Card, IconBadge, Screen, Text, type IconBadgeTone } from '@/components/ui';
+import {
+  ActionCard,
+  Card,
+  HeroHeader,
+  InitialsAvatar,
+  SectionHeader,
+  StatusBarScrim,
+  useHeroScroll,
+} from '@/components/ui';
 import { useSession } from '@/features/auth/session';
 import { PetSwitcher } from '@/features/pets/PetSwitcher';
-import { colors, spacing, touchTarget } from '@/theme';
-
-type Shortcut = {
-  label: string;
-  icon: React.ComponentProps<typeof Ionicons>['name'];
-  tone: IconBadgeTone;
-  href: '/discover' | '/community' | '/bookings' | '/pets';
-};
-
-const SHORTCUTS: Shortcut[] = [
-  { label: 'Vet care', icon: 'medkit-outline', tone: 'lavender', href: '/discover' },
-  { label: 'Caretakers', icon: 'home-outline', tone: 'peach', href: '/discover' },
-  { label: 'Community', icon: 'people-outline', tone: 'sage', href: '/community' },
-  { label: 'My pets', icon: 'paw-outline', tone: 'coral', href: '/pets' },
-];
+import { timeOfDayGreeting } from '@/lib/greeting';
+import { colors, spacing } from '@/theme';
 
 export default function HomeScreen() {
-  const firstName = useSession((state) => state.user?.display_name?.split(' ')[0]);
+  const user = useSession((state) => state.user);
+  const firstName = user?.display_name?.split(' ')[0];
+  const scroll = useHeroScroll();
+
   return (
-    <Screen testID="home-screen">
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Text variant="title">{firstName ? `Hi, ${firstName}` : 'Welcome to Petfinity'}</Text>
-          <Text variant="body" color="textMuted">
-            Every paw. Every need. Every connection.
-          </Text>
-        </View>
-        <Pressable
-          onPress={() => router.push('/profile')}
-          accessibilityRole="button"
-          accessibilityLabel="Profile and settings"
-          hitSlop={8}
-          style={styles.avatar}
-        >
-          <Ionicons name="person-circle-outline" size={32} color={colors.primary} />
-        </Pressable>
-      </View>
-
-      <Card tone="primary" style={styles.hero}>
-        <Text variant="heading" color="textOnPrimary">
-          Care for every paw, close to home
-        </Text>
-        <Text variant="body" color="textOnPrimary">
-          Find trusted vets and caretakers near you, and keep your pet&apos;s care in one place.
-        </Text>
-        <View style={styles.heroActions}>
-          <Button
-            label="Book a vet"
-            icon="medkit"
-            variant="inverse"
-            onPress={() => router.push('/discover')}
-          />
-          <Button
-            label="Find a caretaker"
-            variant="outlineInverse"
-            onPress={() => router.push('/discover')}
-          />
-        </View>
-      </Card>
-
-      <PetSwitcher />
-
-      <View style={styles.section}>
-        <Text variant="subheading">Explore</Text>
-        <View style={styles.shortcuts}>
-          {SHORTCUTS.map((item) => (
+    <View style={styles.screen}>
+      <ScrollView
+        onScroll={scroll.onScroll}
+        scrollEventThrottle={scroll.scrollEventThrottle}
+        style={styles.screen}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        testID="home-screen"
+      >
+        <HeroHeader
+          edgeToEdge
+          eyebrow={timeOfDayGreeting()}
+          title={firstName ? `Hi, ${firstName}` : 'Welcome to Petfinity'}
+          subtitle="Trusted care for every paw, close to home."
+          accessory={
             <Pressable
-              key={item.label}
-              onPress={() => router.push(item.href)}
+              onPress={() => router.push('/profile')}
               accessibilityRole="button"
-              accessibilityLabel={item.label}
-              style={styles.shortcut}
+              accessibilityLabel="Profile and settings"
+              hitSlop={8}
             >
-              <IconBadge name={item.icon} tone={item.tone} />
-              <Text variant="label" align="center">
-                {item.label}
-              </Text>
+              <InitialsAvatar name={user?.display_name} />
             </Pressable>
-          ))}
-        </View>
-      </View>
+          }
+          style={styles.hero}
+        />
 
-      <View style={styles.section}>
-        <Text variant="subheading">Upcoming</Text>
-        <Card>
-          <EmptyState
-            icon="calendar-outline"
-            tone="sage"
-            title="No upcoming bookings"
-            message="When you book a vet appointment or a caretaker, it will show up here."
+        <View style={styles.actions}>
+          <ActionCard
+            icon="medkit"
+            tone="lavender"
+            gradient="lavender"
+            title="Book a vet"
+            subtitle="Clinic visits and home check-ups"
+            onPress={() => router.push('/discover')}
+            testID="action-book-vet"
           />
-        </Card>
-      </View>
-    </Screen>
+          <ActionCard
+            icon="home"
+            tone="peach"
+            gradient="coral"
+            title="Find a caretaker"
+            subtitle="Sitting, day care and boarding"
+            onPress={() => router.push('/discover')}
+            testID="action-find-caretaker"
+          />
+        </View>
+
+        <View style={styles.body}>
+          <PetSwitcher />
+
+          <View style={styles.section}>
+            <SectionHeader title="Explore" />
+            <View style={styles.grid}>
+              <View style={styles.gridRow}>
+                <ActionCard
+                  icon="search"
+                  tone="lavender"
+                  gradient="lavender"
+                  title="Discover"
+                  subtitle="Vets and clinics near you"
+                  onPress={() => router.push('/discover')}
+                />
+                <ActionCard
+                  icon="people"
+                  tone="sage"
+                  gradient="sage"
+                  title="Community"
+                  subtitle="Local pet parents"
+                  onPress={() => router.push('/community')}
+                />
+              </View>
+              <View style={styles.gridRow}>
+                <ActionCard
+                  icon="paw"
+                  tone="coral"
+                  gradient="coral"
+                  title="My pets"
+                  subtitle="Profiles and care notes"
+                  onPress={() => router.push('/pets')}
+                />
+                <ActionCard
+                  icon="calendar"
+                  tone="peach"
+                  gradient="warm"
+                  title="Bookings"
+                  subtitle="Appointments and stays"
+                  onPress={() => router.push('/bookings')}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <SectionHeader title="Upcoming" />
+            <Card>
+              <EmptyState
+                compact
+                icon="calendar-outline"
+                tone="sage"
+                title="No upcoming bookings"
+                message="When you book a vet or a caretaker, it will show up here."
+              />
+            </Card>
+          </View>
+        </View>
+      </ScrollView>
+      <StatusBarScrim scrolled={scroll.scrolled} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
-  headerText: { flex: 1, gap: spacing.xs },
-  avatar: {
-    width: touchTarget,
-    height: touchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { paddingBottom: spacing.xxl },
+  hero: { paddingBottom: spacing.xxxl + spacing.xl },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    marginTop: -(spacing.xxxl + spacing.sm),
   },
-  hero: { gap: spacing.md, padding: spacing.xl },
-  heroActions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.sm },
+  body: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, gap: spacing.xl },
   section: { gap: spacing.md },
-  shortcuts: { flexDirection: 'row', justifyContent: 'space-between' },
-  shortcut: { alignItems: 'center', gap: spacing.sm, flex: 1, minHeight: touchTarget },
+  grid: { gap: spacing.md },
+  gridRow: { flexDirection: 'row', gap: spacing.md },
 });

@@ -1,4 +1,4 @@
-export { colors, palette, type ColorToken } from './colors';
+export { colors, gradients, palette, type ColorToken, type GradientToken } from './colors';
 export { contrastRatio } from './contrast';
 export {
   elevation,

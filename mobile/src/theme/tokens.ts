@@ -20,6 +20,7 @@ export const radius = {
   md: 12,
   lg: 16,
   xl: 24,
+  xxl: 28,
   pill: 999,
 } as const;
 
@@ -36,10 +37,20 @@ export const fonts = {
 } as const;
 
 export type TextVariant =
-  'display' | 'title' | 'heading' | 'subheading' | 'body' | 'bodyStrong' | 'label' | 'caption';
+  | 'hero'
+  | 'display'
+  | 'title'
+  | 'heading'
+  | 'subheading'
+  | 'body'
+  | 'bodyStrong'
+  | 'label'
+  | 'caption'
+  | 'eyebrow';
 
 export const typography: Record<TextVariant, TextStyle> = {
-  display: { fontFamily: fonts.displayBold, fontSize: 30, lineHeight: 38 },
+  hero: { fontFamily: fonts.displayBold, fontSize: 34, lineHeight: 42, letterSpacing: -0.5 },
+  display: { fontFamily: fonts.displayBold, fontSize: 30, lineHeight: 38, letterSpacing: -0.3 },
   title: { fontFamily: fonts.displayBold, fontSize: 24, lineHeight: 32 },
   heading: { fontFamily: fonts.displaySemiBold, fontSize: 20, lineHeight: 28 },
   subheading: { fontFamily: fonts.displaySemiBold, fontSize: 17, lineHeight: 24 },
@@ -47,6 +58,13 @@ export const typography: Record<TextVariant, TextStyle> = {
   bodyStrong: { fontFamily: fonts.bodySemiBold, fontSize: 16, lineHeight: 24 },
   label: { fontFamily: fonts.bodySemiBold, fontSize: 14, lineHeight: 20 },
   caption: { fontFamily: fonts.body, fontSize: 13, lineHeight: 18 },
+  eyebrow: {
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
 };
 
 /** Restrained elevation (doc 08). */

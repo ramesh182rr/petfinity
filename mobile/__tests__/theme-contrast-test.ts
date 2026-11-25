@@ -1,4 +1,4 @@
-import { colors, contrastRatio } from '@/theme';
+import { colors, contrastRatio, gradients } from '@/theme';
 
 /** WCAG 2.1 AA: 4.5:1 for body text, 3:1 for large text and UI component boundaries. */
 const TEXT_PAIRS: [string, keyof typeof colors, keyof typeof colors][] = [
@@ -41,5 +41,15 @@ describe('colour contrast (WCAG AA)', () => {
 
   it('rejects malformed colours', () => {
     expect(() => contrastRatio('purple', '#FFFFFF')).toThrow('#RRGGBB');
+  });
+});
+
+describe('text on dark gradients', () => {
+  const darkStops = [...gradients.primary, ...gradients.dusk];
+  it.each(darkStops)('white text ≥ 4.5:1 on %s', (stop) => {
+    expect(contrastRatio(colors.textOnPrimary, stop)).toBeGreaterThanOrEqual(4.5);
+  });
+  it.each(darkStops)('lavender-tint secondary text ≥ 4.5:1 on %s', (stop) => {
+    expect(contrastRatio(colors.primaryTint, stop)).toBeGreaterThanOrEqual(4.5);
   });
 });

@@ -2,7 +2,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 
-import { colors, fonts } from '@/theme';
+import { FloatingTabBar } from '@/navigation/FloatingTabBar';
+import { colors } from '@/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -12,8 +13,8 @@ function tabIcon(active: IconName, inactive: IconName) {
     return (
       <Ionicons
         name={focused ? active : inactive}
-        size={24}
-        color={focused ? colors.primary : colors.textMuted}
+        size={22}
+        color={focused ? colors.textOnPrimary : colors.textMuted}
       />
     );
   }
@@ -24,15 +25,9 @@ function tabIcon(active: IconName, inactive: IconName) {
 export default function TabsLayout() {
   return (
     <Tabs
+      tabBar={(props) => <FloatingTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: { fontFamily: fonts.bodySemiBold, fontSize: 12 },
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-        },
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
