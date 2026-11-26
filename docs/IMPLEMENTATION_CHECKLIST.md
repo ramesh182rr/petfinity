@@ -32,10 +32,10 @@
 - [ ] Media upload
 - [x] Discover list/search/filter (2.5)
 - [x] Provider/clinic detail (2.5)
-- [ ] Availability/slot selection (open times shown in 2.5; picking one for a booking comes in 2.7)
-- [ ] Appointment booking
-- [ ] Mock payment states
-- [ ] Booking management and review
+- [x] Availability/slot selection (2.5, 2.7)
+- [x] Appointment booking (2.7)
+- [x] Mock payment states (2.6, 2.7)
+- [ ] Booking management and review (management done in 2.7; reviews come in 2.10)
 
 ## Phase 2 — vet discovery and booking (see [development/phase-2-plan.md](development/phase-2-plan.md))
 - [x] 2.1 Provider and clinic onboarding API: profiles, clinics, private verification documents, submission
@@ -45,7 +45,7 @@
 - [x] 2.4 Services and availability: services, weekly hours with capacity, days off and special hours, slot generation in the owner's timezone; provider workspace in the app
 - [x] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md), [0011](decisions/0011-launch-areas-and-locations.md)): launch areas, near-me search, filters, clinic and home-visit vet pages with live open times; provider area and GPS pin
 - [x] 2.6 Booking engine (API): bookings, capacity units with an exclusion constraint, idempotent create, instant/request state machine, expiry, cancellation policy, mock payments ([0012](decisions/0012-booking-policy-payments-capacity.md))
-- [ ] 2.7 Booking flow (app)
+- [x] 2.7 Booking flow (app): review and book, pending/confirmed states, mock pay now or at visit, Bookings tab, detail with timeline, cancel with outcome preview, reschedule
 - [ ] 2.8 Provider inbox (app)
 - [ ] 2.9 Notifications and reminders
 - [ ] 2.10 Reviews

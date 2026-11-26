@@ -74,11 +74,53 @@ Ratings arrive with reviews (2.10).
 - Unlisted or suspended listings show a friendly "isn't listed right now" state.
 - Photos, reviews and the map come later.
 
-### 9. Booking flow
-Pet → service → slot → notes → policy/price review → mock payment → confirmation. Request-mode services show "Clinic confirms within …" before submitting, then a pending state until the provider responds (payment follows confirmation). Include loading, slot-conflict, pending, declined/expired, failure and cancellation states. Vet bookings are labelled "appointment" in the UI.
+### 9. Booking flow (implemented 2.7)
+Pet → service → slot → notes → policy and price review → confirmation → mock payment. Vet bookings are called "appointment" in the UI.
 
-### 10. Booking detail
-Status, date/time, provider contact, directions, pet/context, cancellation/reschedule rules and support.
+- **Pick a time:** on a clinic or vet page, choose a service, a day and a slot. **Continue with 9:00 am** opens the review. A slot chosen for another service or day doesn't carry over.
+- **Review** (`app/book/index.tsx`):
+  - gradient hero with Date, Time and Price tiles
+  - **Who is it for?** One pet per appointment; species the service doesn't take are shown disabled with "not offered here"; no pets → "Add a pet"
+  - home visits only: **Visit address** (required), with the note "Shared with the vet only after they accept"
+  - optional notes
+  - a rules card: "Confirmed instantly" or "Confirmed by the vet within 2 hours", "Free cancellation until 7:00 am" (with the day), and "Pay now or at the visit"
+  - total, with a "Mock payment · not charged" pill
+  - **Confirm appointment** or **Send request**
+- One idempotency key per review screen, so a double tap or retry can't book twice.
+- States:
+  - loading
+  - listing or service gone
+  - **slot conflict**: "That time was just taken", with "Pick another time"
+  - other errors shown inline
+- On success the review is replaced by the booking detail, opened with `new=1`.
+
+### 10. Booking detail (implemented 2.7, `app/bookings/[id]/index.tsx`)
+- Gradient hero: service, listing, a status pill, and Date, Time and Price tiles.
+- A status card for every state:
+  - "You're booked!" (new) or "See you on …"
+  - "Request sent / Waiting for confirmation", with the provider's deadline and "you pay nothing until it's confirmed"
+  - declined, expired or cancelled by the provider: the reason, "You weren't charged" and **Find another time**
+  - cancelled: the outcome (refunded in full, late cancellation, or nothing charged)
+  - checked in, completed, missed
+- **Payment** (confirmed and later):
+  - amount, payment status, a **Mock** pill
+  - **Pay now** and **Pay at visit**, equal-width
+  - "Payments are simulated… No money moves."
+- **Details:** pet, listing (opens its page), visit address (home visits), notes. **Get directions** for confirmed clinic visits opens the phone's maps app.
+- **Changes:** the policy line ("Free cancellation until …"), then **Reschedule** and **Cancel**. Cancel asks first, and the dialog says exactly what happens (free and refunded, late, or request withdrawn).
+- **Timeline** of booking events.
+- Refreshes on focus.
+- **Reschedule** (`app/bookings/[id]/reschedule.tsx`):
+  - the current time, then a 14-day strip and a slot grid (the current time isn't offered)
+  - **Move to 4:00 pm**
+  - for request services: "The vet confirms the new time again"
+- **Bookings tab** (`app/(tabs)/bookings.tsx`):
+  - dusk hero with "Next: …"
+  - Upcoming and Past
+  - booking cards: a plum date tile (muted for past), service, listing, time, pet and a status pill
+  - skeletons, error with retry, empty states ("Find a vet" for upcoming)
+  - pull to refresh, refresh on focus
+- Still to come: provider contact (with messaging, later) and support.
 
 ### 11. Care request creation
 Care type, pet(s), dates, location, requirements, optional budget and submit confirmation.

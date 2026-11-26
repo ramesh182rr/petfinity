@@ -37,12 +37,14 @@ export const useClinicListing = (id: string, origin: SearchOrigin | null) =>
   useQuery({
     queryKey: discoveryKeys.detail('clinic', id, origin),
     queryFn: () => api.getClinic(id, origin),
+    enabled: !!id,
   });
 
 export const useVetListing = (id: string, origin: SearchOrigin | null) =>
   useQuery({
     queryKey: discoveryKeys.detail('vet', id, origin),
     queryFn: () => api.getVet(id, origin),
+    enabled: !!id,
   });
 
 export const usePublicSlots = (

@@ -34,7 +34,9 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
                         # manage/[ownerType]/[id]/{index,service,hours,day-off} (services and availability)
   discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
-  (tabs)/               # Home, Discover (search + filters), Bookings, Community, My Pets
+  book/                 # review and book an appointment (pet, notes, address, policy)
+  bookings/[id]/        # booking detail (status, mock payment, timeline, cancel) and reschedule
+  (tabs)/               # Home, Discover (search + filters), Bookings (upcoming/past), Community, My Pets
   profile.tsx, +not-found.tsx
 src/
   theme/                # design tokens: colors (semantic), typography, spacing, radius, elevation
@@ -48,6 +50,7 @@ src/
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
   features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation,
                         # SlotPicker (DayStrip, SlotGrid)
+  features/bookings/    # booking API + hooks (idempotency key per attempt), BookingCard, status/payment/policy text
   features/discovery/   # launch areas, search store/hooks, ListingCard, detail parts, LocationField (area + GPS pin),
                         # one-off foreground location (expo-location)
   features/<name>/      # feature hooks + components (e.g. system/health)

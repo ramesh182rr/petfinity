@@ -36,6 +36,9 @@ export function RootNavigator() {
         <Stack.Screen name="pets/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="pets/[id]/edit" options={{ title: 'Edit pet' }} />
         <Stack.Screen name="discover/area" options={{ title: 'Where to search' }} />
+        <Stack.Screen name="book/index" options={{ title: '' }} />
+        <Stack.Screen name="bookings/[id]/index" options={{ title: '' }} />
+        <Stack.Screen name="bookings/[id]/reschedule" options={{ title: 'Reschedule' }} />
         <Stack.Screen name="discover/clinic/[id]" options={{ title: '' }} />
         <Stack.Screen name="discover/vet/[id]" options={{ title: '' }} />
         <Stack.Screen name="provider/index" options={{ title: '' }} />

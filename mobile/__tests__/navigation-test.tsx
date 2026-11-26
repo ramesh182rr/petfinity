@@ -12,6 +12,8 @@ import HomeScreen from '../app/(tabs)/index';
 import TabsLayout from '../app/(tabs)/_layout';
 import PetsScreen from '../app/(tabs)/pets';
 
+import { createFakeApi } from './helpers/fakeApi';
+
 function Root() {
   return (
     <QueryClientProvider client={createQueryClient()}>
@@ -52,9 +54,12 @@ describe('tab navigation', () => {
   });
 
   it('Bookings empty state links to Discover', async () => {
+    const api = createFakeApi();
+    api.on('GET', '/bookings', () => [200, { items: [] }]);
+    globalThis.fetch = api.fetch;
     await renderRouter(routes, { initialUrl: '/bookings' });
 
-    await fireEvent.press(screen.getByRole('button', { name: 'Explore care' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Find a vet' }));
 
     await waitFor(() => expect(screen).toHavePathname('/discover'));
   });

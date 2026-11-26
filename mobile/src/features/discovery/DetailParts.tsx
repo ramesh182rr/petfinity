@@ -98,7 +98,7 @@ export function HoursCard({ hours, closures }: { hours: DayHours[]; closures: Cl
                     .map(
                       (r) => `${formatTime(hhmm(r.start_time))} – ${formatTime(hhmm(r.end_time))}`,
                     )
-                    .join(',  ')
+                    .join('\n')
                 : 'Closed'}
           </Text>
         </View>
