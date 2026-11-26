@@ -8,6 +8,8 @@ from fastapi import APIRouter
 
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.web_router import router as auth_web_router
+from app.modules.bookings.router import manage_router as bookings_manage_router
+from app.modules.bookings.router import router as bookings_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.clinics.router import router as clinics_router
 from app.modules.discovery.router import router as discovery_router
@@ -30,5 +32,7 @@ api_router.include_router(providers_router)
 api_router.include_router(clinics_router)
 api_router.include_router(catalog_router)
 api_router.include_router(discovery_router)
+api_router.include_router(bookings_router)
+api_router.include_router(bookings_manage_router)
 api_router.include_router(verification_router)
 api_router.include_router(verification_admin_router)

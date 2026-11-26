@@ -18,14 +18,24 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `services` (implemented 2.4): exactly one owner, `clinic_id` or `provider_profile_id` (check `one_owner`). Fields: category (12 fixed values, e.g. general_consultation, vaccination, dental), title, description, `price_minor` (paise, 0–₹1,00,000), currency (INR only), `duration_minutes` (5–480, multiple of 5), service_mode (in_clinic / home_visit / teleconsult; teleconsult is rejected by the API for now), confirmation_mode (instant / request), species (text array), active, archived_at, timestamps. Services are archived, never deleted, so future bookings can keep pointing at them.
 - `availability_rules` (implemented 2.4): one owner (as above), weekday (0 = Monday … 6 = Sunday), start_time < end_time (local time, 5-minute grid), capacity 1–20 (appointments at once), created_at. Breaks are simply gaps between ranges. The timezone comes from the owner: a clinic's `timezone`, or Asia/Kolkata for an individual vet. The API rejects overlapping ranges on the same day and caps ranges at 6 per day.
 - `availability_exceptions` (implemented 2.4): one owner, on_date, kind (closed / custom_hours), start/end time and capacity (required for custom_hours, null for closed; check `valid_shape`), note (≤120), created_at. Custom hours replace that day's weekly hours. Index on on_date.
-- Slots are not stored. They are computed from rules and exceptions in the owner's timezone, stepping by the service duration, with a 30-minute minimum lead time and a 60-day horizon (`app/modules/catalog/slots.py`). Booking holds (2.6) will subtract from capacity.
+- Slots are not stored. They are computed from rules and exceptions in the owner's timezone, stepping by the service duration, with a minimum lead time (30 minutes for instant services, 60 for request services) and a 60-day horizon (`app/modules/catalog/slots.py`). A slot is open only if a capacity unit is free: `catalog.available_slots` subtracts slot-holding bookings (2.6).
 - `caretaker_requests`: owner_id, pet ids, service_type, location, date range, requirements, budget, status.
 - `caretaker_offers`: request_id, caretaker_id, price, message, availability, status.
-- `bookings` (single record for vet appointments and care, [decision 0005](decisions/0005-unified-bookings.md)): booking_type (vet_appointment/care), owner_id, provider_profile_id, clinic_id, service_id (vet), caretaker_request_id + offer_id (care), service_mode, confirmation_mode, status, start_at/end_at (UTC) + timezone, price snapshot, cancellation policy snapshot, owner_notes, response_deadline, idempotency_key.
-- `booking_pets`: booking_id, pet_id.
-- `booking_events`: booking_id, from_status, to_status, event (e.g. rescheduled), actor_user_id, reason, created_at (append-only).
-- `payments`: booking_id, provider, payment intent/reference, amount, status, idempotency key; mock fields in MVP.
-- `refunds`, `payouts`, `commissions`: separate accounting records (later real payments).
+- `bookings` (implemented 2.6, [0005](decisions/0005-unified-bookings.md), [0012](decisions/0012-booking-policy-payments-capacity.md)):
+  - booking_type (vet_appointment/care), owner_id
+  - exactly one listing: clinic_id or provider_profile_id; service_id (required for vet appointments)
+  - snapshots: service_title, service_mode, confirmation_mode, amount_minor, currency, cancellation_policy (JSONB)
+  - status (decision 0004 values), start_at/end_at (UTC), timezone, response_deadline (required while pending_provider)
+  - resource_id (= the listing) and capacity_unit (1–20)
+  - owner_notes, visit_address (home visits; shown to the provider after confirmation)
+  - payment_status (not_due/unpaid/pay_at_visit/paid/refunded/not_refunded), cancellation_outcome (not_charged/full_refund/late_no_refund), cancel_reason
+  - idempotency_key and request_hash (unique per owner), timestamps
+  - **Exclusion constraint** `ex_bookings_no_overlap`: GiST on (resource_id =, capacity_unit =, tstzrange(start_at, end_at) &&) where status is pending_provider, confirmed or in_progress. Needs `btree_gist`.
+  - Indexes: (owner_id, start_at), (resource_id, start_at), and a partial index on response_deadline for pending requests.
+  - Care columns (caretaker_request_id, offer_id) arrive with Phase 3.
+- `booking_pets` (implemented 2.6): booking_id, pet_id (primary key on both). Vet appointments take one pet.
+- `booking_events` (implemented 2.6): booking_id, event (created/confirmed/declined/expired/cancelled/rescheduled/checked_in/completed/no_show/paid/pay_at_visit), from_status, to_status, actor_user_id, actor_role (owner/provider/admin/system), reason, details (JSONB), created_at. Append-only.
+- `payments` (implemented 2.6, mock ledger): booking_id, provider (`mock` only), kind (charge/refund), amount_minor, currency, status, reference (unique `mock_…`), created_at.
 - `reviews`: booking_id, author_id, provider_id, rating, text, moderation status.
 - `posts`, `post_media`, `comments`, `reactions`.
 - `reports`, `blocks`, `moderation_actions`.

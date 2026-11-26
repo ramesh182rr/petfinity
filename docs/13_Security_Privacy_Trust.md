@@ -27,6 +27,11 @@ The platform facilitates animal care and people entering homes or leaving pets w
   - A home-visit vet's base pin is never returned publicly, and neither is a distance to it. Parents see only the area and the travel radius.
   - A parent's device location is sent per search and never stored.
   - Public listing pages omit phone, email, registration numbers, slot capacity and internal day-off notes.
+- Bookings (2.6, [0012](decisions/0012-booking-policy-payments-capacity.md)):
+  - A home-visit address is shown to the provider only once they confirm.
+  - Bookings are visible only to the parent, the listing's operators or vet, and admins; anyone else gets 404.
+  - Every change is in `booking_events`; admin cancellations are also in the audit log.
+  - Payments are mock-only and labelled as such.
 - Lost-pet posts may reveal location; warn users and allow approximate location.
 - Moderation audit and appeal process.
 

@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 from app.core.clock import utcnow
 from app.core.errors import AppError
 from app.modules.audit import service as audit
+from app.modules.bookings.busy import busy_by_resource, free_unit
+from app.modules.bookings.policy import REQUEST_MIN_LEAD
 from app.modules.catalog.models import (
     AvailabilityException,
     AvailabilityRule,
@@ -22,7 +24,14 @@ from app.modules.catalog.models import (
 )
 from app.modules.catalog.owners import Owner
 from app.modules.catalog.schemas import ExceptionIn, RuleIn, ServiceCreate, ServiceUpdate
-from app.modules.catalog.slots import HORIZON_DAYS, Slot, generate_slots, overlaps, windows_for_date
+from app.modules.catalog.slots import (
+    HORIZON_DAYS,
+    MIN_LEAD,
+    Slot,
+    generate_slots,
+    overlaps,
+    windows_for_date,
+)
 
 MAX_SERVICES = 50
 MAX_RANGES_PER_DAY = 6
@@ -255,6 +264,41 @@ def delete_exception(
 # --- slots ----------------------------------------------------------------------------------
 
 
+def min_lead_for(service: Service) -> timedelta:
+    """Request-mode services need more notice so the provider can answer (0004)."""
+    return REQUEST_MIN_LEAD if service.confirmation_mode == ConfirmationMode.REQUEST else MIN_LEAD
+
+
+def available_slots(
+    db: Session,
+    owner: Owner,
+    service: Service,
+    on: date,
+    *,
+    now: datetime,
+    exclude_booking: uuid.UUID | None = None,
+) -> list[Slot]:
+    """Bookable slots: opening hours and exceptions, minus capacity taken by bookings."""
+    if not service.active or service.archived_at is not None:
+        return []
+    exceptions = [e for e in list_exceptions(db, owner, from_date=on) if e.on_date == on]
+    windows = windows_for_date(on, list_rules(db, owner), exceptions)
+    slots = generate_slots(
+        on,
+        windows,
+        timezone=owner.timezone,
+        duration_minutes=service.duration_minutes,
+        now=now,
+        min_lead=min_lead_for(service),
+    )
+    if not slots:
+        return []
+    busy = busy_by_resource(
+        db, [owner.id], slots[0].start, slots[-1].end, now, exclude_booking=exclude_booking
+    ).get(owner.id, [])
+    return [s for s in slots if free_unit(s.start, s.end, s.capacity, busy) is not None]
+
+
 def preview_slots(
     db: Session, owner: Owner, service_id: uuid.UUID, on: date, *, now: datetime | None = None
 ) -> list[Slot]:
@@ -264,14 +308,4 @@ def preview_slots(
         raise AppError(
             "invalid_date", f"Choose a date within the next {HORIZON_DAYS} days.", status_code=422
         )
-    if not service.active:
-        return []
-    exceptions = [e for e in list_exceptions(db, owner, from_date=on) if e.on_date == on]
-    windows = windows_for_date(on, list_rules(db, owner), exceptions)
-    return generate_slots(
-        on,
-        windows,
-        timezone=owner.timezone,
-        duration_minutes=service.duration_minutes,
-        now=now or utcnow(),
-    )
+    return available_slots(db, owner, service, on, now=now or utcnow())

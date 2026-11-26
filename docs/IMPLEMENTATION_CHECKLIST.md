@@ -44,7 +44,7 @@
 - [x] UI refresh: gradient heroes, floating tab bar, richer components; quality bar recorded in doc 08 and CLAUDE.md
 - [x] 2.4 Services and availability: services, weekly hours with capacity, days off and special hours, slot generation in the owner's timezone; provider workspace in the app
 - [x] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md), [0011](decisions/0011-launch-areas-and-locations.md)): launch areas, near-me search, filters, clinic and home-visit vet pages with live open times; provider area and GPS pin
-- [ ] 2.6 Booking engine
+- [x] 2.6 Booking engine (API): bookings, capacity units with an exclusion constraint, idempotent create, instant/request state machine, expiry, cancellation policy, mock payments ([0012](decisions/0012-booking-policy-payments-capacity.md))
 - [ ] 2.7 Booking flow (app)
 - [ ] 2.8 Provider inbox (app)
 - [ ] 2.9 Notifications and reminders

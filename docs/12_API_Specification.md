@@ -142,13 +142,73 @@ Public read endpoints for discovery arrive in 2.5.
 ## Provider bookings (planned, 2.8)
 - `GET /provider/bookings`
 
-## Bookings (vet appointments and care — one model, [decision 0005](decisions/0005-unified-bookings.md))
-- `GET /providers/{provider_id}/slots?service_id=&date=`
-- `POST /bookings`: vet appointment. Requires the `Idempotency-Key` header; transactional. Returns `confirmed` (instant service) or `pending_provider` (request service) — [decision 0004](decisions/0004-booking-confirmation-model.md)
-- `GET /bookings`, `GET /bookings/{id}`
-- `POST /bookings/{id}/confirm`, `POST /bookings/{id}/decline` (provider; request mode)
-- `POST /bookings/{id}/cancel`, `POST /bookings/{id}/reschedule`
-- `POST /bookings/{id}/check-in`, `POST /bookings/{id}/complete`, `POST /bookings/{id}/no-show` (provider/admin)
+## Bookings (implemented 2.6: decisions [0004](decisions/0004-booking-confirmation-model.md), [0005](decisions/0005-unified-bookings.md), [0012](decisions/0012-booking-policy-payments-capacity.md))
+One resource for parents, providers and admins. Every response includes:
+- `viewer_role`: owner, provider or admin
+- `allowed_actions`: what the caller may do next (cancel, reschedule, pay, pay_at_visit, confirm, decline, check_in, complete, no_show)
+- `policy.free_cancellation_until`
+- `payment_status` and `payment_is_mock: true`
+
+Bookings are visible only to the parent, the listing's operators or vet, and admins. Anyone else gets 404.
+
+| Method and path | Who | Purpose |
+|---|---|---|
+| `POST /bookings` | parent | Book a vet appointment (see below) |
+| `GET /bookings?scope=upcoming\|past` | parent | My bookings |
+| `GET /bookings/{id}` | any viewer | Detail, with the `events` timeline and mock `payments` |
+| `POST /bookings/{id}/confirm` | provider | Accept a request before its `response_deadline` |
+| `POST /bookings/{id}/decline` | provider | Decline a request (optional `reason`) |
+| `POST /bookings/{id}/cancel` | parent, provider, admin | Cancel. `reason` is required for provider and admin |
+| `POST /bookings/{id}/reschedule` | parent | Move to another open slot (`start_at`), up to 2 h before the start |
+| `POST /bookings/{id}/check-in` | provider | From 60 min before the start → `in_progress` |
+| `POST /bookings/{id}/complete` | provider | `in_progress` → `completed` |
+| `POST /bookings/{id}/no-show` | provider | From 15 min after the start |
+| `POST /bookings/{id}/payment` | parent | **Mock.** `{"method": "pay_now" \| "pay_at_visit"}`. Confirmed bookings only; nothing is charged |
+| `GET /manage/{owner_type}/{owner_id}/bookings?scope=requests\|upcoming\|past` | provider | Provider inbox for one listing |
+
+`POST /bookings` in detail:
+- **Body:** `{listing_kind: clinic|vet, listing_id, service_id, start_at, pet_ids: [one pet], owner_notes?, visit_address?}`
+- **Idempotency-Key header (8–64 characters) is required.**
+  - Same key and same body → `200` with `Idempotent-Replayed: true`.
+  - Same key, different body → `422 idempotency_key_reused`.
+- **Result:**
+  - Instant service → `201 confirmed`, `payment_status: unpaid`.
+  - Request service → `201 pending_provider`, with `response_deadline = min(now + 2 h, start − 30 min)` and `payment_status: not_due`.
+
+Cancellation outcomes:
+
+| Situation | `cancellation_outcome` | `payment_status` |
+|---|---|---|
+| Pending request | `not_charged` | unchanged |
+| Parent, free window, paid | `full_refund` | `refunded` (mock refund row) |
+| Parent, free window, not paid | `not_charged` | unchanged |
+| Parent, inside the last 2 h | `late_no_refund` | `not_refunded` if paid |
+| Provider or admin | `full_refund` if paid, else `not_charged` | `refunded` if paid |
+
+Errors:
+
+| Code | Meaning |
+|---|---|
+| `400 idempotency_key_required` | |
+| `404` | Unlisted listing, missing booking, or not yours |
+| `409 slot_unavailable` | Not an open slot, or capacity is full |
+| `409 action_not_allowed` | |
+| `409 invalid_transition` | |
+| `409 request_expired` | |
+| `409 reschedule_too_late` | |
+| `409 service_unavailable` | Reschedule only |
+| `422 pet_not_found` | |
+| `422 species_not_offered` | |
+| `422 address_required` | Home visits |
+| `422 own_listing` | |
+| `422 service_unavailable` | |
+| `422 invalid_date` | Beyond 60 days |
+| `422 too_many_bookings` | More than 20 active |
+| `422 reason_required` | |
+
+Capacity: each booking takes a numbered capacity unit of its listing, and an exclusion constraint forbids overlapping holds on one unit. Public open times, the workspace preview and the next free slot in search all subtract booked capacity.
+
+Care bookings (`POST /offers/{id}/accept`) arrive in Phase 3.
 
 ## Caretaker requests/offers
 - `POST /caretaker-requests`
@@ -159,9 +219,10 @@ Public read endpoints for discovery arrive in 2.5.
 - `POST /offers/{id}/decline`
 - `GET /provider/requests` (matching requests)
 
-## Payment mock
-- `POST /bookings/{id}/payment-intent` (mock adapter; only for `confirmed` bookings)
-- `POST /bookings/{id}/payment-confirmation` (mock-only; never trust the client without server state)
+## Payment mock (implemented 2.6)
+- `POST /bookings/{id}/payment` (above) replaces the planned payment-intent and confirmation pair while payments are mocked.
+- State is entirely server-side: payment rows have `provider = 'mock'` and a `mock_…` reference.
+- A real gateway will sit behind the same endpoint, with a payment intent step, once settlement and compliance are decided (doc 07).
 
 ## Community
 - `GET /feed?scope=local|following`

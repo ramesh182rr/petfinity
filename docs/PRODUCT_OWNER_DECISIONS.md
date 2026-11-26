@@ -9,7 +9,8 @@ Status: approved defaults applied
 - **Marketplace initial focus:** Dogs and cats.
 - **Vet services:** Clinic, home visit and teleconsultation service types, enabled only where providers and legal/compliance requirements permit.
 - **Caretakers:** Identity verification required; profile/experience verification; references where feasible; meet-and-greet encouraged; completed-booking reviews.
-- **Payments:** Mock flow for development; architect for future marketplace payments, commission and provider settlement.
+- **Payments:** Mock flow for development; architect for future marketplace payments, commission and provider settlement. Vet bookings (2026-11-26, [0012](decisions/0012-booking-policy-payments-capacity.md)): after confirmation the parent picks "Pay now (mock)" or "Pay at the visit"; nothing is charged.
+- **Cancellation policy (vet bookings, [0012](decisions/0012-booking-policy-payments-capacity.md)):** free until 2 hours before the start; later parent cancellations are allowed but not refunded; provider/admin cancellations always refund in full.
 - **Community:** Public-in-app, local and following feeds, with moderation.
 - **Booking confirmation:** instant or request per service. In-clinic is instant by default, home visits are request. Accepting a caretaker offer confirms the booking ([0004](decisions/0004-booking-confirmation-model.md)).
 - **Bookings:** one booking record for vet and caretaker services. "Appointment" is UI wording for vet bookings ([0005](decisions/0005-unified-bookings.md)).

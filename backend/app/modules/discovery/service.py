@@ -25,6 +25,8 @@ from sqlalchemy.orm import Session
 
 from app.core.clock import utcnow
 from app.core.errors import AppError
+from app.modules.bookings.busy import Busy, busy_by_resource, free_unit
+from app.modules.catalog import service as catalog
 from app.modules.catalog.models import (
     AvailabilityException,
     AvailabilityRule,
@@ -34,7 +36,13 @@ from app.modules.catalog.models import (
     ServiceMode,
 )
 from app.modules.catalog.owners import Owner
-from app.modules.catalog.slots import HORIZON_DAYS, Slot, generate_slots, windows_for_date
+from app.modules.catalog.slots import (
+    HORIZON_DAYS,
+    MIN_LEAD,
+    Slot,
+    generate_slots,
+    windows_for_date,
+)
 from app.modules.clinics.models import Clinic, ClinicMember, MemberRole
 from app.modules.discovery.areas import (
     AREA_SPREAD_KM,
@@ -261,17 +269,29 @@ def is_open_now(schedule: _Schedule, timezone: str, now: datetime) -> bool:
 
 
 def next_slot(
-    schedule: _Schedule, timezone: str, duration_minutes: int, now: datetime
+    schedule: _Schedule,
+    timezone: str,
+    duration_minutes: int,
+    now: datetime,
+    *,
+    busy: Sequence[Busy] = (),
+    min_lead: timedelta = MIN_LEAD,
 ) -> datetime | None:
+    """Earliest slot with a free capacity unit, today plus the next 7 days."""
     today = _local_now(timezone, now).date()
-    for offset in range(NEXT_SLOT_DAYS + 1):  # today plus the next 7 days
+    for offset in range(NEXT_SLOT_DAYS + 1):
         on = today + timedelta(days=offset)
         windows = windows_for_date(on, schedule.rules, schedule.exceptions)
-        slots = generate_slots(
-            on, windows, timezone=timezone, duration_minutes=duration_minutes, now=now
-        )
-        if slots:
-            return slots[0].start
+        for slot in generate_slots(
+            on,
+            windows,
+            timezone=timezone,
+            duration_minutes=duration_minutes,
+            now=now,
+            min_lead=min_lead,
+        ):
+            if free_unit(slot.start, slot.end, slot.capacity, busy) is not None:
+                return slot.start
     return None
 
 
@@ -321,7 +341,7 @@ class _Candidate:
     sort_distance: float
     schedule_key: uuid.UUID
     timezone: str
-    shortest_minutes: int
+    shortest: Service
 
 
 def _verified_clinics() -> ColumnElement[bool]:
@@ -411,7 +431,7 @@ def search(
                 sort_distance=dist,
                 schedule_key=clinic.id,
                 timezone=clinic.timezone,
-                shortest_minutes=min(s.duration_minutes for s in matching),
+                shortest=min(matching, key=lambda s: s.duration_minutes),
             )
         )
 
@@ -453,7 +473,7 @@ def search(
                 sort_distance=dist,
                 schedule_key=vet.id,
                 timezone=VET_TIMEZONE,
-                shortest_minutes=min(s.duration_minutes for s in matching),
+                shortest=min(matching, key=lambda s: s.duration_minutes),
             )
         )
 
@@ -480,12 +500,21 @@ def search(
         candidates.sort(key=lambda c: (c.sort_distance, c.listing.name))
 
     page = candidates[offset : offset + limit]
+    busy = busy_by_resource(
+        db,
+        [c.schedule_key for c in page],
+        now - timedelta(days=1),
+        now + timedelta(days=NEXT_SLOT_DAYS + 2),
+        now,
+    )
     for candidate in page:
         candidate.listing.next_slot_at = next_slot(
             schedules[candidate.schedule_key],
             candidate.timezone,
-            candidate.shortest_minutes,
+            candidate.shortest.duration_minutes,
             now,
+            busy=busy.get(candidate.schedule_key, []),
+            min_lead=catalog.min_lead_for(candidate.shortest),
         )
     return [c.listing for c in page], len(candidates)
 
@@ -677,8 +706,4 @@ def public_slots(
         raise AppError(
             "invalid_date", f"Choose a date within the next {HORIZON_DAYS} days.", status_code=422
         )
-    schedule = _schedules(db, [owner.id], on, on)[owner.id]
-    windows = windows_for_date(on, schedule.rules, schedule.exceptions)
-    return owner, generate_slots(
-        on, windows, timezone=owner.timezone, duration_minutes=service.duration_minutes, now=now
-    )
+    return owner, catalog.available_slots(db, owner, service, on, now=now)

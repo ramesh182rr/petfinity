@@ -229,6 +229,177 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/bookings': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** My bookings */
+    get: operations['my_bookings_api_v1_bookings_get']
+    put?: never
+    /** Book a vet appointment (instant → confirmed, request → pending_provider) */
+    post: operations['create_booking_api_v1_bookings_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Booking detail */
+    get: operations['booking_detail_api_v1_bookings__booking_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/cancel': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Cancel (parent: free until 2 h before; provider/admin: reason required, full refund) */
+    post: operations['cancel_api_v1_bookings__booking_id__cancel_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/check-in': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Provider checks the pet in */
+    post: operations['check_in_api_v1_bookings__booking_id__check_in_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/complete': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Provider marks the visit completed */
+    post: operations['complete_api_v1_bookings__booking_id__complete_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/confirm': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Provider confirms a request */
+    post: operations['confirm_api_v1_bookings__booking_id__confirm_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/decline': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Provider declines a request */
+    post: operations['decline_api_v1_bookings__booking_id__decline_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/no-show': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Provider marks a no-show (15 min after the start) */
+    post: operations['no_show_api_v1_bookings__booking_id__no_show_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/payment': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** MOCK payment: pay now (nothing is charged) or choose to pay at the visit */
+    post: operations['payment_api_v1_bookings__booking_id__payment_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/bookings/{booking_id}/reschedule': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Parent moves the booking to another open slot */
+    post: operations['reschedule_api_v1_bookings__booking_id__reschedule_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/clinics': {
     parameters: {
       query?: never
@@ -411,6 +582,23 @@ export interface paths {
     get: operations['get_hours_api_v1_manage__owner_type___owner_id__availability_get']
     /** Replace the weekly opening hours */
     put: operations['put_hours_api_v1_manage__owner_type___owner_id__availability_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/bookings': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Provider inbox: requests to answer, upcoming and past bookings for this listing */
+    get: operations['listing_bookings_api_v1_manage__owner_type___owner_id__bookings_get']
+    put?: never
     post?: never
     delete?: never
     options?: never
@@ -794,6 +982,265 @@ export interface components {
       /** Verified At */
       verified_at: string | null
     }
+    /**
+     * BookingAction
+     * @description What the current viewer may do next. The app shows buttons from this list.
+     * @enum {string}
+     */
+    BookingAction:
+      | 'cancel'
+      | 'reschedule'
+      | 'pay'
+      | 'pay_at_visit'
+      | 'confirm'
+      | 'decline'
+      | 'check_in'
+      | 'complete'
+      | 'no_show'
+    /** BookingCreate */
+    BookingCreate: {
+      /**
+       * Listing Id
+       * Format: uuid
+       */
+      listing_id: string
+      listing_kind: components['schemas']['ListingKind']
+      /** Owner Notes */
+      owner_notes?: string | null
+      /**
+       * Pet Ids
+       * @description One pet per vet appointment
+       */
+      pet_ids: string[]
+      /**
+       * Service Id
+       * Format: uuid
+       */
+      service_id: string
+      /**
+       * Start At
+       * Format: date-time
+       * @description A slot start from the open-times endpoint
+       */
+      start_at: string
+      /**
+       * Visit Address
+       * @description Required for home visits. Shared with the vet only once they confirm.
+       */
+      visit_address?: string | null
+    }
+    /** BookingDetail */
+    BookingDetail: {
+      /** Allowed Actions */
+      allowed_actions: components['schemas']['BookingAction'][]
+      /** Amount Minor */
+      amount_minor: number
+      /** Booking Type */
+      booking_type: string
+      /** Cancel Reason */
+      cancel_reason: string | null
+      cancellation_outcome: components['schemas']['CancellationOutcome'] | null
+      confirmation_mode: components['schemas']['ConfirmationMode']
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Currency */
+      currency: string
+      /**
+       * End At
+       * Format: date-time
+       */
+      end_at: string
+      /** Events */
+      events: components['schemas']['BookingEventOut'][]
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      listing: components['schemas']['ListingRef']
+      /**
+       * Owner Name
+       * @description Shown to the provider only
+       */
+      owner_name: string | null
+      /** Owner Notes */
+      owner_notes: string | null
+      /**
+       * Payment Is Mock
+       * @description Always true in the MVP
+       * @default true
+       */
+      payment_is_mock: boolean
+      payment_status: components['schemas']['PaymentStatus']
+      /** Payments */
+      payments: components['schemas']['PaymentOut'][]
+      /** Pets */
+      pets: components['schemas']['BookingPetOut'][]
+      policy: components['schemas']['PolicyOut']
+      /** Response Deadline */
+      response_deadline: string | null
+      /** Service Id */
+      service_id: string | null
+      service_mode: components['schemas']['ServiceMode']
+      /** Service Title */
+      service_title: string
+      /**
+       * Start At
+       * Format: date-time
+       */
+      start_at: string
+      status: components['schemas']['BookingStatus']
+      /** Timezone */
+      timezone: string
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+      viewer_role: components['schemas']['ViewerRole']
+      /**
+       * Visit Address
+       * @description Home visits: hidden from the provider until the booking is confirmed
+       */
+      visit_address: string | null
+    }
+    /** BookingEventOut */
+    BookingEventOut: {
+      /** Actor Role */
+      actor_role: string
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Details */
+      details: {
+        [key: string]: unknown
+      } | null
+      /** Event */
+      event: string
+      from_status: components['schemas']['BookingStatus'] | null
+      /** Reason */
+      reason: string | null
+      to_status: components['schemas']['BookingStatus'] | null
+    }
+    /** BookingList */
+    BookingList: {
+      /** Items */
+      items: components['schemas']['BookingOut'][]
+    }
+    /** BookingOut */
+    BookingOut: {
+      /** Allowed Actions */
+      allowed_actions: components['schemas']['BookingAction'][]
+      /** Amount Minor */
+      amount_minor: number
+      /** Booking Type */
+      booking_type: string
+      /** Cancel Reason */
+      cancel_reason: string | null
+      cancellation_outcome: components['schemas']['CancellationOutcome'] | null
+      confirmation_mode: components['schemas']['ConfirmationMode']
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Currency */
+      currency: string
+      /**
+       * End At
+       * Format: date-time
+       */
+      end_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      listing: components['schemas']['ListingRef']
+      /**
+       * Owner Name
+       * @description Shown to the provider only
+       */
+      owner_name: string | null
+      /** Owner Notes */
+      owner_notes: string | null
+      /**
+       * Payment Is Mock
+       * @description Always true in the MVP
+       * @default true
+       */
+      payment_is_mock: boolean
+      payment_status: components['schemas']['PaymentStatus']
+      /** Pets */
+      pets: components['schemas']['BookingPetOut'][]
+      policy: components['schemas']['PolicyOut']
+      /** Response Deadline */
+      response_deadline: string | null
+      /** Service Id */
+      service_id: string | null
+      service_mode: components['schemas']['ServiceMode']
+      /** Service Title */
+      service_title: string
+      /**
+       * Start At
+       * Format: date-time
+       */
+      start_at: string
+      status: components['schemas']['BookingStatus']
+      /** Timezone */
+      timezone: string
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+      viewer_role: components['schemas']['ViewerRole']
+      /**
+       * Visit Address
+       * @description Home visits: hidden from the provider until the booking is confirmed
+       */
+      visit_address: string | null
+    }
+    /** BookingPetOut */
+    BookingPetOut: {
+      /** Breed */
+      breed: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+      /** Species */
+      species: string
+    }
+    /**
+     * BookingStatus
+     * @enum {string}
+     */
+    BookingStatus:
+      | 'pending_provider'
+      | 'confirmed'
+      | 'in_progress'
+      | 'completed'
+      | 'declined'
+      | 'expired'
+      | 'cancelled_by_owner'
+      | 'cancelled_by_provider'
+      | 'cancelled_by_admin'
+      | 'no_show'
+      | 'disputed'
+    /**
+     * CancellationOutcome
+     * @enum {string}
+     */
+    CancellationOutcome: 'not_charged' | 'full_refund' | 'late_no_refund'
     /**
      * Channel
      * @enum {string}
@@ -1320,6 +1767,19 @@ export interface components {
      * @enum {string}
      */
     ListingKind: 'clinic' | 'vet'
+    /** ListingRef */
+    ListingRef: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      kind: components['schemas']['ListingKind']
+      /** Locality */
+      locality: string | null
+      /** Name */
+      name: string
+    }
     /** MeResponse */
     MeResponse: {
       /**
@@ -1402,6 +1862,46 @@ export interface components {
      * @enum {string}
      */
     OwnerType: 'clinic' | 'provider_profile'
+    /** PaymentIn */
+    PaymentIn: {
+      /**
+       * Method
+       * @description pay_now runs the MOCK payment adapter: nothing is ever charged
+       * @enum {string}
+       */
+      method: 'pay_now' | 'pay_at_visit'
+    }
+    /** PaymentOut */
+    PaymentOut: {
+      /** Amount Minor */
+      amount_minor: number
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Currency */
+      currency: string
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: 'charge' | 'refund'
+      /**
+       * Provider
+       * @constant
+       */
+      provider: 'mock'
+      /** Reference */
+      reference: string
+      /** Status */
+      status: string
+    }
+    /**
+     * PaymentStatus
+     * @enum {string}
+     */
+    PaymentStatus: 'not_due' | 'unpaid' | 'pay_at_visit' | 'paid' | 'refunded' | 'not_refunded'
     /** PersonSummary */
     PersonSummary: {
       /** Display Name */
@@ -1569,6 +2069,20 @@ export interface components {
        */
       media_id: string
       upload: components['schemas']['UploadInstructions']
+    }
+    /** PolicyOut */
+    PolicyOut: {
+      /** Free Cancellation Hours Before */
+      free_cancellation_hours_before: number
+      /**
+       * Free Cancellation Until
+       * Format: date-time
+       */
+      free_cancellation_until: string
+      /** Late Cancellation */
+      late_cancellation: string
+      /** Provider Cancellation */
+      provider_cancellation: string
     }
     /** ProviderProfileCreate */
     ProviderProfileCreate: {
@@ -1789,10 +2303,23 @@ export interface components {
        */
       status: 'ready'
     }
+    /** ReasonIn */
+    ReasonIn: {
+      /** Reason */
+      reason?: string | null
+    }
     /** RefreshRequest */
     RefreshRequest: {
       /** Refresh Token */
       refresh_token: string
+    }
+    /** RescheduleIn */
+    RescheduleIn: {
+      /**
+       * Start At
+       * Format: date-time
+       */
+      start_at: string
     }
     /** ReviewDocumentView */
     ReviewDocumentView: {
@@ -2275,6 +2802,11 @@ export interface components {
       /** Years Experience */
       years_experience: number | null
     }
+    /**
+     * ViewerRole
+     * @enum {string}
+     */
+    ViewerRole: 'owner' | 'provider' | 'admin'
     /** WebSession */
     WebSession: {
       /** Access Token */
@@ -3421,6 +3953,862 @@ export interface operations {
       }
     }
   }
+  my_bookings_api_v1_bookings_get: {
+    parameters: {
+      query?: {
+        scope?: 'upcoming' | 'past'
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingList']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  create_booking_api_v1_bookings_post: {
+    parameters: {
+      query?: never
+      header?: {
+        'Idempotency-Key'?: string | null
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BookingCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  booking_detail_api_v1_bookings__booking_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  cancel_api_v1_bookings__booking_id__cancel_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReasonIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  check_in_api_v1_bookings__booking_id__check_in_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  complete_api_v1_bookings__booking_id__complete_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  confirm_api_v1_bookings__booking_id__confirm_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  decline_api_v1_bookings__booking_id__decline_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReasonIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  no_show_api_v1_bookings__booking_id__no_show_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  payment_api_v1_bookings__booking_id__payment_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PaymentIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  reschedule_api_v1_bookings__booking_id__reschedule_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RescheduleIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   create_clinic_api_v1_clinics_post: {
     parameters: {
       query?: never
@@ -4227,6 +5615,85 @@ export interface operations {
       }
       /** @description Forbidden */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  listing_bookings_api_v1_manage__owner_type___owner_id__bookings_get: {
+    parameters: {
+      query?: {
+        scope?: 'requests' | 'upcoming' | 'past'
+      }
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingList']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown
         }
