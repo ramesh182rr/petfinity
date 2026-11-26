@@ -46,11 +46,41 @@ Owner only. Another user's pet returns **404**, so a pet's existence is never re
 3. `PUT /pets/{pet_id}/photo` `{media_id}` → the pet. The API verifies existence, size and real file type. Errors: 409 `upload_not_found` / `upload_already_used`, 422 `invalid_file`.
 - `DELETE /pets/{pet_id}/photo` → the pet, with the photo removed.
 
-## Discovery
-- `GET /providers?category=&lat=&lng=&radius=&service=&price_min=&price_max=&verified=&available=`
-- `GET /providers/{provider_id}`
-- `GET /clinics/{clinic_id}`
-- `GET /services`
+## Discovery (implemented 2.5, [decision 0011](decisions/0011-launch-areas-and-locations.md))
+Signed-in users only.
+
+What is listed:
+- Only **verified, active** clinics and veterinarians with at least one active service. Vets appear only for their home-visit services.
+- Anything else returns 404, the same as a missing ID.
+
+Origin: either `area` (a launch-area key) or `lat` + `lng` (device location, never stored). With neither, the API returns 422 `location_required`.
+
+| Method and path | Purpose |
+|---|---|
+| `GET /discover/areas` | The 10 launch areas with centre points, the default/max radius (10/25 km) and vet travel radius choices |
+| `GET /discover/search` | Search. Parameters: origin; `radius_km` (1–25, default 10); `kind` (all/clinic/vet); `category`; `mode` (in_clinic/home_visit); `species`; `price_max_minor`; `open_now`; `emergency`; `q` (name, locality or qualifications); `sort` (distance/price); `limit` (≤50); `offset`. Returns `{items, total, origin, radius_km}` |
+| `GET /discover/clinics/{id}` | Public clinic page (optional origin for distance) |
+| `GET /discover/vets/{id}` | Public home-visit vet page (optional origin for `visits_you`) |
+| `GET /discover/clinics/{id}/slots?service_id&date` | Open slots for one service on one date |
+| `GET /discover/vets/{id}/slots?service_id&date` | Same, for a vet's home-visit service |
+
+How results are worked out:
+- **Clinics** match when within `radius_km` of the origin. **Vets** match when the origin is inside the vet's own travel radius (`service_radius_km`, default 10).
+- Each listing summarises its matching services: modes, categories, from-price, count.
+- `open_now` uses today's hours and exceptions in the listing's timezone.
+- `next_slot_at` is the earliest slot within 7 days for the shortest matching service. It is computed for the returned page only.
+- A listing without an exact pin uses its area's centre, with `distance_is_approximate: true`.
+
+Privacy (doc 13):
+- Public shapes never include phone or email, registration numbers, verification documents, slot capacity or internal day-off notes.
+- A vet's base coordinates are never returned, and neither is a distance to the vet. Only `area_name` and `service_radius_km` are shown.
+- `badge.checks` says in plain words what was verified.
+
+Provider-side location fields:
+- `ClinicCreate`/`ClinicUpdate` and `ProviderProfileCreate`/`ProviderProfileUpdate` accept `area_key`.
+- Profiles also accept `latitude`, `longitude` and `service_radius_km` (5, 10, 15 or 25).
+- A pin must lie within 50 km of the chosen area (422 `location_outside_area`).
+- Without an area, it is inferred from the pin or the city.
 
 ## Provider onboarding and verification (implemented 2.1)
 Authorisation: provider profiles are owner-only; clinic edits are for operators only; non-members get 404.

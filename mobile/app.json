@@ -39,7 +39,15 @@
       "expo-asset",
       "expo-secure-store",
       "expo-image",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Petfinity uses your location to find verified vets and clinics near you and, for providers, to pin your practice. Searches don't save your location.",
+          "isAndroidBackgroundLocationEnabled": false,
+          "isIosBackgroundLocationEnabled": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

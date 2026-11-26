@@ -1,18 +1,30 @@
 from __future__ import annotations
 
 import uuid
-from typing import Annotated, Any
+from decimal import Decimal
+from typing import Annotated, Any, Self
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
 from app.core.text import clean_required, clean_text
 from app.core.types import UtcDatetime
+from app.modules.discovery.areas import SERVICE_RADIUS_CHOICES, AreaKey
 from app.modules.providers.models import ProviderType
 from app.modules.verification.status import ActiveStatus, VerificationStatus
 
 Lang = Annotated[str, StringConstraints(min_length=2, max_length=30)]
 
 CREDENTIAL_FIELDS = ("registration_number", "registration_council", "qualifications")
+LOCATION_FIELDS = ("area_key", "latitude", "longitude", "service_radius_km")
+Lat = Annotated[Decimal, Field(ge=-90, le=90, max_digits=9, decimal_places=6)]
+Lng = Annotated[Decimal, Field(ge=-180, le=180, max_digits=9, decimal_places=6)]
 
 
 class _ProfileFields(BaseModel):
@@ -25,6 +37,28 @@ class _ProfileFields(BaseModel):
     registration_number: Annotated[str, StringConstraints(max_length=50)] | None = None
     registration_council: Annotated[str, StringConstraints(max_length=120)] | None = None
     qualifications: Annotated[str, StringConstraints(max_length=200)] | None = None
+    # Home-visit base and reach (decision 0011). The coordinates stay private.
+    area_key: AreaKey | None = None
+    latitude: Lat | None = None
+    longitude: Lng | None = None
+    service_radius_km: int | None = Field(
+        default=None, description=f"One of {', '.join(map(str, SERVICE_RADIUS_CHOICES))}"
+    )
+
+    @field_validator("service_radius_km")
+    @classmethod
+    def _radius(cls, value: int | None) -> int | None:
+        if value is not None and value not in SERVICE_RADIUS_CHOICES:
+            raise ValueError(f"choose one of {', '.join(map(str, SERVICE_RADIUS_CHOICES))} km")
+        return value
+
+    @model_validator(mode="after")
+    def _pair(self) -> Self:
+        if ("latitude" in self.model_fields_set) != ("longitude" in self.model_fields_set) or (
+            (self.latitude is None) != (self.longitude is None)
+        ):
+            raise ValueError("latitude and longitude must be provided together")
+        return self
 
     @field_validator("bio", "city", "registration_number", "registration_council", "qualifications")
     @classmethod
@@ -81,6 +115,10 @@ class ProviderProfileResponse(BaseModel):
     registration_number: str | None
     registration_council: str | None
     qualifications: str | None
+    area_key: AreaKey | None
+    latitude: Decimal | None
+    longitude: Decimal | None
+    service_radius_km: int | None
     verification_status: VerificationStatus
     verified_at: UtcDatetime | None
     status: ActiveStatus

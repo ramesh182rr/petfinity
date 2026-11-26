@@ -10,6 +10,7 @@ from app.modules.auth.router import router as auth_router
 from app.modules.auth.web_router import router as auth_web_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.clinics.router import router as clinics_router
+from app.modules.discovery.router import router as discovery_router
 from app.modules.health.router import router as health_router
 from app.modules.pets.router import router as pets_router
 from app.modules.providers.router import router as providers_router
@@ -28,5 +29,6 @@ api_router.include_router(pets_router)
 api_router.include_router(providers_router)
 api_router.include_router(clinics_router)
 api_router.include_router(catalog_router)
+api_router.include_router(discovery_router)
 api_router.include_router(verification_router)
 api_router.include_router(verification_admin_router)

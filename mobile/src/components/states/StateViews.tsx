@@ -134,7 +134,9 @@ export function ErrorState({
           {message}
         </Text>
       </View>
-      {onRetry ? <Button label="Try again" icon="refresh" onPress={onRetry} /> : null}
+      {onRetry ? (
+        <Button label="Try again" icon="refresh" onPress={onRetry} style={styles.action} />
+      ) : null}
       {requestId ? (
         <Text variant="caption" color="textMuted" selectable>
           Reference: {requestId}

@@ -4,7 +4,13 @@ type Handler = (body: unknown, headers: Record<string, string>) => [number, unkn
 
 export type FakeApi = {
   on(method: string, path: string, handler: Handler): void;
-  calls: { method: string; path: string; body: unknown; headers: Record<string, string> }[];
+  calls: {
+    method: string;
+    path: string;
+    query: URLSearchParams;
+    body: unknown;
+    headers: Record<string, string>;
+  }[];
   fetch: jest.Mock;
 };
 
@@ -20,11 +26,12 @@ export function createFakeApi(): FakeApi {
   const calls: FakeApi['calls'] = [];
   const fetchMock = jest.fn(async (url: string, init: RequestInit = {}) => {
     const method = init.method ?? 'GET';
-    const path = new URL(url).pathname.replace('/api/v1', '');
+    const parsed = new URL(url);
+    const path = parsed.pathname.replace('/api/v1', '');
     const headers = (init.headers ?? {}) as Record<string, string>;
     // Only JSON (string) bodies are parsed; binary uploads (Blob) are passed through.
     const body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
-    calls.push({ method, path, body, headers });
+    calls.push({ method, path, query: parsed.searchParams, body, headers });
     const handler = routes.get(`${method} ${path}`);
     if (!handler) {
       return json(404, { error: { code: 'not_found', message: 'Not Found', request_id: 'x' } });

@@ -7,6 +7,10 @@ import { Button, ChipGroup, FormSection, Text, TextField } from '@/components/ui
 import { normalizeIndianContact } from '@/features/auth/identifiers';
 import { colors, spacing } from '@/theme';
 
+import { LocationField } from '@/features/discovery/LocationField';
+import { useAreas } from '@/features/discovery/hooks';
+import type { AreaKey } from '@/features/discovery/types';
+
 import { STATES } from './labels';
 import type { Clinic, ClinicCreate } from './types';
 
@@ -31,6 +35,9 @@ const schema = z.object({
     .regex(/^[1-9]\d{5}$/, 'Enter a valid 6-digit PIN code.'),
   emergencyServices: z.boolean(),
   practisesHere: z.boolean(),
+  areaKey: z.string().nullable(),
+  latitude: z.string().nullable(),
+  longitude: z.string().nullable(),
 });
 type Values = z.infer<typeof schema>;
 
@@ -49,6 +56,9 @@ export function toClinicPayload(v: Values, includePractises: boolean): ClinicCre
     postal_code: v.postalCode.trim(),
     emergency_services: v.emergencyServices,
     practises_here: includePractises && v.practisesHere,
+    area_key: (v.areaKey as AreaKey | null) ?? null,
+    latitude: v.latitude,
+    longitude: v.longitude,
   };
 }
 
@@ -83,10 +93,18 @@ export function ClinicForm({
       postalCode: initial?.postal_code ?? '',
       emergencyServices: initial?.emergency_services ?? false,
       practisesHere: false,
+      areaKey: initial?.area_key ?? null,
+      latitude: initial?.latitude ?? null,
+      longitude: initial?.longitude ?? null,
     },
   });
   const e = formState.errors;
   const state = useWatch({ control, name: 'state' });
+  const [areaKey, latitude, longitude, city] = useWatch({
+    control,
+    name: ['areaKey', 'latitude', 'longitude', 'city'],
+  });
+  const knownCities = useAreas().data?.areas.map((a) => a.name) ?? [];
   const submit = handleSubmit((v) => onSubmit(toClinicPayload(v, !initial && canPractise)));
 
   const field = (
@@ -151,7 +169,29 @@ export function ClinicForm({
         {toggle('emergencyServices', 'Emergency services', 'You accept urgent cases.')}
       </FormSection>
 
-      <FormSection title="Address" note="A map pin arrives with the discovery map.">
+      <FormSection
+        title="Location"
+        note="Pet parents nearby find you by this. Pin it while you're at the clinic for exact distances."
+      >
+        <LocationField
+          testID="clinic-location"
+          value={{ areaKey: areaKey as AreaKey | null, latitude, longitude }}
+          onChange={(next) => {
+            setValue('areaKey', next.areaKey);
+            setValue('latitude', next.latitude);
+            setValue('longitude', next.longitude);
+          }}
+          onAreaPicked={(area) => {
+            if (!city.trim() || knownCities.includes(city.trim())) {
+              setValue('city', area.name, { shouldValidate: true });
+            }
+            setValue('state', area.state, { shouldValidate: true });
+          }}
+          pinHint="Until then, distance is estimated from the area's centre."
+        />
+      </FormSection>
+
+      <FormSection title="Address" note="Shown on your public listing.">
         {field('addressLine1', 'Street address', { autoCapitalize: 'words' })}
         {field('addressLine2', 'Building / floor (optional)')}
         {field('locality', 'Area / locality', {

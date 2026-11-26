@@ -31,6 +31,7 @@ def to_response(clinic: Clinic, roles: list[MemberRole]) -> ClinicResponse:
         postal_code=clinic.postal_code,
         latitude=clinic.latitude,
         longitude=clinic.longitude,
+        area_key=clinic.area_key,
         timezone=clinic.timezone,
         emergency_services=clinic.emergency_services,
         verification_status=clinic.verification_status,

@@ -20,7 +20,7 @@
 - Solo developer with Claude; Claude does not commit; suggests commit messages.
 
 ## Decisions to confirm before coding beyond foundation
-1. Launch areas and initial service radii within Tamil Nadu, Kerala and Bengaluru.
+1. ~~Launch areas and service radii~~: **decided.** 10 launch cities, a 10 km default search radius (up to 25 km), and home-visit vets by travel radius ([0011](decisions/0011-launch-areas-and-locations.md)).
 2. ~~User auth strategy~~: **decided.** Passwordless OTP via email or phone ([0007](decisions/0007-authentication.md)). Delivery providers are still open under #15.
 3. ~~Map provider~~: **decided.** Google Maps, list-first discovery ([0010](decisions/0010-maps-google.md)).
 4. Provider verification process and evidence sources.

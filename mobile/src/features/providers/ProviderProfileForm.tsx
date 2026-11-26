@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { z } from 'zod';
 
 import { Button, ChipGroup, FormSection, Text, TextField } from '@/components/ui';
+import { LocationField } from '@/features/discovery/LocationField';
+import type { AreaKey } from '@/features/discovery/types';
 import { spacing } from '@/theme';
 
 import { COUNCILS, LANGUAGES } from './labels';
@@ -24,6 +26,10 @@ const schema = z.object({
   registrationNumber: z.string().trim().max(50),
   registrationCouncil: z.string().trim().max(120),
   qualifications: z.string().trim().max(200),
+  areaKey: z.string().nullable(),
+  latitude: z.string().nullable(),
+  longitude: z.string().nullable(),
+  serviceRadiusKm: z.number().nullable(),
 });
 type Values = z.infer<typeof schema>;
 
@@ -41,6 +47,10 @@ export function toProfilePayload(values: Values, type: ProviderType): ProviderPr
     base.registration_number = nullIfEmpty(values.registrationNumber);
     base.registration_council = nullIfEmpty(values.registrationCouncil);
     base.qualifications = nullIfEmpty(values.qualifications);
+    base.area_key = (values.areaKey as AreaKey | null) ?? null;
+    base.latitude = values.latitude;
+    base.longitude = values.longitude;
+    base.service_radius_km = values.serviceRadiusKm;
   }
   return base;
 }
@@ -62,7 +72,7 @@ export function ProviderProfileForm({
   serverError,
   onSubmit,
 }: Props) {
-  const { control, handleSubmit, formState } = useForm<Values>({
+  const { control, handleSubmit, formState, setValue } = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: {
       displayName: initial?.display_name ?? '',
@@ -73,10 +83,18 @@ export function ProviderProfileForm({
       registrationNumber: initial?.registration_number ?? '',
       registrationCouncil: initial?.registration_council ?? '',
       qualifications: initial?.qualifications ?? '',
+      areaKey: initial?.area_key ?? null,
+      latitude: initial?.latitude ?? null,
+      longitude: initial?.longitude ?? null,
+      serviceRadiusKm: initial?.service_radius_km ?? 10,
     },
   });
   const e = formState.errors;
   const isVet = type === 'veterinarian';
+  const [areaKey, latitude, longitude, radiusKm, city] = useWatch({
+    control,
+    name: ['areaKey', 'latitude', 'longitude', 'serviceRadiusKm', 'city'],
+  });
   const submit = handleSubmit((values) => onSubmit(toProfilePayload(values, type)));
 
   const field = (
@@ -167,6 +185,28 @@ export function ProviderProfileForm({
             )}
           />
           {field('qualifications', 'Qualifications', { placeholder: 'e.g. B.V.Sc. & A.H.' })}
+        </FormSection>
+      ) : null}
+
+      {isVet ? (
+        <FormSection
+          title="Home visits"
+          note="Pet parents inside your travel radius can find you. Your pin is private: they only see the area and radius."
+        >
+          <LocationField
+            testID="provider-location"
+            value={{ areaKey: areaKey as AreaKey | null, latitude, longitude }}
+            onChange={(next) => {
+              setValue('areaKey', next.areaKey);
+              setValue('latitude', next.latitude);
+              setValue('longitude', next.longitude);
+            }}
+            onAreaPicked={(area) => {
+              if (!city.trim()) setValue('city', area.name);
+            }}
+            radius={{ value: radiusKm, onChange: (km) => setValue('serviceRadiusKm', km) }}
+            pinHint="Pin where you start your visits for accurate matching. Until then we use the area's centre."
+          />
         </FormSection>
       ) : null}
 

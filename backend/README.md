@@ -31,6 +31,8 @@ app/
   db/                # engine/session, declarative base + conventions
   api/v1/router.py   # registers module routers under /api/v1
   modules/<name>/    # one folder per domain module (router, schemas, service, models)
+                     # e.g. discovery/ (launch areas, search, public listing pages), catalog/ (services, hours, slots)
+  dev/seed_demo.py   # demo discovery listings for local development (refuses outside local/development)
   openapi_export.py  # writes openapi.json, the contract consumed by mobile/
 alembic/             # migrations (versions/ named YYYYMMDD_<rev>_<slug>.py)
 tests/               # pytest against real PostgreSQL

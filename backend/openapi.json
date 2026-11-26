@@ -9,6 +9,118 @@
         "title": "ActiveStatus",
         "type": "string"
       },
+      "AreaKey": {
+        "enum": [
+          "chennai",
+          "coimbatore",
+          "madurai",
+          "tiruchirappalli",
+          "salem",
+          "kochi",
+          "thiruvananthapuram",
+          "kozhikode",
+          "thrissur",
+          "bengaluru"
+        ],
+        "title": "AreaKey",
+        "type": "string"
+      },
+      "AreaOut": {
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/AreaKey"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "state",
+          "latitude",
+          "longitude"
+        ],
+        "title": "AreaOut",
+        "type": "object"
+      },
+      "AreasResponse": {
+        "properties": {
+          "areas": {
+            "items": {
+              "$ref": "#/components/schemas/AreaOut"
+            },
+            "title": "Areas",
+            "type": "array"
+          },
+          "default_radius_km": {
+            "title": "Default Radius Km",
+            "type": "integer"
+          },
+          "max_radius_km": {
+            "title": "Max Radius Km",
+            "type": "integer"
+          },
+          "service_radius_choices_km": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Service Radius Choices Km",
+            "type": "array"
+          }
+        },
+        "required": [
+          "areas",
+          "default_radius_km",
+          "max_radius_km",
+          "service_radius_choices_km"
+        ],
+        "title": "AreasResponse",
+        "type": "object"
+      },
+      "Badge": {
+        "properties": {
+          "checks": {
+            "description": "What Petfinity checked before verifying, in plain words",
+            "items": {
+              "type": "string"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          }
+        },
+        "required": [
+          "verified_at",
+          "checks"
+        ],
+        "title": "Badge",
+        "type": "object"
+      },
       "Channel": {
         "enum": [
           "email",
@@ -180,6 +292,16 @@
             ],
             "title": "Address Line2"
           },
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "city": {
             "maxLength": 80,
             "minLength": 2,
@@ -304,6 +426,222 @@
         "title": "ClinicCreate",
         "type": "object"
       },
+      "ClinicDetail": {
+        "properties": {
+          "address_line1": {
+            "title": "Address Line1",
+            "type": "string"
+          },
+          "address_line2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line2"
+          },
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "badge": {
+            "$ref": "#/components/schemas/Badge"
+          },
+          "city": {
+            "title": "City",
+            "type": "string"
+          },
+          "closures": {
+            "description": "Days off and special hours, next 14 days",
+            "items": {
+              "$ref": "#/components/schemas/Closure"
+            },
+            "title": "Closures",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "distance_is_approximate": {
+            "title": "Distance Is Approximate",
+            "type": "boolean"
+          },
+          "distance_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Km"
+          },
+          "doctors": {
+            "items": {
+              "$ref": "#/components/schemas/DoctorOut"
+            },
+            "title": "Doctors",
+            "type": "array"
+          },
+          "emergency_services": {
+            "title": "Emergency Services",
+            "type": "boolean"
+          },
+          "hours": {
+            "items": {
+              "$ref": "#/components/schemas/DayHours"
+            },
+            "title": "Hours",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "locality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locality"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_now": {
+            "title": "Open Now",
+            "type": "boolean"
+          },
+          "postal_code": {
+            "title": "Postal Code",
+            "type": "string"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/PublicService"
+            },
+            "title": "Services",
+            "type": "array"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "area_name",
+          "timezone",
+          "badge",
+          "open_now",
+          "hours",
+          "closures",
+          "services",
+          "name",
+          "description",
+          "address_line1",
+          "address_line2",
+          "locality",
+          "city",
+          "state",
+          "postal_code",
+          "latitude",
+          "longitude",
+          "distance_km",
+          "distance_is_approximate",
+          "emergency_services",
+          "doctors"
+        ],
+        "title": "ClinicDetail",
+        "type": "object"
+      },
+      "ClinicRef": {
+        "properties": {
+          "city": {
+            "title": "City",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "locality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locality"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "locality",
+          "city"
+        ],
+        "title": "ClinicRef",
+        "type": "object"
+      },
       "ClinicResponse": {
         "properties": {
           "address_line1": {
@@ -320,6 +658,16 @@
               }
             ],
             "title": "Address Line2"
+          },
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "city": {
             "title": "City",
@@ -459,6 +807,7 @@
           "postal_code",
           "latitude",
           "longitude",
+          "area_key",
           "timezone",
           "emergency_services",
           "verification_status",
@@ -498,6 +847,16 @@
               }
             ],
             "title": "Address Line2"
+          },
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "city": {
             "anyOf": [
@@ -644,6 +1003,55 @@
         "title": "ClinicUpdate",
         "type": "object"
       },
+      "Closure": {
+        "properties": {
+          "end_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Time"
+          },
+          "kind": {
+            "enum": [
+              "closed",
+              "custom_hours"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "start_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Time"
+          }
+        },
+        "required": [
+          "on_date",
+          "kind",
+          "start_time",
+          "end_time"
+        ],
+        "title": "Closure",
+        "type": "object"
+      },
       "ConfirmationMode": {
         "enum": [
           "instant",
@@ -651,6 +1059,30 @@
         ],
         "title": "ConfirmationMode",
         "type": "string"
+      },
+      "DayHours": {
+        "properties": {
+          "ranges": {
+            "items": {
+              "$ref": "#/components/schemas/HoursRange"
+            },
+            "title": "Ranges",
+            "type": "array"
+          },
+          "weekday": {
+            "description": "0 = Monday",
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Weekday",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "weekday",
+          "ranges"
+        ],
+        "title": "DayHours",
+        "type": "object"
       },
       "Decision": {
         "enum": [
@@ -683,6 +1115,57 @@
           "decision"
         ],
         "title": "DecisionRequest",
+        "type": "object"
+      },
+      "DoctorOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "qualifications": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qualifications"
+          },
+          "years_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Experience"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "qualifications",
+          "years_experience",
+          "languages"
+        ],
+        "title": "DoctorOut",
         "type": "object"
       },
       "DocumentConfirm": {
@@ -1083,6 +1566,213 @@
         "title": "HistoryEntry",
         "type": "object"
       },
+      "HoursRange": {
+        "properties": {
+          "end_time": {
+            "format": "time",
+            "title": "End Time",
+            "type": "string"
+          },
+          "start_time": {
+            "format": "time",
+            "title": "Start Time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_time",
+          "end_time"
+        ],
+        "title": "HoursRange",
+        "type": "object"
+      },
+      "KindFilter": {
+        "enum": [
+          "all",
+          "clinic",
+          "vet"
+        ],
+        "title": "KindFilter",
+        "type": "string"
+      },
+      "Listing": {
+        "properties": {
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/ServiceCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "distance_is_approximate": {
+            "description": "True when the clinic has no exact pin and its area centre was used",
+            "title": "Distance Is Approximate",
+            "type": "boolean"
+          },
+          "distance_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Clinics only. Never set for home-visit vets, whose base is private.",
+            "title": "Distance Km"
+          },
+          "emergency": {
+            "title": "Emergency",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ListingKind"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "modes": {
+            "items": {
+              "$ref": "#/components/schemas/ServiceMode"
+            },
+            "title": "Modes",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_slot_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Earliest bookable slot within 7 days",
+            "title": "Next Slot At"
+          },
+          "open_now": {
+            "title": "Open Now",
+            "type": "boolean"
+          },
+          "price_from_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price From Minor"
+          },
+          "service_count": {
+            "title": "Service Count",
+            "type": "integer"
+          },
+          "service_radius_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Home-visit vets: how far they travel",
+            "title": "Service Radius Km"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Clinic locality or a vet's qualifications",
+            "title": "Subtitle"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          },
+          "years_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Experience"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "name",
+          "subtitle",
+          "area_name",
+          "distance_km",
+          "distance_is_approximate",
+          "service_radius_km",
+          "verified_at",
+          "emergency",
+          "modes",
+          "categories",
+          "price_from_minor",
+          "service_count",
+          "open_now",
+          "next_slot_at",
+          "languages",
+          "years_experience"
+        ],
+        "title": "Listing",
+        "type": "object"
+      },
+      "ListingKind": {
+        "enum": [
+          "clinic",
+          "vet"
+        ],
+        "title": "ListingKind",
+        "type": "string"
+      },
       "MeResponse": {
         "properties": {
           "capabilities": {
@@ -1180,6 +1870,41 @@
         ],
         "title": "MemberRole",
         "type": "string"
+      },
+      "Origin": {
+        "description": "Where distances are measured from: a launch area's centre or the device.",
+        "properties": {
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude",
+          "area_key",
+          "label"
+        ],
+        "title": "Origin",
+        "type": "object"
       },
       "OtpRequest": {
         "properties": {
@@ -1957,6 +2682,16 @@
       "ProviderProfileCreate": {
         "additionalProperties": false,
         "properties": {
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "bio": {
             "anyOf": [
               {
@@ -2004,6 +2739,38 @@
             ],
             "title": "Languages"
           },
+          "latitude": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
           "provider_type": {
             "$ref": "#/components/schemas/ProviderType"
           },
@@ -2043,6 +2810,18 @@
             ],
             "title": "Registration Number"
           },
+          "service_radius_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "One of 5, 10, 15, 25",
+            "title": "Service Radius Km"
+          },
           "years_experience": {
             "anyOf": [
               {
@@ -2066,6 +2845,16 @@
       },
       "ProviderProfileResponse": {
         "properties": {
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "bio": {
             "anyOf": [
               {
@@ -2109,6 +2898,28 @@
             "title": "Languages",
             "type": "array"
           },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
           "provider_type": {
             "$ref": "#/components/schemas/ProviderType"
           },
@@ -2144,6 +2955,17 @@
               }
             ],
             "title": "Registration Number"
+          },
+          "service_radius_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Radius Km"
           },
           "status": {
             "$ref": "#/components/schemas/ActiveStatus"
@@ -2191,6 +3013,10 @@
           "registration_number",
           "registration_council",
           "qualifications",
+          "area_key",
+          "latitude",
+          "longitude",
+          "service_radius_km",
           "verification_status",
           "verified_at",
           "status",
@@ -2203,6 +3029,16 @@
       "ProviderProfileUpdate": {
         "additionalProperties": false,
         "properties": {
+          "area_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AreaKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "bio": {
             "anyOf": [
               {
@@ -2257,6 +3093,38 @@
             ],
             "title": "Languages"
           },
+          "latitude": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
           "qualifications": {
             "anyOf": [
               {
@@ -2293,6 +3161,18 @@
             ],
             "title": "Registration Number"
           },
+          "service_radius_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "One of 5, 10, 15, 25",
+            "title": "Service Radius Km"
+          },
           "years_experience": {
             "anyOf": [
               {
@@ -2317,6 +3197,132 @@
         ],
         "title": "ProviderType",
         "type": "string"
+      },
+      "PublicService": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/ServiceCategory"
+          },
+          "confirmation_mode": {
+            "$ref": "#/components/schemas/ConfirmationMode"
+          },
+          "currency": {
+            "const": "INR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "duration_minutes": {
+            "title": "Duration Minutes",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "price_minor": {
+            "title": "Price Minor",
+            "type": "integer"
+          },
+          "service_mode": {
+            "$ref": "#/components/schemas/ServiceMode"
+          },
+          "species": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Species",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "title",
+          "description",
+          "price_minor",
+          "currency",
+          "duration_minutes",
+          "service_mode",
+          "confirmation_mode",
+          "species"
+        ],
+        "title": "PublicService",
+        "type": "object"
+      },
+      "PublicSlot": {
+        "properties": {
+          "end": {
+            "format": "date-time",
+            "title": "End",
+            "type": "string"
+          },
+          "local_start": {
+            "description": "HH:MM in the listing's timezone",
+            "title": "Local Start",
+            "type": "string"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "local_start"
+        ],
+        "title": "PublicSlot",
+        "type": "object"
+      },
+      "PublicSlots": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "service_id": {
+            "format": "uuid",
+            "title": "Service Id",
+            "type": "string"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/PublicSlot"
+            },
+            "title": "Slots",
+            "type": "array"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "timezone",
+          "service_id",
+          "slots"
+        ],
+        "title": "PublicSlots",
+        "type": "object"
       },
       "QueueEntry": {
         "properties": {
@@ -2584,6 +3590,36 @@
           "end_time"
         ],
         "title": "RuleOut",
+        "type": "object"
+      },
+      "SearchResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Listing"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "radius_km": {
+            "title": "Radius Km",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "origin",
+          "radius_km"
+        ],
+        "title": "SearchResponse",
         "type": "object"
       },
       "ServiceCategory": {
@@ -3033,6 +4069,14 @@
         ],
         "title": "SlotPreview",
         "type": "object"
+      },
+      "SortOrder": {
+        "enum": [
+          "distance",
+          "price"
+        ],
+        "title": "SortOrder",
+        "type": "string"
       },
       "Species": {
         "enum": [
@@ -3524,6 +4568,146 @@
         ],
         "title": "VerificationStatus",
         "type": "string"
+      },
+      "VetDetail": {
+        "properties": {
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "badge": {
+            "$ref": "#/components/schemas/Badge"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "clinics": {
+            "items": {
+              "$ref": "#/components/schemas/ClinicRef"
+            },
+            "title": "Clinics",
+            "type": "array"
+          },
+          "closures": {
+            "description": "Days off and special hours, next 14 days",
+            "items": {
+              "$ref": "#/components/schemas/Closure"
+            },
+            "title": "Closures",
+            "type": "array"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "hours": {
+            "items": {
+              "$ref": "#/components/schemas/DayHours"
+            },
+            "title": "Hours",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "open_now": {
+            "title": "Open Now",
+            "type": "boolean"
+          },
+          "qualifications": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qualifications"
+          },
+          "service_radius_km": {
+            "title": "Service Radius Km",
+            "type": "integer"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/PublicService"
+            },
+            "title": "Services",
+            "type": "array"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          },
+          "visits_you": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Whether the search origin is inside the vet's home-visit radius (null when no origin was given)",
+            "title": "Visits You"
+          },
+          "years_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Experience"
+          }
+        },
+        "required": [
+          "id",
+          "area_name",
+          "timezone",
+          "badge",
+          "open_now",
+          "hours",
+          "closures",
+          "services",
+          "display_name",
+          "bio",
+          "qualifications",
+          "years_experience",
+          "languages",
+          "service_radius_km",
+          "visits_you",
+          "clinics"
+        ],
+        "title": "VetDetail",
+        "type": "object"
       },
       "WebSession": {
         "properties": {
@@ -5439,6 +6623,806 @@
         "summary": "Update clinic (operators)",
         "tags": [
           "clinics"
+        ]
+      }
+    },
+    "/api/v1/discover/areas": {
+      "get": {
+        "operationId": "list_areas_api_v1_discover_areas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreasResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Launch areas",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/api/v1/discover/clinics/{clinic_id}": {
+      "get": {
+        "operationId": "clinic_detail_api_v1_discover_clinics__clinic_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clinic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Clinic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AreaKey"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Area"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 90,
+                  "minimum": -90,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lng",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 180,
+                  "minimum": -180,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lng"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Public clinic detail (verified clinics only)",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/api/v1/discover/clinics/{clinic_id}/slots": {
+      "get": {
+        "operationId": "clinic_slots_api_v1_discover_clinics__clinic_id__slots_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clinic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Clinic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Service Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicSlots"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open slots for one of a clinic's services on a date",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/api/v1/discover/search": {
+      "get": {
+        "operationId": "search_api_v1_discover_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AreaKey"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Area"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 90,
+                  "minimum": -90,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lng",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 180,
+                  "minimum": -180,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lng"
+            }
+          },
+          {
+            "in": "query",
+            "name": "radius_km",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 25,
+              "minimum": 1,
+              "title": "Radius Km",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/KindFilter",
+              "default": "all"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ServiceCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ServiceMode"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Mode"
+            }
+          },
+          {
+            "in": "query",
+            "name": "species",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 16,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Species"
+            }
+          },
+          {
+            "in": "query",
+            "name": "price_max_minor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 10000000,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Price Max Minor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "open_now",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Open Now",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "emergency",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Emergency",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 60,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SortOrder",
+              "default": "distance"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search verified clinics and home-visit vets near an area or the device",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/api/v1/discover/vets/{profile_id}": {
+      "get": {
+        "operationId": "vet_detail_api_v1_discover_vets__profile_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AreaKey"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Area"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 90,
+                  "minimum": -90,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lng",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 180,
+                  "minimum": -180,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lng"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VetDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Public home-visit vet detail (verified vets only; base location stays private)",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/api/v1/discover/vets/{profile_id}/slots": {
+      "get": {
+        "operationId": "vet_slots_api_v1_discover_vets__profile_id__slots_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Service Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicSlots"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open slots for one of a vet's home-visit services on a date",
+        "tags": [
+          "discover"
         ]
       }
     },

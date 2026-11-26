@@ -44,6 +44,9 @@ class Clinic(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     postal_code: Mapped[str] = mapped_column(String(6), nullable=False)
     latitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
     longitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
+    # Launch area (decision 0011). Discovery uses the exact coordinates when set,
+    # otherwise the area's centre (shown as an approximate distance).
+    area_key: Mapped[str | None] = mapped_column(String(32))
     timezone: Mapped[str] = mapped_column(
         String(40), nullable=False, default="Asia/Kolkata", server_default="Asia/Kolkata"
     )
@@ -70,6 +73,7 @@ class Clinic(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             name="valid_coordinates",
         ),
         Index("ix_clinics_city_verification", "city", "verification_status"),
+        Index("ix_clinics_area_verification", "area_key", "verification_status"),
     )
 
 

@@ -1,7 +1,7 @@
 # Implementation Checklist
 
 ## Discovery and validation
-- [ ] Define launch service clusters and radius across Tamil Nadu, Kerala and Bengaluru
+- [x] Define launch service clusters and radius across Tamil Nadu, Kerala and Bengaluru ([0011](decisions/0011-launch-areas-and-locations.md))
 - [ ] Interview pet owners, clinics and caretakers
 - [ ] Validate commission/booking preference
 - [ ] Recruit pilot providers
@@ -24,15 +24,15 @@
 - [x] 1b.4 Media upload: signed URLs; local storage in dev, R2 adapter ready (keys pending) ([0008](decisions/0008-media-storage.md))
 - [x] 1b.5 Pet profiles (mobile): My Pets, add/edit/delete, photo, Home pet switcher
 - [ ] 1b.6 Analytics, error monitoring, environments and secrets matrix (deferred by the product owner, 2026-11-25)
-- [ ] Provider profiles and clinic memberships (decision 0006): built with provider onboarding in Phase 2
+- [x] Provider profiles and clinic memberships (decision 0006): built with provider onboarding in Phase 2 (2.1)
 
 ## Core owner experience
 - [ ] Onboarding and location
 - [ ] Multi-pet profile
 - [ ] Media upload
-- [ ] Discover list/search/filter
-- [ ] Provider/clinic detail
-- [ ] Availability/slot selection
+- [x] Discover list/search/filter (2.5)
+- [x] Provider/clinic detail (2.5)
+- [ ] Availability/slot selection (open times shown in 2.5; picking one for a booking comes in 2.7)
 - [ ] Appointment booking
 - [ ] Mock payment states
 - [ ] Booking management and review
@@ -43,7 +43,7 @@
 - [x] 2.3 Provider onboarding (app): hub, profile and clinic forms, document upload, submit, review status and messages
 - [x] UI refresh: gradient heroes, floating tab bar, richer components; quality bar recorded in doc 08 and CLAUDE.md
 - [x] 2.4 Services and availability: services, weekly hours with capacity, days off and special hours, slot generation in the owner's timezone; provider workspace in the app
-- [ ] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md))
+- [x] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md), [0011](decisions/0011-launch-areas-and-locations.md)): launch areas, near-me search, filters, clinic and home-visit vet pages with live open times; provider area and GPS pin
 - [ ] 2.6 Booking engine
 - [ ] 2.7 Booking flow (app)
 - [ ] 2.8 Provider inbox (app)

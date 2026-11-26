@@ -31,6 +31,7 @@ import {
   useServices,
   useSlotPreview,
 } from '@/features/catalog/hooks';
+import { DayStrip, SlotGrid } from '@/features/catalog/SlotPicker';
 import type { OwnerType, Service } from '@/features/catalog/types';
 import { useClinic, useProviderProfile } from '@/features/providers/hooks';
 import { STATUS_INFO } from '@/features/providers/labels';
@@ -304,49 +305,12 @@ export default function ManageScreen() {
                     />
                   ))}
                 </ScrollView>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.chipRow}
-                >
-                  {days.map((d) => {
-                    const selected = d.iso === previewDate;
-                    return (
-                      <Pressable
-                        key={d.iso}
-                        onPress={() => setPreviewDate(d.iso)}
-                        accessibilityRole="button"
-                        accessibilityState={{ selected }}
-                        accessibilityLabel={`${d.weekday} ${d.label}`}
-                        style={[styles.dayChip, selected && styles.dayChipSelected]}
-                      >
-                        <Text variant="caption" color={selected ? 'textOnPrimary' : 'textMuted'}>
-                          {d.weekday}
-                        </Text>
-                        <Text variant="label" color={selected ? 'textOnPrimary' : 'text'}>
-                          {d.label}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </ScrollView>
-                {slots.isPending ? (
-                  <Skeleton height={40} />
-                ) : slots.data?.slots.length ? (
-                  <View style={styles.slotGrid} testID="slot-grid">
-                    {slots.data.slots.map((s) => (
-                      <View key={s.start} style={styles.slot}>
-                        <Text variant="label" color="primary">
-                          {formatTime(s.local_start)}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                ) : (
-                  <Text variant="body" color="textMuted">
-                    No slots that day. Check your opening hours and days off.
-                  </Text>
-                )}
+                <DayStrip days={days} selected={previewDate} onSelect={setPreviewDate} />
+                <SlotGrid
+                  slots={slots.data?.slots}
+                  loading={slots.isPending}
+                  emptyMessage="No slots that day. Check your opening hours and days off."
+                />
               </>
             ) : (
               <Text variant="body" color="textMuted">
@@ -391,24 +355,4 @@ const styles = StyleSheet.create({
   dayLabel: { width: 44 },
   hoursText: { flex: 1 },
   chipRow: { gap: spacing.sm, paddingRight: spacing.lg },
-  dayChip: {
-    width: 88,
-    minHeight: 56,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  dayChipSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
-  slotGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  slot: {
-    width: '30.5%',
-    minHeight: 40,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primaryTint,
-  },
 });

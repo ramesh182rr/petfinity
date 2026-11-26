@@ -33,7 +33,8 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   pets/                 # new, [id] (profile), [id]/edit
   provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
                         # manage/[ownerType]/[id]/{index,service,hours,day-off} (services and availability)
-  (tabs)/               # Home, Discover, Bookings, Community, My Pets
+  discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
+  (tabs)/               # Home, Discover (search + filters), Bookings, Community, My Pets
   profile.tsx, +not-found.tsx
 src/
   theme/                # design tokens: colors (semantic), typography, spacing, radius, elevation
@@ -45,7 +46,10 @@ src/
   features/auth/        # session store (Zustand), secure token storage, auth API, validation
   features/pets/        # pet API + TanStack Query hooks, PetForm, photo picking/upload, active pet
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
-  features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation
+  features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation,
+                        # SlotPicker (DayStrip, SlotGrid)
+  features/discovery/   # launch areas, search store/hooks, ListingCard, detail parts, LocationField (area + GPS pin),
+                        # one-off foreground location (expo-location)
   features/<name>/      # feature hooks + components (e.g. system/health)
   navigation/           # RootNavigator: protected-route guards by session state
 __tests__/              # Jest (jest-expo) tests: *-test.ts(x)

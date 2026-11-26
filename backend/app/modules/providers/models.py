@@ -8,9 +8,18 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -37,6 +46,12 @@ class ProviderProfile(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         ARRAY(String(30)), nullable=False, server_default="{}", default=list
     )
     city: Mapped[str | None] = mapped_column(String(80))
+    # Home-visit base (decision 0011). Private: discovery never returns these
+    # coordinates, only the area name and the service radius.
+    area_key: Mapped[str | None] = mapped_column(String(32))
+    latitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
+    longitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
+    service_radius_km: Mapped[int | None] = mapped_column(Integer)
     # Veterinarian credentials (verified against the state veterinary council register).
     registration_number: Mapped[str | None] = mapped_column(String(50))
     registration_council: Mapped[str | None] = mapped_column(String(120))
@@ -56,5 +71,15 @@ class ProviderProfile(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         CheckConstraint(
             "years_experience IS NULL OR (years_experience >= 0 AND years_experience <= 70)",
             name="valid_experience",
+        ),
+        CheckConstraint(
+            "(latitude IS NULL) = (longitude IS NULL) AND "
+            "(latitude IS NULL OR "
+            "(latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180))",
+            name="valid_coordinates",
+        ),
+        CheckConstraint(
+            "service_radius_km IS NULL OR service_radius_km BETWEEN 1 AND 50",
+            name="valid_service_radius",
         ),
     )

@@ -23,6 +23,10 @@ The platform facilitates animal care and people entering homes or leaving pets w
 ## Community safety
 - Community guidelines, report, block, hide, moderation queue, rate limits and repeat-offender handling.
 - No public exposure of exact home addresses.
+- Discovery (2.5, [0011](decisions/0011-launch-areas-and-locations.md)):
+  - A home-visit vet's base pin is never returned publicly, and neither is a distance to it. Parents see only the area and the travel radius.
+  - A parent's device location is sent per search and never stored.
+  - Public listing pages omit phone, email, registration numbers, slot capacity and internal day-off notes.
 - Lost-pet posts may reveal location; warn users and allow approximate location.
 - Moderation audit and appeal process.
 

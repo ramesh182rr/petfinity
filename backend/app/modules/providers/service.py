@@ -9,9 +9,11 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import AppError
 from app.modules.audit import service as audit
+from app.modules.discovery.areas import resolve_area
 from app.modules.providers.models import ProviderProfile, ProviderType
 from app.modules.providers.schemas import (
     CREDENTIAL_FIELDS,
+    LOCATION_FIELDS,
     ProviderProfileCreate,
     ProviderProfileUpdate,
 )
@@ -56,6 +58,9 @@ def create(db: Session, user_id: uuid.UUID, data: ProviderProfileCreate) -> Prov
             status_code=409,
         )
     values = data.model_dump(exclude_none=True)
+    values["area_key"] = resolve_area(
+        values.get("area_key"), data.latitude, data.longitude, city=data.city
+    )
     profile = ProviderProfile(
         user_id=user_id,
         verification_status=VerificationStatus.DRAFT,
@@ -92,6 +97,11 @@ def update(
             "Credentials can't be changed while your profile is being reviewed.",
             status_code=409,
         )
+    if any(field in changes for field in (*LOCATION_FIELDS, "city")):
+        lat = changes.get("latitude", profile.latitude)
+        lng = changes.get("longitude", profile.longitude)
+        area = changes.get("area_key", None if "latitude" in changes else profile.area_key)
+        changes["area_key"] = resolve_area(area, lat, lng, city=changes.get("city", profile.city))
     for field, value in changes.items():
         setattr(profile, field, value)
     if credential_change and profile.verification_status == VerificationStatus.VERIFIED:

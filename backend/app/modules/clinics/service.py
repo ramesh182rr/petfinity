@@ -12,6 +12,7 @@ from app.core.errors import AppError
 from app.modules.audit import service as audit
 from app.modules.clinics.models import Clinic, ClinicMember, MemberRole
 from app.modules.clinics.schemas import ClinicCreate, ClinicUpdate
+from app.modules.discovery.areas import resolve_area
 from app.modules.providers import service as providers
 from app.modules.providers.models import ProviderType
 from app.modules.verification.status import ActiveStatus, VerificationStatus
@@ -77,6 +78,9 @@ def create(db: Session, user_id: uuid.UUID, data: ClinicCreate) -> tuple[Clinic,
         )
 
     values = data.model_dump(exclude={"practises_here"}, exclude_none=True)
+    values["area_key"] = resolve_area(
+        values.get("area_key"), data.latitude, data.longitude, city=data.city
+    )
     clinic = Clinic(
         created_by_user_id=user_id,
         verification_status=VerificationStatus.DRAFT,
@@ -134,6 +138,11 @@ def update(db: Session, user_id: uuid.UUID, clinic_id: uuid.UUID, data: ClinicUp
         )
     if "emergency_services" in changes and changes["emergency_services"] is None:
         changes["emergency_services"] = False
+    if any(f in changes for f in ("area_key", "latitude", "longitude", "city")):
+        lat = changes.get("latitude", clinic.latitude)
+        lng = changes.get("longitude", clinic.longitude)
+        area = changes.get("area_key", None if "latitude" in changes else clinic.area_key)
+        changes["area_key"] = resolve_area(area, lat, lng, city=changes.get("city", clinic.city))
     for field, value in changes.items():
         setattr(clinic, field, value)
     if identity_change and clinic.verification_status == VerificationStatus.VERIFIED:

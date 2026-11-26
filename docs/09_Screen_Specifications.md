@@ -30,14 +30,49 @@ Pet cards, add pet, select active pet, health information summary.
 - Includes skeleton loading, pull-to-refresh, an empty state with "Add your first pet", and an error state with retry and a reference ID.
 - **Home pet switcher:** tap to make a pet active, long-press to open it, and "+" to add. The active pet is kept in memory only for now.
 
-### 6. Discover search
-Search, category chips, list/map switch, filters and no-results state.
+### 6. Discover search (implemented 2.5, `app/(tabs)/discover.tsx`)
+- Gradient hero with:
+  - a location pill ("Chennai · 10 km" or "Near you"), which opens the area picker
+  - a search box (debounced, searching names, localities and qualifications)
+- Filter card:
+  - All / Clinics / Home visits
+  - quick chips: Open now, Lowest price, Emergency
+  - category chips
+- First visit, no location yet: a "Where should we look?" card with **Near me** and **Choose city**, both the same height.
+- States: skeleton cards, an error with retry, and an empty state. The empty state offers "Clear filters", or "Search within 25 km" when nothing is nearby.
+- Pull to refresh; results also refresh when the tab regains focus. "Show more" pages through results.
+- **Area picker** (`app/discover/area.tsx`):
+  - "Use my current location" (foreground only, never saved)
+  - search radius chips: 5, 10, 15, 25 km
+  - the launch cities grouped by state
+- List/map switch: the map view comes after the Maps key (0010).
 
-### 7. Provider list
-Provider cards, verified state, distance, rating, service summary, price range and availability.
+### 7. Provider list (implemented 2.5, `ListingCard`)
+Each card shows:
+- an initials avatar with a clinic or home-visit badge, the name and a verified shield
+- for clinics: locality and distance (`~` when estimated from the area centre)
+- for vets: area and "Home visits within N km", with no distance
+- Open now / Closed now and Emergency pills
+- the "from ₹" price
+- a footer with the next free slot and a category summary
 
-### 8. Clinic/provider detail
-Photos, verification, clinic/provider info, address, hours, services/prices, doctor profiles, reviews, map and booking CTA.
+Ratings arrive with reviews (2.10).
+
+### 8. Clinic/provider detail (implemented 2.5)
+- **Clinic** (`app/discover/clinic/[id].tsx`):
+  - gradient hero with stat tiles: From, Services, Open/Closed right now
+  - "Verified by Petfinity" card listing what was checked
+  - about, then selectable services
+  - **Available times**: 14-day strip and a slot grid; the button reads "Booking opens soon" until 2.7
+  - vets at the clinic
+  - opening hours ("Open 24 hours" where it applies), plus closures in the next 14 days
+  - address with **Get directions**, which opens the phone's maps app: no API key, no billing
+- **Home-visit vet** (`app/discover/vet/[id].tsx`):
+  - hero tiles: From, Experience, Travels N km
+  - a "Visits your area" or "Outside their travel area" banner
+  - verified checks, about and languages, home-visit services, available times, "Also practises at" clinics, visiting hours
+- Unlisted or suspended listings show a friendly "isn't listed right now" state.
+- Photos, reviews and the map come later.
 
 ### 9. Booking flow
 Pet → service → slot → notes → policy/price review → mock payment → confirmation. Request-mode services show "Clinic confirms within …" before submitting, then a pending state until the provider responds (payment follows confirmation). Include loading, slot-conflict, pending, declined/expired, failure and cancellation states. Vet bookings are labelled "appointment" in the UI.
@@ -108,6 +143,13 @@ Booking events, caretaker offers, community interactions and settings.
   - date picker field (from today, up to 60 days ahead)
   - Closed all day / Special hours (time pills and capacity), optional note
 - Editors return to the workspace even when opened from a deep link.
+
+*Added in 2.5:* the clinic form and the vet profile form have a **Location** or **Home visits** section:
+- launch-area chips
+- "Use my current location" pin, with Clear
+- for vets, travel radius chips: 5, 10, 15, 25 km
+
+The vet's pin is private.
 
 *Still planned:*
 - Booking/request inbox

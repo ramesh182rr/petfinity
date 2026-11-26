@@ -79,7 +79,9 @@ const styles = StyleSheet.create({
   iconPill: {
     width: 48,
     height: 30,
-    borderRadius: radius.pill,
+    // Exact half-height: Android can drop an oversized radius when the background toggles.
+    borderRadius: 15,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },

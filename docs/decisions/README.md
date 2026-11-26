@@ -14,6 +14,7 @@ Each significant product or technical decision gets one numbered file. A decisio
 | [0008](0008-media-storage.md) | Media via signed URLs; `STORAGE_BACKEND` switch: local (dev) / Cloudflare R2 | 2026-11-24 | Accepted |
 | [0009](0009-admin-web-app.md) | Admin web app (React + Vite) in `admin/` | 2026-11-25 | Accepted |
 | [0010](0010-maps-google.md) | Google Maps; list-first discovery; capped paid APIs | 2026-11-25 | Accepted |
+| [0011](0011-launch-areas-and-locations.md) | 10 launch areas; GPS pins; home-visit vets by travel radius | 2026-11-26 | Accepted |
 
 ## Template
 

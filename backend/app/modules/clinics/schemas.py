@@ -20,6 +20,7 @@ from app.core.text import clean_required, clean_text
 from app.core.types import UtcDatetime
 from app.modules.auth.identifiers import normalize_contact_phone
 from app.modules.clinics.models import MemberRole
+from app.modules.discovery.areas import AreaKey
 from app.modules.verification.status import ActiveStatus, VerificationStatus
 
 _PIN = re.compile(r"^[1-9][0-9]{5}$")
@@ -56,6 +57,7 @@ class _ClinicFields(BaseModel):
     locality: Annotated[str, StringConstraints(max_length=100)] | None = None
     latitude: Lat | None = None
     longitude: Lng | None = None
+    area_key: AreaKey | None = None
     emergency_services: bool | None = None
 
     @field_validator("description", "address_line2", "locality")
@@ -160,6 +162,7 @@ class ClinicResponse(BaseModel):
     postal_code: str
     latitude: Decimal | None
     longitude: Decimal | None
+    area_key: AreaKey | None
     timezone: str
     emergency_services: bool
     verification_status: VerificationStatus

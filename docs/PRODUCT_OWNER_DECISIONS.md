@@ -4,7 +4,7 @@ Status: approved defaults applied
 
 - **Brand name:** Petfinity (availability/trademark/domain checks still pending).
 - **Tagline direction:** “Every paw. Every need. Every connection.” (working tagline; not final).
-- **Launch geography:** Tamil Nadu, Kerala and Bengaluru (Karnataka). Use focused local clusters and service radii; do not imply uniform provider coverage across these regions at launch.
+- **Launch geography:** Tamil Nadu, Kerala and Bengaluru (Karnataka). Use focused local clusters and service radii; do not imply uniform provider coverage across these regions at launch. Launch areas (2026-11-26, [0011](decisions/0011-launch-areas-and-locations.md)): Chennai, Coimbatore, Madurai, Tiruchirappalli, Salem, Kochi, Thiruvananthapuram, Kozhikode, Thrissur and Bengaluru.
 - **Pet profiles:** All species supported in profile data.
 - **Marketplace initial focus:** Dogs and cats.
 - **Vet services:** Clinic, home visit and teleconsultation service types, enabled only where providers and legal/compliance requirements permit.

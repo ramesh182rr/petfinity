@@ -264,6 +264,108 @@ export interface paths {
     patch: operations['update_clinic_api_v1_clinics__clinic_id__patch']
     trace?: never
   }
+  '/api/v1/discover/areas': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Launch areas */
+    get: operations['list_areas_api_v1_discover_areas_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/discover/clinics/{clinic_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Public clinic detail (verified clinics only) */
+    get: operations['clinic_detail_api_v1_discover_clinics__clinic_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/discover/clinics/{clinic_id}/slots': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Open slots for one of a clinic's services on a date */
+    get: operations['clinic_slots_api_v1_discover_clinics__clinic_id__slots_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/discover/search': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Search verified clinics and home-visit vets near an area or the device */
+    get: operations['search_api_v1_discover_search_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/discover/vets/{profile_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Public home-visit vet detail (verified vets only; base location stays private) */
+    get: operations['vet_detail_api_v1_discover_vets__profile_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/discover/vets/{profile_id}/slots': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Open slots for one of a vet's home-visit services on a date */
+    get: operations['vet_slots_api_v1_discover_vets__profile_id__slots_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/health': {
     parameters: {
       query?: never
@@ -645,6 +747,54 @@ export interface components {
      */
     ActiveStatus: 'active' | 'suspended'
     /**
+     * AreaKey
+     * @enum {string}
+     */
+    AreaKey:
+      | 'chennai'
+      | 'coimbatore'
+      | 'madurai'
+      | 'tiruchirappalli'
+      | 'salem'
+      | 'kochi'
+      | 'thiruvananthapuram'
+      | 'kozhikode'
+      | 'thrissur'
+      | 'bengaluru'
+    /** AreaOut */
+    AreaOut: {
+      key: components['schemas']['AreaKey']
+      /** Latitude */
+      latitude: number
+      /** Longitude */
+      longitude: number
+      /** Name */
+      name: string
+      /** State */
+      state: string
+    }
+    /** AreasResponse */
+    AreasResponse: {
+      /** Areas */
+      areas: components['schemas']['AreaOut'][]
+      /** Default Radius Km */
+      default_radius_km: number
+      /** Max Radius Km */
+      max_radius_km: number
+      /** Service Radius Choices Km */
+      service_radius_choices_km: number[]
+    }
+    /** Badge */
+    Badge: {
+      /**
+       * Checks
+       * @description What Petfinity checked before verifying, in plain words
+       */
+      checks: string[]
+      /** Verified At */
+      verified_at: string | null
+    }
+    /**
      * Channel
      * @enum {string}
      */
@@ -693,6 +843,7 @@ export interface components {
       address_line1: string
       /** Address Line2 */
       address_line2?: string | null
+      area_key?: components['schemas']['AreaKey'] | null
       /** City */
       city: string
       /** Description */
@@ -722,12 +873,79 @@ export interface components {
       /** State */
       state: string
     }
+    /** ClinicDetail */
+    ClinicDetail: {
+      /** Address Line1 */
+      address_line1: string
+      /** Address Line2 */
+      address_line2: string | null
+      /** Area Name */
+      area_name: string | null
+      badge: components['schemas']['Badge']
+      /** City */
+      city: string
+      /**
+       * Closures
+       * @description Days off and special hours, next 14 days
+       */
+      closures: components['schemas']['Closure'][]
+      /** Description */
+      description: string | null
+      /** Distance Is Approximate */
+      distance_is_approximate: boolean
+      /** Distance Km */
+      distance_km: number | null
+      /** Doctors */
+      doctors: components['schemas']['DoctorOut'][]
+      /** Emergency Services */
+      emergency_services: boolean
+      /** Hours */
+      hours: components['schemas']['DayHours'][]
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Latitude */
+      latitude: number | null
+      /** Locality */
+      locality: string | null
+      /** Longitude */
+      longitude: number | null
+      /** Name */
+      name: string
+      /** Open Now */
+      open_now: boolean
+      /** Postal Code */
+      postal_code: string
+      /** Services */
+      services: components['schemas']['PublicService'][]
+      /** State */
+      state: string
+      /** Timezone */
+      timezone: string
+    }
+    /** ClinicRef */
+    ClinicRef: {
+      /** City */
+      city: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Locality */
+      locality: string | null
+      /** Name */
+      name: string
+    }
     /** ClinicResponse */
     ClinicResponse: {
       /** Address Line1 */
       address_line1: string
       /** Address Line2 */
       address_line2: string | null
+      area_key: components['schemas']['AreaKey'] | null
       /** City */
       city: string
       /**
@@ -780,6 +998,7 @@ export interface components {
       address_line1?: string | null
       /** Address Line2 */
       address_line2?: string | null
+      area_key?: components['schemas']['AreaKey'] | null
       /** City */
       city?: string | null
       /** Description */
@@ -803,11 +1022,38 @@ export interface components {
       /** State */
       state?: string | null
     }
+    /** Closure */
+    Closure: {
+      /** End Time */
+      end_time: string | null
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: 'closed' | 'custom_hours'
+      /**
+       * On Date
+       * Format: date
+       */
+      on_date: string
+      /** Start Time */
+      start_time: string | null
+    }
     /**
      * ConfirmationMode
      * @enum {string}
      */
     ConfirmationMode: 'instant' | 'request'
+    /** DayHours */
+    DayHours: {
+      /** Ranges */
+      ranges: components['schemas']['HoursRange'][]
+      /**
+       * Weekday
+       * @description 0 = Monday
+       */
+      weekday: number
+    }
     /**
      * Decision
      * @enum {string}
@@ -818,6 +1064,22 @@ export interface components {
       decision: components['schemas']['Decision']
       /** Reason */
       reason?: string | null
+    }
+    /** DoctorOut */
+    DoctorOut: {
+      /** Display Name */
+      display_name: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Languages */
+      languages: string[]
+      /** Qualifications */
+      qualifications: string | null
+      /** Years Experience */
+      years_experience: number | null
     }
     /** DocumentConfirm */
     DocumentConfirm: {
@@ -979,6 +1241,85 @@ export interface components {
        */
       submitted_at: string
     }
+    /** HoursRange */
+    HoursRange: {
+      /**
+       * End Time
+       * Format: time
+       */
+      end_time: string
+      /**
+       * Start Time
+       * Format: time
+       */
+      start_time: string
+    }
+    /**
+     * KindFilter
+     * @enum {string}
+     */
+    KindFilter: 'all' | 'clinic' | 'vet'
+    /** Listing */
+    Listing: {
+      /** Area Name */
+      area_name: string | null
+      /** Categories */
+      categories: components['schemas']['ServiceCategory'][]
+      /**
+       * Distance Is Approximate
+       * @description True when the clinic has no exact pin and its area centre was used
+       */
+      distance_is_approximate: boolean
+      /**
+       * Distance Km
+       * @description Clinics only. Never set for home-visit vets, whose base is private.
+       */
+      distance_km: number | null
+      /** Emergency */
+      emergency: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      kind: components['schemas']['ListingKind']
+      /** Languages */
+      languages: string[]
+      /** Modes */
+      modes: components['schemas']['ServiceMode'][]
+      /** Name */
+      name: string
+      /**
+       * Next Slot At
+       * @description Earliest bookable slot within 7 days
+       */
+      next_slot_at: string | null
+      /** Open Now */
+      open_now: boolean
+      /** Price From Minor */
+      price_from_minor: number | null
+      /** Service Count */
+      service_count: number
+      /**
+       * Service Radius Km
+       * @description Home-visit vets: how far they travel
+       */
+      service_radius_km: number | null
+      /**
+       * Subtitle
+       * @description Clinic locality or a vet's qualifications
+       */
+      subtitle: string | null
+      /** Verified At */
+      verified_at: string | null
+      /** Years Experience */
+      years_experience: number | null
+    }
+    /**
+     * ListingKind
+     * @enum {string}
+     */
+    ListingKind: 'clinic' | 'vet'
     /** MeResponse */
     MeResponse: {
       /**
@@ -1017,6 +1358,19 @@ export interface components {
      * @enum {string}
      */
     MemberRole: 'operator' | 'veterinarian'
+    /**
+     * Origin
+     * @description Where distances are measured from: a launch area's centre or the device.
+     */
+    Origin: {
+      area_key: components['schemas']['AreaKey'] | null
+      /** Label */
+      label: string
+      /** Latitude */
+      latitude: number
+      /** Longitude */
+      longitude: number
+    }
     /** OtpRequest */
     OtpRequest: {
       channel: components['schemas']['Channel']
@@ -1218,6 +1572,7 @@ export interface components {
     }
     /** ProviderProfileCreate */
     ProviderProfileCreate: {
+      area_key?: components['schemas']['AreaKey'] | null
       /** Bio */
       bio?: string | null
       /** City */
@@ -1226,6 +1581,10 @@ export interface components {
       display_name: string
       /** Languages */
       languages?: string[] | null
+      /** Latitude */
+      latitude?: number | string | null
+      /** Longitude */
+      longitude?: number | string | null
       provider_type: components['schemas']['ProviderType']
       /** Qualifications */
       qualifications?: string | null
@@ -1233,11 +1592,17 @@ export interface components {
       registration_council?: string | null
       /** Registration Number */
       registration_number?: string | null
+      /**
+       * Service Radius Km
+       * @description One of 5, 10, 15, 25
+       */
+      service_radius_km?: number | null
       /** Years Experience */
       years_experience?: number | null
     }
     /** ProviderProfileResponse */
     ProviderProfileResponse: {
+      area_key: components['schemas']['AreaKey'] | null
       /** Bio */
       bio: string | null
       /** City */
@@ -1256,6 +1621,10 @@ export interface components {
       id: string
       /** Languages */
       languages: string[]
+      /** Latitude */
+      latitude: string | null
+      /** Longitude */
+      longitude: string | null
       provider_type: components['schemas']['ProviderType']
       /** Qualifications */
       qualifications: string | null
@@ -1263,6 +1632,8 @@ export interface components {
       registration_council: string | null
       /** Registration Number */
       registration_number: string | null
+      /** Service Radius Km */
+      service_radius_km: number | null
       status: components['schemas']['ActiveStatus']
       /**
        * Updated At
@@ -1277,6 +1648,7 @@ export interface components {
     }
     /** ProviderProfileUpdate */
     ProviderProfileUpdate: {
+      area_key?: components['schemas']['AreaKey'] | null
       /** Bio */
       bio?: string | null
       /** City */
@@ -1285,12 +1657,21 @@ export interface components {
       display_name?: string | null
       /** Languages */
       languages?: string[] | null
+      /** Latitude */
+      latitude?: number | string | null
+      /** Longitude */
+      longitude?: number | string | null
       /** Qualifications */
       qualifications?: string | null
       /** Registration Council */
       registration_council?: string | null
       /** Registration Number */
       registration_number?: string | null
+      /**
+       * Service Radius Km
+       * @description One of 5, 10, 15, 25
+       */
+      service_radius_km?: number | null
       /** Years Experience */
       years_experience?: number | null
     }
@@ -1299,6 +1680,67 @@ export interface components {
      * @enum {string}
      */
     ProviderType: 'veterinarian' | 'caretaker'
+    /** PublicService */
+    PublicService: {
+      category: components['schemas']['ServiceCategory']
+      confirmation_mode: components['schemas']['ConfirmationMode']
+      /**
+       * Currency
+       * @constant
+       */
+      currency: 'INR'
+      /** Description */
+      description: string | null
+      /** Duration Minutes */
+      duration_minutes: number
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Price Minor */
+      price_minor: number
+      service_mode: components['schemas']['ServiceMode']
+      /** Species */
+      species: string[]
+      /** Title */
+      title: string
+    }
+    /** PublicSlot */
+    PublicSlot: {
+      /**
+       * End
+       * Format: date-time
+       */
+      end: string
+      /**
+       * Local Start
+       * @description HH:MM in the listing's timezone
+       */
+      local_start: string
+      /**
+       * Start
+       * Format: date-time
+       */
+      start: string
+    }
+    /** PublicSlots */
+    PublicSlots: {
+      /**
+       * Date
+       * Format: date
+       */
+      date: string
+      /**
+       * Service Id
+       * Format: uuid
+       */
+      service_id: string
+      /** Slots */
+      slots: components['schemas']['PublicSlot'][]
+      /** Timezone */
+      timezone: string
+    }
     /** QueueEntry */
     QueueEntry: {
       /** City */
@@ -1419,6 +1861,16 @@ export interface components {
        * @description 0 = Monday … 6 = Sunday
        */
       weekday: number
+    }
+    /** SearchResponse */
+    SearchResponse: {
+      /** Items */
+      items: components['schemas']['Listing'][]
+      origin: components['schemas']['Origin']
+      /** Radius Km */
+      radius_km: number
+      /** Total */
+      total: number
     }
     /**
      * ServiceCategory
@@ -1584,6 +2036,11 @@ export interface components {
       /** Timezone */
       timezone: string
     }
+    /**
+     * SortOrder
+     * @enum {string}
+     */
+    SortOrder: 'distance' | 'price'
     /**
      * Species
      * @enum {string}
@@ -1775,6 +2232,49 @@ export interface components {
      * @enum {string}
      */
     VerificationStatus: 'draft' | 'submitted' | 'needs_info' | 'verified' | 'rejected'
+    /** VetDetail */
+    VetDetail: {
+      /** Area Name */
+      area_name: string | null
+      badge: components['schemas']['Badge']
+      /** Bio */
+      bio: string | null
+      /** Clinics */
+      clinics: components['schemas']['ClinicRef'][]
+      /**
+       * Closures
+       * @description Days off and special hours, next 14 days
+       */
+      closures: components['schemas']['Closure'][]
+      /** Display Name */
+      display_name: string
+      /** Hours */
+      hours: components['schemas']['DayHours'][]
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Languages */
+      languages: string[]
+      /** Open Now */
+      open_now: boolean
+      /** Qualifications */
+      qualifications: string | null
+      /** Service Radius Km */
+      service_radius_km: number
+      /** Services */
+      services: components['schemas']['PublicService'][]
+      /** Timezone */
+      timezone: string
+      /**
+       * Visits You
+       * @description Whether the search origin is inside the vet's home-visit radius (null when no origin was given)
+       */
+      visits_you: boolean | null
+      /** Years Experience */
+      years_experience: number | null
+    }
     /** WebSession */
     WebSession: {
       /** Access Token */
@@ -3128,6 +3628,380 @@ export interface operations {
       }
       /** @description Conflict */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  list_areas_api_v1_discover_areas_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AreasResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  clinic_detail_api_v1_discover_clinics__clinic_id__get: {
+    parameters: {
+      query?: {
+        area?: components['schemas']['AreaKey'] | null
+        lat?: number | null
+        lng?: number | null
+      }
+      header?: never
+      path: {
+        clinic_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ClinicDetail']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  clinic_slots_api_v1_discover_clinics__clinic_id__slots_get: {
+    parameters: {
+      query: {
+        service_id: string
+        date: string
+      }
+      header?: never
+      path: {
+        clinic_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PublicSlots']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  search_api_v1_discover_search_get: {
+    parameters: {
+      query?: {
+        area?: components['schemas']['AreaKey'] | null
+        lat?: number | null
+        lng?: number | null
+        radius_km?: number
+        kind?: components['schemas']['KindFilter']
+        category?: components['schemas']['ServiceCategory'] | null
+        mode?: components['schemas']['ServiceMode'] | null
+        species?: string | null
+        price_max_minor?: number | null
+        open_now?: boolean
+        emergency?: boolean
+        q?: string | null
+        sort?: components['schemas']['SortOrder']
+        limit?: number
+        offset?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SearchResponse']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  vet_detail_api_v1_discover_vets__profile_id__get: {
+    parameters: {
+      query?: {
+        area?: components['schemas']['AreaKey'] | null
+        lat?: number | null
+        lng?: number | null
+      }
+      header?: never
+      path: {
+        profile_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['VetDetail']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  vet_slots_api_v1_discover_vets__profile_id__slots_get: {
+    parameters: {
+      query: {
+        service_id: string
+        date: string
+      }
+      header?: never
+      path: {
+        profile_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PublicSlots']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
         headers: {
           [name: string]: unknown
         }

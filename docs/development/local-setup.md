@@ -28,6 +28,12 @@ uv run uvicorn app.main:app --reload --port 8000
 ```
 Open http://localhost:8000/api/v1/health/ready. It should return `{"status":"ready",…}`.
 
+**Demo listings for Discover (optional, dev only):**
+```bash
+uv run python -m app.dev.seed_demo
+```
+This creates 5 verified clinics and 2 home-visit vets in Chennai, Kochi and Bengaluru. All use `demo-…@petfinity.dev` accounts. Running it again adds nothing, and it refuses to run unless `APP_ENV` is `local` or `development`.
+
 Uploaded files (pet photos) are stored in `backend/.local-storage/` (git-ignored) while `STORAGE_BACKEND=local`. To try Cloudflare R2 locally, fill in the `R2_*` values and set `STORAGE_BACKEND=r2` ([decision 0008](../decisions/0008-media-storage.md)).
 
 Run the checks:
@@ -48,6 +54,15 @@ npm run android                 # first run builds the native dev client (severa
 - To make yourself an admin locally, set `BOOTSTRAP_ADMIN_EMAILS=<your email>` in `backend/.env`, restart the API and sign in with that email.
 - In the app, open **Profile** (the person icon on Home). The dev-only pill should read **API: connected (v0.1.0)**.
 - After the first build, `npm start` and then `a` reloads quickly. Rebuild only after native dependency or `app.json` plugin changes.
+- **Location on the emulator ("Near me", "Use my current location"):** `adb emu geo fix` is not always picked up. A test provider works reliably (this example is Adyar, Chennai):
+  ```bash
+  for p in gps fused network; do
+    adb shell cmd location providers add-test-provider $p
+    adb shell cmd location providers set-test-provider-enabled $p true
+    adb shell cmd location providers set-test-provider-location $p --location 13.0067,80.2575 --accuracy 5
+  done
+  ```
+- `expo-location` is a native module. After pulling 2.5 for the first time, rebuild the dev client with `npm run android`.
 - **Physical device:** set `EXPO_PUBLIC_API_URL=http://<your-Mac-LAN-IP>:8000`, run the API with `--host 0.0.0.0`, and keep both devices on the same network.
 
 Run the checks:
