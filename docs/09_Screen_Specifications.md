@@ -193,6 +193,30 @@ Booking events, caretaker offers, community interactions and settings.
 
 The vet's pin is private.
 
+*Implemented in 2.8 (provider inbox):*
+- **Workspace → Appointments**:
+  - "N requests waiting", with the next reply-by time
+  - "Next: …" with the pet and service
+  - both rows open the inbox
+- **Inbox** (`app/provider/manage/[ownerType]/[id]/bookings.tsx`):
+  - dusk hero with Requests, Today and Upcoming tiles
+  - Requests / Upcoming / Past tabs
+  - Upcoming and Past are grouped by day (Today, Tomorrow, "Mon, 30 Nov")
+  - provider booking cards show the pet parent's name, "Home visit", a **New request** pill and "Reply by 12:10 am (1 h 59 min left)"
+  - skeletons, error with retry, an empty state per tab
+  - pull to refresh, refresh on focus
+- **Provider booking** (`app/provider/booking/[id].tsx`):
+  - hero: the pet's name, the service and pet parent, a status pill, and Date (day of month and weekday), Time and Price tiles
+  - an action card that changes with the status:
+    - **New request:** reply-by time, **Decline** and **Confirm**
+    - **Confirmed:** **Check in** (from an hour before), **Didn't come** (15 min after the start), **Cancel**
+    - **Checked in:** **Mark completed**
+    - final states: what happened, and the reason if there is one
+  - Decline and Cancel open an inline reason panel: preset chips plus "Or write your own", Back and submit buttons of equal width, and a note that the pet parent sees the message
+  - Patient: pet, pet parent, notes, and the home-visit address (shown as "Shared with you once you confirm" until then)
+  - Payment from the provider's view ("Collect payment at the visit", "Paid online (mock)", …)
+  - Timeline showing who did what
+
 *Still planned:*
 - Booking/request inbox
 - Booking detail and status actions

@@ -164,7 +164,7 @@ Bookings are visible only to the parent, the listing's operators or vet, and adm
 | `POST /bookings/{id}/complete` | provider | `in_progress` → `completed` |
 | `POST /bookings/{id}/no-show` | provider | From 15 min after the start |
 | `POST /bookings/{id}/payment` | parent | **Mock.** `{"method": "pay_now" \| "pay_at_visit"}`. Confirmed bookings only; nothing is charged |
-| `GET /manage/{owner_type}/{owner_id}/bookings?scope=requests\|upcoming\|past` | provider | Provider inbox for one listing |
+| `GET /manage/{owner_type}/{owner_id}/bookings?scope=requests\|upcoming\|past` | provider | Provider inbox for one listing. `requests` = pending (by deadline); `upcoming` = confirmed and checked in (requests excluded); `past` = everything finished |
 
 `POST /bookings` in detail:
 - **Body:** `{listing_kind: clinic|vet, listing_id, service_id, start_at, pet_ids: [one pet], owner_notes?, visit_address?}`

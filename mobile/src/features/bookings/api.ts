@@ -1,5 +1,7 @@
 import { apiClient } from '@/api';
 
+import type { OwnerType } from '@/features/catalog/types';
+
 import type { BookingCreate, BookingDetail, BookingScope } from './types';
 
 type List = { items: BookingDetail[] };
@@ -31,3 +33,26 @@ export const payBooking = (
   method: 'pay_now' | 'pay_at_visit',
 ): Promise<BookingDetail> =>
   apiClient.request(`/bookings/${id}/payment`, { method: 'POST', body: { method } });
+
+// ---- provider side (clinic operators and vets) ----------------------------------
+
+export type InboxScope = 'requests' | 'upcoming' | 'past';
+export type ProviderAction = 'confirm' | 'decline' | 'check-in' | 'complete' | 'no-show' | 'cancel';
+
+export const listListingBookings = (
+  ownerType: OwnerType,
+  ownerId: string,
+  scope: InboxScope,
+): Promise<List> => apiClient.request(`/manage/${ownerType}/${ownerId}/bookings?scope=${scope}`);
+
+export const providerAction = (
+  id: string,
+  action: ProviderAction,
+  reason?: string,
+): Promise<BookingDetail> => {
+  const withReason = action === 'decline' || action === 'cancel';
+  return apiClient.request(`/bookings/${id}/${action}`, {
+    method: 'POST',
+    ...(withReason ? { body: reason ? { reason } : {} } : {}),
+  });
+};

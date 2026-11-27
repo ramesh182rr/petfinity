@@ -32,7 +32,8 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   onboarding.tsx        # display name after first sign-in
   pets/                 # new, [id] (profile), [id]/edit
   provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
-                        # manage/[ownerType]/[id]/{index,service,hours,day-off} (services and availability)
+                        # manage/[ownerType]/[id]/{index,service,hours,day-off,bookings} (services, availability, inbox),
+                        # booking/[id] (provider view of a booking: confirm, decline, check in, complete)
   discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
   book/                 # review and book an appointment (pet, notes, address, policy)
   bookings/[id]/        # booking detail (status, mock payment, timeline, cancel) and reschedule

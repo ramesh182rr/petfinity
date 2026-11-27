@@ -33,6 +33,8 @@ import {
 } from '@/features/catalog/hooks';
 import { DayStrip, SlotGrid } from '@/features/catalog/SlotPicker';
 import type { OwnerType, Service } from '@/features/catalog/types';
+import { formatWhen, replyBy } from '@/features/bookings/format';
+import { useListingBookings } from '@/features/bookings/hooks';
 import { useClinic, useProviderProfile } from '@/features/providers/hooks';
 import { STATUS_INFO } from '@/features/providers/labels';
 import { useRefreshOnFocus } from '@/lib/useRefreshOnFocus';
@@ -87,7 +89,16 @@ export default function ManageScreen() {
   const hours = useHours(ownerType, id);
   const exceptions = useExceptions(ownerType, id);
   const removeException = useDeleteException(ownerType, id);
-  useRefreshOnFocus(services.refetch, hours.refetch, exceptions.refetch);
+  const requests = useListingBookings(ownerType, id, 'requests');
+  const upcoming = useListingBookings(ownerType, id, 'upcoming');
+  const next = upcoming.data?.items[0];
+  useRefreshOnFocus(
+    services.refetch,
+    hours.refetch,
+    exceptions.refetch,
+    requests.refetch,
+    upcoming.refetch,
+  );
 
   const days = upcomingDays(14);
   const [previewDate, setPreviewDate] = useState(days[0]?.iso ?? '');
@@ -170,6 +181,44 @@ export default function ManageScreen() {
 
         <View style={styles.section}>
           <SectionHeader
+            title="Appointments"
+            actionLabel="Inbox"
+            onAction={() => go(`${base}/bookings`)}
+          />
+          <Card style={styles.list} testID="manage-appointments">
+            <ListRow
+              icon="mail-unread"
+              tone={requests.data?.items.length ? 'peach' : 'sage'}
+              title={
+                requests.data?.items.length
+                  ? `${requests.data.items.length} ${requests.data.items.length === 1 ? 'request' : 'requests'} waiting`
+                  : 'No requests waiting'
+              }
+              subtitle={
+                requests.data?.items[0]?.response_deadline
+                  ? replyBy(requests.data.items[0].response_deadline)
+                  : 'Requests for home visits and request-only services appear here.'
+              }
+              onPress={() => go(`${base}/bookings?scope=requests`)}
+              testID="manage-requests"
+            />
+            <ListRow
+              icon="calendar"
+              tone="lavender"
+              title={next ? `Next: ${formatWhen(next.start_at)}` : 'No upcoming appointments'}
+              subtitle={
+                next
+                  ? `${next.pets.map((p) => p.name).join(', ')} · ${next.service_title}`
+                  : 'Confirmed appointments show up here.'
+              }
+              onPress={() => go(`${base}/bookings?scope=upcoming`)}
+              testID="manage-next"
+            />
+          </Card>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader
             title="Services"
             actionLabel="Add"
             onAction={() => go(`${base}/service`)}
@@ -225,7 +274,7 @@ export default function ManageScreen() {
                     {ranges.length
                       ? ranges
                           .map((r) => `${formatTime(r.start_time)} – ${formatTime(r.end_time)}`)
-                          .join(',  ')
+                          .join('\n')
                       : 'Closed'}
                   </Text>
                 </View>

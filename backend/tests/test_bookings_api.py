@@ -397,6 +397,10 @@ def test_request_mode_confirm_and_address_privacy(
         headers=vet["headers"],
     ).json()["items"]
     assert [r["id"] for r in requests] == [b["id"]]
+    upcoming = api.get(
+        f"/api/v1/manage/provider_profile/{vet['id']}/bookings", headers=vet["headers"]
+    ).json()["items"]
+    assert upcoming == []  # requests aren't on the calendar until confirmed
 
     assert api.post(f"{url}/confirm", headers=parent).status_code == 409
     confirmed = api.post(f"{url}/confirm", headers=vet["headers"]).json()

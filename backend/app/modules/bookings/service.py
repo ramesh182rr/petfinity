@@ -484,9 +484,10 @@ def list_for_listing(db: Session, owner: Owner, scope: str) -> list[Booking]:
             Booking.response_deadline
         )
     elif scope == "upcoming":
-        query = query.where(Booking.status.in_(HOLDING_STATUSES), Booking.end_at > now).order_by(
-            Booking.start_at
-        )
+        # Requests have their own tab; upcoming is what's actually on the calendar.
+        query = query.where(
+            Booking.status.in_((S.CONFIRMED, S.IN_PROGRESS)), Booking.end_at > now
+        ).order_by(Booking.start_at)
     else:
         query = query.where(
             ~(Booking.status.in_(HOLDING_STATUSES) & (Booking.end_at > now))

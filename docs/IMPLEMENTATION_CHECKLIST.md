@@ -46,7 +46,7 @@
 - [x] 2.5 Discovery (list-first, [0010](decisions/0010-maps-google.md), [0011](decisions/0011-launch-areas-and-locations.md)): launch areas, near-me search, filters, clinic and home-visit vet pages with live open times; provider area and GPS pin
 - [x] 2.6 Booking engine (API): bookings, capacity units with an exclusion constraint, idempotent create, instant/request state machine, expiry, cancellation policy, mock payments ([0012](decisions/0012-booking-policy-payments-capacity.md))
 - [x] 2.7 Booking flow (app): review and book, pending/confirmed states, mock pay now or at visit, Bookings tab, detail with timeline, cancel with outcome preview, reschedule
-- [ ] 2.8 Provider inbox (app)
+- [x] 2.8 Provider inbox (app): workspace Appointments summary, Requests/Upcoming/Past inbox, confirm/decline with reasons, check-in, complete, no-show, provider cancel
 - [ ] 2.9 Notifications and reminders
 - [ ] 2.10 Reviews
 

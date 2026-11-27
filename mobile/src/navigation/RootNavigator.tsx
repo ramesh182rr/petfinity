@@ -56,6 +56,8 @@ export function RootNavigator() {
           name="provider/manage/[ownerType]/[id]/hours"
           options={{ title: 'Opening hours' }}
         />
+        <Stack.Screen name="provider/manage/[ownerType]/[id]/bookings" options={{ title: '' }} />
+        <Stack.Screen name="provider/booking/[id]" options={{ title: '' }} />
         <Stack.Screen
           name="provider/manage/[ownerType]/[id]/day-off"
           options={{ title: 'Day off or special hours' }}

@@ -66,6 +66,16 @@ export function formatClock(iso: string): string {
   return formatTime(`${pad(d.getHours())}:${pad(d.getMinutes())}`);
 }
 
+/** "Monday" for compact tiles. */
+export function formatWeekday(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-IN', { weekday: 'long' });
+}
+
+/** "30 Nov" for compact tiles. */
+export function formatShortDay(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+
 export function formatWhen(iso: string): string {
   return `${formatDay(iso)} · ${formatClock(iso)}`;
 }
@@ -128,3 +138,48 @@ export function newIdempotencyKey(): string {
 
 export const isUpcoming = (b: Booking) =>
   ['pending_provider', 'confirmed', 'in_progress'].includes(b.status);
+
+/** "Reply by 10:19 pm (1 h 20 min left)" for a request, from the provider's side. */
+export function replyBy(deadlineIso: string, now: Date = new Date()): string {
+  const left = Math.max(0, Math.round((new Date(deadlineIso).getTime() - now.getTime()) / 60_000));
+  const hours = Math.floor(left / 60);
+  const minutes = left % 60;
+  const remaining =
+    left === 0 ? 'time is up' : hours ? `${hours} h ${minutes} min left` : `${minutes} min left`;
+  return `Reply by ${formatClock(deadlineIso)} (${remaining})`;
+}
+
+/** Section title for a day of appointments: Today, Tomorrow or "Sat, 28 Nov". */
+export function dayHeading(iso: string, now: Date = new Date()): string {
+  const day = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const diff = Math.round((day(new Date(iso)) - day(now)) / 86_400_000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Tomorrow';
+  if (diff === -1) return 'Yesterday';
+  return formatDay(iso);
+}
+
+/** Groups bookings (already sorted) under day headings, keeping their order. */
+export function groupByDay<T extends { start_at: string }>(
+  items: T[],
+  now: Date = new Date(),
+): { title: string; items: T[] }[] {
+  const groups: { title: string; items: T[] }[] = [];
+  for (const item of items) {
+    const title = dayHeading(item.start_at, now);
+    const last = groups[groups.length - 1];
+    if (last && last.title === title) last.items.push(item);
+    else groups.push({ title, items: [item] });
+  }
+  return groups;
+}
+
+export const PROVIDER_REASONS = {
+  decline: [
+    'Fully booked at that time',
+    'Outside my visit area',
+    'Not available that day',
+    'Needs an in-clinic visit',
+  ],
+  cancel: ['Vet unavailable', 'Emergency at the clinic', 'Clinic closed unexpectedly'],
+} as const;

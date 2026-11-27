@@ -111,7 +111,7 @@ describe('provider workspace', () => {
     expect(await screen.findByTestId('service-s-1')).toBeOnTheScreen();
     expect(screen.getByText('₹600')).toBeOnTheScreen();
     expect(screen.getByText('Instant')).toBeOnTheScreen();
-    expect(await screen.findByText('9:00 am – 1:00 pm,  3:00 pm – 6:00 pm')).toBeOnTheScreen();
+    expect(await screen.findByText('9:00 am – 1:00 pm\n3:00 pm – 6:00 pm')).toBeOnTheScreen();
     expect(screen.getAllByText('Closed').length).toBe(6);
     expect(await screen.findByText('9:20 am')).toBeOnTheScreen();
   });

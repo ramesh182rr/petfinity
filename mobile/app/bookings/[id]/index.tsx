@@ -17,21 +17,22 @@ import {
 import { errorMessage } from '@/features/auth/errorMessage';
 import {
   cancelPreview,
-  eventLabel,
   formatClock,
-  formatDay,
+  formatShortDay,
+  formatWeekday,
   formatWhen,
   PAYMENT_LABEL,
   policyLine,
   STATUS_INFO,
 } from '@/features/bookings/format';
 import { useBooking, useCancelBooking, usePayBooking } from '@/features/bookings/hooks';
+import { Timeline } from '@/features/bookings/Timeline';
 import type { BookingDetail } from '@/features/bookings/types';
 import { formatRupees } from '@/features/catalog/format';
 import { HeroStats } from '@/features/discovery/DetailParts';
 import { useRefreshOnFocus } from '@/lib/useRefreshOnFocus';
 import { transparentHeader } from '@/navigation/headerOptions';
-import { colors, radius, spacing } from '@/theme';
+import { colors, spacing } from '@/theme';
 
 function StatusBanner({ booking, isNew }: { booking: BookingDetail; isNew: boolean }) {
   const s = booking.status;
@@ -231,7 +232,7 @@ export default function BookingDetailScreen() {
             </View>
             <HeroStats
               items={[
-                { value: formatDay(b.start_at), label: 'Date' },
+                { value: formatShortDay(b.start_at), label: formatWeekday(b.start_at) },
                 { value: formatClock(b.start_at), label: 'Time' },
                 { value: formatRupees(b.amount_minor), label: 'Price' },
               ]}
@@ -351,23 +352,7 @@ export default function BookingDetailScreen() {
 
         <View style={styles.section}>
           <SectionHeader title="Timeline" />
-          <Card style={styles.timeline} testID="timeline">
-            {b.events.map((e, i) => (
-              <View key={`${e.created_at}-${i}`} style={styles.event}>
-                <View style={styles.rail}>
-                  <View style={[styles.dot, i === b.events.length - 1 && styles.dotLatest]} />
-                  {i < b.events.length - 1 ? <View style={styles.line} /> : null}
-                </View>
-                <View style={styles.eventText}>
-                  <Text variant="label">{eventLabel(e.event, e.to_status)}</Text>
-                  <Text variant="caption" color="textMuted">
-                    {formatWhen(e.created_at)}
-                    {e.reason ? ` · ${e.reason}` : ''}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </Card>
+          <Timeline events={b.events} />
         </View>
       </HeroScreen>
     </>
@@ -385,17 +370,4 @@ const styles = StyleSheet.create({
   buttonRow: { flexDirection: 'row', gap: spacing.md },
   flexButton: { flex: 1 },
   policy: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
-  timeline: { gap: 0 },
-  event: { flexDirection: 'row', gap: spacing.md },
-  rail: { width: 14, alignItems: 'center' },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: radius.pill,
-    marginTop: 4,
-    backgroundColor: colors.primarySoft,
-  },
-  dotLatest: { backgroundColor: colors.primary },
-  line: { flex: 1, width: 2, marginVertical: 2, backgroundColor: colors.border },
-  eventText: { flex: 1, gap: spacing.xxs, paddingBottom: spacing.md },
 });
