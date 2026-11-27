@@ -38,6 +38,7 @@ export const palette = {
   green700: '#217A54',
   green100: '#E2F2EA',
   amber700: '#A35F12',
+  amber400: '#E8A33D',
   amber100: '#FCEFD9',
   red700: '#C44747',
   red100: '#FBE5E5',
@@ -75,6 +76,8 @@ export const colors = {
   success: palette.green700,
   successTint: palette.green100,
   warning: palette.amber700,
+  /** Rating stars (decorative; the rating is always also given as text). */
+  ratingStar: palette.amber400,
   warningTint: palette.amber100,
   error: palette.red700,
   errorTint: palette.red100,

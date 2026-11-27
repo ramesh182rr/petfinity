@@ -86,3 +86,14 @@ def require_staff_role(role: StaffRoleName) -> Callable[[Session, User], User]:
 
 
 AdminUser = Annotated[User, Depends(require_staff_role(StaffRoleName.ADMIN))]
+
+
+def require_moderation(db: DbSession, user: CurrentUser) -> User:
+    """Moderators or admins (decision 0006): content moderation such as reviews."""
+    roles = staff_service.active_role_names(db, user.id)
+    if not roles & {StaffRoleName.MODERATOR.value, StaffRoleName.ADMIN.value}:
+        raise AppError("forbidden", "You don't have permission to do that.", status_code=403)
+    return user
+
+
+ModeratorUser = Annotated[User, Depends(require_moderation)]

@@ -1,6 +1,6 @@
 # Petfinity admin
 
-Staff web app for provider verification (and, later, moderation and support). It is a **website**, separate from the mobile app ([decision 0009](../docs/decisions/0009-admin-web-app.md)).
+Staff web app for provider verification and review moderation (support comes later). It is a **website**, separate from the mobile app ([decision 0009](../docs/decisions/0009-admin-web-app.md)).
 
 Stack: React 19, Vite 8, TypeScript, React Router, TanStack Query. Fonts are Poppins and Inter, self-hosted.
 
@@ -15,7 +15,7 @@ npm run dev              # http://localhost:5173 (proxies /api to http://localho
 
 1. Start the API first (`cd backend && uv run uvicorn app.main:app --port 8000`).
 2. To make yourself an admin locally, set `BOOTSTRAP_ADMIN_EMAILS=<your email>` in `backend/.env`, restart the API, then sign in here with that email. The 6-digit code appears in the API terminal (mock sender).
-3. Anyone without the admin role sees "Not authorised". The API enforces this independently.
+3. Admins see **Verification** and **Reviews**; staff with the `moderator` role see **Reviews** only ([decision 0014](../docs/decisions/0014-reviews-and-moderation.md)). Anyone else sees "Not authorised". The API enforces this independently.
 
 ## Checks
 

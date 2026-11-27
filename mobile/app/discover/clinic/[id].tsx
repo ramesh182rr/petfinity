@@ -20,6 +20,7 @@ import { BadgeCard, HeroStats, HoursCard, ServiceRow } from '@/features/discover
 import { avatarName, distanceLabel } from '@/features/discovery/format';
 import { useClinicListing } from '@/features/discovery/hooks';
 import { useDiscoveryStore } from '@/features/discovery/store';
+import { ratingTile, ReviewsSection } from '@/features/reviews/ReviewsSection';
 import type { ClinicDetail } from '@/features/discovery/types';
 import { transparentHeader } from '@/navigation/headerOptions';
 import { spacing } from '@/theme';
@@ -81,10 +82,7 @@ export default function ClinicListingScreen() {
           <HeroStats
             items={[
               { value: formatRupees(from), label: 'From' },
-              {
-                value: String(c.services.length),
-                label: c.services.length === 1 ? 'Service' : 'Services',
-              },
+              ratingTile(c.rating, c.review_count ?? 0),
               { value: c.open_now ? 'Open' : 'Closed', label: 'Right now' },
             ]}
           />
@@ -119,6 +117,15 @@ export default function ClinicListingScreen() {
           <SectionHeader title="Available times" />
           <AvailabilityCard kind="clinic" id={c.id} service={selected} />
         </View>
+
+        <ReviewsSection
+          kind="clinic"
+          id={c.id}
+          name={c.name}
+          rating={c.rating}
+          count={c.review_count ?? 0}
+          recent={c.recent_reviews ?? []}
+        />
 
         {c.doctors.length ? (
           <View style={styles.section}>

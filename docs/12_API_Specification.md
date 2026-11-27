@@ -210,6 +210,25 @@ Capacity: each booking takes a numbered capacity unit of its listing, and an exc
 
 Care bookings (`POST /offers/{id}/accept`) arrive in Phase 3.
 
+## Reviews (implemented 2.10, [decision 0014](decisions/0014-reviews-and-moderation.md))
+| Method and path | Who | Purpose |
+|---|---|---|
+| `POST /bookings/{id}/review` | parent | `{rating 1–5, text?}`. Completed bookings only, within 30 days, one per booking. Returns `MyReview` (201) |
+| `GET /bookings/{id}/review` | parent | My review of the visit (404 if none) |
+| `PATCH /reviews/{id}` | author | Edit within 30 days of the visit (409 once removed or after the window) |
+| `POST /reviews/{id}/report` | anyone else | `{reason, note?}`. Idempotent per person; the first report hides the review (204) |
+| `PUT /reviews/{id}/reply` | provider | One public reply, editable. 422 `reply_not_allowed` if it contains contact details or links |
+| `GET /discover/{clinics\|vets}/{id}/reviews?before=` | signed in | Published reviews: `{summary, items, next_before}`. `is_mine` marks the viewer's own |
+| `GET /manage/{owner_type}/{owner_id}/reviews` | provider | Published and held reviews, with `can_reply` |
+| `GET /admin/reviews?status=pending\|published\|removed` | moderator, admin | Moderation queue, with reports, flag reason and author contact |
+| `POST /admin/reviews/{id}/decision` | moderator, admin | `{action: keep\|remove, note?}`. Resolves the reports; a removal notifies the author; audited |
+
+`MyReview` includes `status`, `status_note` (why it's hidden or was removed), `can_edit`, `edit_until` and `reply`.
+
+Bookings carry `review` (parent view) and the `review` action while one can be written. Search results carry `rating` and `review_count`, and accept `sort=rating`. Listing pages also carry the 3 newest reviews in `recent_reviews`.
+
+Errors: `409 not_reviewable`, `409 review_window_closed`, `409 already_reviewed`, `409 review_removed`, `409 already_removed`, `422 own_review`, `422 reply_not_allowed`, `403 forbidden` (not staff).
+
 ## Caretaker requests/offers
 - `POST /caretaker-requests`
 - `GET /caretaker-requests/{id}`

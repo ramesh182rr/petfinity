@@ -67,6 +67,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       status,
       user,
       isAdmin: !!user?.capabilities.includes('admin'),
+      isModerator: !!user?.capabilities.includes('moderator'),
       requestCode: (email) =>
         api.request('/auth/otp/request', {
           method: 'POST',

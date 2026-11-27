@@ -36,6 +36,7 @@ import type { OwnerType, Service } from '@/features/catalog/types';
 import { formatWhen, replyBy } from '@/features/bookings/format';
 import { useListingBookings } from '@/features/bookings/hooks';
 import { useClinic, useProviderProfile } from '@/features/providers/hooks';
+import { useProviderReviews } from '@/features/reviews/hooks';
 import { STATUS_INFO } from '@/features/providers/labels';
 import { useRefreshOnFocus } from '@/lib/useRefreshOnFocus';
 import { transparentHeader } from '@/navigation/headerOptions';
@@ -92,12 +93,14 @@ export default function ManageScreen() {
   const requests = useListingBookings(ownerType, id, 'requests');
   const upcoming = useListingBookings(ownerType, id, 'upcoming');
   const next = upcoming.data?.items[0];
+  const reviewPage = useProviderReviews(ownerType, id);
   useRefreshOnFocus(
     services.refetch,
     hours.refetch,
     exceptions.refetch,
     requests.refetch,
     upcoming.refetch,
+    reviewPage.refetch,
   );
 
   const days = upcomingDays(14);
@@ -213,6 +216,18 @@ export default function ManageScreen() {
               }
               onPress={() => go(`${base}/bookings?scope=upcoming`)}
               testID="manage-next"
+            />
+            <ListRow
+              icon="star"
+              tone="peach"
+              title={
+                reviewPage.data?.summary.review_count
+                  ? `★ ${reviewPage.data.summary.rating?.toFixed(1)} · ${reviewPage.data.summary.review_count} ${reviewPage.data.summary.review_count === 1 ? 'review' : 'reviews'}`
+                  : 'No reviews yet'
+              }
+              subtitle="Read reviews and reply to pet parents."
+              onPress={() => go(`${base}/reviews`)}
+              testID="manage-reviews"
             />
           </Card>
         </View>

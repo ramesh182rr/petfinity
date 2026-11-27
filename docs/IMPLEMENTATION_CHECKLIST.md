@@ -35,7 +35,7 @@
 - [x] Availability/slot selection (2.5, 2.7)
 - [x] Appointment booking (2.7)
 - [x] Mock payment states (2.6, 2.7)
-- [ ] Booking management and review (management done in 2.7; reviews come in 2.10)
+- [x] Booking management and review (2.7, 2.10)
 
 ## Phase 2 — vet discovery and booking (see [development/phase-2-plan.md](development/phase-2-plan.md))
 - [x] 2.1 Provider and clinic onboarding API: profiles, clinics, private verification documents, submission
@@ -48,7 +48,7 @@
 - [x] 2.7 Booking flow (app): review and book, pending/confirmed states, mock pay now or at visit, Bookings tab, detail with timeline, cancel with outcome preview, reschedule
 - [x] 2.8 Provider inbox (app): workspace Appointments summary, Requests/Upcoming/Past inbox, confirm/decline with reasons, check-in, complete, no-show, provider cancel
 - [x] 2.9 Notifications and reminders: in-app inbox with unread badge, booking notifications for both sides, day-before and 2-hour reminders, push via Expo behind an adapter (mock in dev) ([0013](decisions/0013-notifications-and-push.md))
-- [ ] 2.10 Reviews
+- [x] 2.10 Reviews: completed visits only, one per booking, publish then moderate (report or auto-flag hides), provider replies, 30-day edits, ratings in search and listing pages, admin moderation ([0014](decisions/0014-reviews-and-moderation.md))
 
 ## Provider/admin
 - [ ] Provider onboarding

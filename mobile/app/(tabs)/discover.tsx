@@ -209,6 +209,13 @@ export default function DiscoverScreen() {
             testID="filter-price"
           />
           <Chip
+            icon="star"
+            label="Top rated"
+            selected={filters.sort === 'rating'}
+            onPress={() => setFilters({ sort: filters.sort === 'rating' ? 'distance' : 'rating' })}
+            testID="filter-rating"
+          />
+          <Chip
             icon="medkit"
             label="Emergency"
             selected={filters.emergency}
@@ -262,7 +269,11 @@ export default function DiscoverScreen() {
               {total} verified {total === 1 ? 'listing' : 'listings'}
             </Text>
             <Text variant="caption" color="textMuted">
-              {filters.sort === 'price' ? 'Lowest price first' : 'Nearest first'}
+              {filters.sort === 'price'
+                ? 'Lowest price first'
+                : filters.sort === 'rating'
+                  ? 'Top rated first'
+                  : 'Nearest first'}
             </Text>
           </View>
           {items.map((listing) => (

@@ -27,6 +27,8 @@ const base: Listing = {
   next_slot_at: null,
   languages: [],
   years_experience: null,
+  rating: null,
+  review_count: 0,
 };
 
 describe('discovery formatting', () => {

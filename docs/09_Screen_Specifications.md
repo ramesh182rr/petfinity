@@ -234,10 +234,37 @@ The vet's pin is private.
 - Care request browse/respond (caretaker)
 - Reviews and profile analytics (limited MVP)
 
+*Reviews (implemented 2.10, [0014](decisions/0014-reviews-and-moderation.md)):*
+- **Booking detail (parent):** for completed visits, a **Your review** section.
+  - Before reviewing: "How was Lotus Pet Clinic?" with **Rate your visit**.
+  - After: stars, date, text, the provider's reply, **Edit review** (within 30 days), and a "Hidden for now" or "Removed" pill with the reason.
+- **Rate your visit** (`app/bookings/[id]/review.tsx`):
+  - the visit summary
+  - "How was the visit?" with five large stars (52 dp targets) and a label (Poor … Excellent)
+  - an optional text box with a privacy hint
+  - **Post review** or **Save changes**
+  - a note that only the first name and last initial are shown
+- **Listing pages:**
+  - the header shows a "★ 4.0 · 1 review" tile, or "New · No reviews yet" (on the vet page it replaces the travel tile, which the "Visits your area" banner already covers)
+  - a **Reviews** section: the summary, the 3 newest reviews with replies, **See all N**, and **Report** (hidden on your own reviews)
+  - `app/discover/reviews.tsx` lists all reviews, with paging
+- **Report review** (`app/reviews/[id]/report.tsx`): reason chips, an optional note, **Report review**, then a "Thanks for telling us" confirmation.
+- **Discover:** listing cards show ★ rating and count; there is a **Top rated** quick chip (sort by rating).
+- **Provider reviews** (`provider/manage/…/reviews`):
+  - a gradient hero with Average, Published and Replied tiles
+  - review cards with **Reply publicly** or **Edit reply** (inline composer) and a "Hidden while Petfinity checks it" pill for held reviews
+  - the workspace's Appointments card links here ("★ 5.0 · 1 review")
+
 ## Admin web screens
 - Dashboard/metrics
 - Provider verification queue
 - Provider detail/document review
+- **Reviews moderation (implemented 2.10, `admin/src/pages/ReviewsPage.tsx`):**
+  - a hero with the waiting count
+  - Needs a decision / Published / Removed tabs
+  - review cards with listing, author and contact, date, stars, flag chip, text, provider reply and report list (reason chips with notes)
+  - a note to the author, then **Keep and publish** or **Remove**
+  - moderators see this page only; admins also see Verification
 - User/provider search
 - Booking lookup
 - Reports/moderation queue

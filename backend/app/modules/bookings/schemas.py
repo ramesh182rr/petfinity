@@ -13,6 +13,7 @@ from app.core.types import UtcDatetime
 from app.modules.bookings.models import BookingStatus, CancellationOutcome, PaymentStatus
 from app.modules.catalog.models import ConfirmationMode, ServiceMode
 from app.modules.discovery.schemas import ListingKind
+from app.modules.reviews.schemas import MyReview
 
 Note = Annotated[str, StringConstraints(max_length=500)]
 Reason = Annotated[str, StringConstraints(max_length=300)]
@@ -30,6 +31,7 @@ class BookingAction(StrEnum):
     CHECK_IN = "check_in"
     COMPLETE = "complete"
     NO_SHOW = "no_show"
+    REVIEW = "review"  # parent: rate a completed visit (within 30 days)
 
 
 class ViewerRole(StrEnum):
@@ -152,6 +154,9 @@ class BookingOut(BaseModel):
     policy: PolicyOut
     cancellation_outcome: CancellationOutcome | None
     cancel_reason: str | None
+    review: MyReview | None = Field(
+        default=None, description="The parent's review of this visit (parent view only)"
+    )
     viewer_role: ViewerRole
     allowed_actions: list[BookingAction]
     created_at: UtcDatetime

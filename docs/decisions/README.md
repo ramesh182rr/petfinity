@@ -17,6 +17,7 @@ Each significant product or technical decision gets one numbered file. A decisio
 | [0011](0011-launch-areas-and-locations.md) | 10 launch areas; GPS pins; home-visit vets by travel radius | 2026-11-26 | Accepted |
 | [0012](0012-booking-policy-payments-capacity.md) | Free cancellation until 2 h before; mock pay now or at visit; capacity units | 2026-11-26 | Accepted |
 | [0013](0013-notifications-and-push.md) | In-app inbox first; Expo push behind an adapter; booking reminders | 2026-11-27 | Accepted |
+| [0014](0014-reviews-and-moderation.md) | Reviews from completed visits; publish then moderate; provider replies; 30-day edits | 2026-11-27 | Accepted |
 
 ## Template
 

@@ -20,6 +20,7 @@
   --success: #217a54;
   --success-tint: #e2f2ea;
   --warning: #a35f12;
+  --rating: #c98315;
   --warning-tint: #fcefd9;
   --error: #c44747;
   --error-tint: #fbe5e5;
@@ -498,4 +499,28 @@ body {
 .hero-stat span {
   font-size: 12.5px;
   color: #f1e7f7;
+}
+
+/* Reviews moderation (2.10) */
+.rating {
+  color: var(--rating);
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+.review-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.review-reply {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--plum-tint);
+}
+.report-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
 }

@@ -4,7 +4,7 @@ import { useSession } from '../auth/context'
 import { Logo } from './Logo'
 
 export function Layout() {
-  const { user, signOut } = useSession()
+  const { user, signOut, isAdmin } = useSession()
   return (
     <div className="shell">
       <header className="topbar">
@@ -12,7 +12,8 @@ export function Layout() {
           <Logo />
           <strong className="brand">Petfinity Admin</strong>
           <nav className="row nav" aria-label="Main">
-            <NavLink to="/verification">Verification</NavLink>
+            {isAdmin ? <NavLink to="/verification">Verification</NavLink> : null}
+            <NavLink to="/reviews">Reviews</NavLink>
           </nav>
         </div>
         <div className="row">

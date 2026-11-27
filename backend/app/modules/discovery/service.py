@@ -68,6 +68,8 @@ from app.modules.discovery.schemas import (
     VetDetail,
 )
 from app.modules.providers.models import ProviderProfile, ProviderType
+from app.modules.reviews import service as review_service
+from app.modules.reviews.present import public_reviews
 from app.modules.verification.status import ActiveStatus, VerificationStatus
 
 VET_TIMEZONE = "Asia/Kolkata"
@@ -492,7 +494,23 @@ def search(
     if filters.open_now:
         candidates = [c for c in candidates if c.listing.open_now]
 
-    if filters.sort is SortOrder.PRICE:
+    ratings = review_service.summaries(db, [c.schedule_key for c in candidates])
+    for candidate in candidates:
+        found = ratings.get(candidate.schedule_key)
+        if found:
+            candidate.listing.rating, candidate.listing.review_count = found.rating, found.count
+
+    if filters.sort is SortOrder.RATING:
+        # Best rated first; unrated listings last; ties by distance.
+        candidates.sort(
+            key=lambda c: (
+                -(c.listing.rating or 0),
+                -c.listing.review_count,
+                c.sort_distance,
+                c.listing.name,
+            )
+        )
+    elif filters.sort is SortOrder.PRICE:
         candidates.sort(
             key=lambda c: (c.listing.price_from_minor or 0, c.sort_distance, c.listing.name)
         )
@@ -550,7 +568,12 @@ def _listed_services(db: Session, owner_id: uuid.UUID, *, vet: bool) -> list[Ser
 
 
 def clinic_detail(
-    db: Session, clinic_id: uuid.UUID, origin: Origin | None, *, now: datetime | None = None
+    db: Session,
+    clinic_id: uuid.UUID,
+    origin: Origin | None,
+    *,
+    now: datetime | None = None,
+    viewer_id: uuid.UUID | None = None,
 ) -> ClinicDetail:
     now = now or utcnow()
     clinic = _public_clinic(db, clinic_id)
@@ -574,7 +597,12 @@ def clinic_detail(
         .order_by(ProviderProfile.display_name)
     )
     exact = not point[2]
+    rated = review_service.summary(db, clinic.id)
+    recent = review_service.published_for(db, clinic.id, before=None, limit=3)
     return ClinicDetail(
+        rating=rated.rating,
+        review_count=rated.count,
+        recent_reviews=public_reviews(db, recent, viewer_id),
         id=clinic.id,
         name=clinic.name,
         description=clinic.description,
@@ -619,7 +647,12 @@ def _vet_checks(vet: ProviderProfile) -> list[str]:
 
 
 def vet_detail(
-    db: Session, profile_id: uuid.UUID, origin: Origin | None, *, now: datetime | None = None
+    db: Session,
+    profile_id: uuid.UUID,
+    origin: Origin | None,
+    *,
+    now: datetime | None = None,
+    viewer_id: uuid.UUID | None = None,
 ) -> VetDetail:
     now = now or utcnow()
     vet = _public_vet(db, profile_id)
@@ -640,7 +673,12 @@ def vet_detail(
     practices = db.scalars(
         select(Clinic).where(_verified_clinics(), Clinic.id.in_(practice_ids)).order_by(Clinic.name)
     )
+    rated = review_service.summary(db, vet.id)
+    recent = review_service.published_for(db, vet.id, before=None, limit=3)
     return VetDetail(
+        rating=rated.rating,
+        review_count=rated.count,
+        recent_reviews=public_reviews(db, recent, viewer_id),
         id=vet.id,
         display_name=vet.display_name,
         bio=vet.bio,

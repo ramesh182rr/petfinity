@@ -10,6 +10,7 @@ import { AvailabilityCard } from '@/features/discovery/AvailabilityCard';
 import { BadgeCard, HeroStats, HoursCard, ServiceRow } from '@/features/discovery/DetailParts';
 import { useVetListing } from '@/features/discovery/hooks';
 import { useDiscoveryStore } from '@/features/discovery/store';
+import { ratingTile, ReviewsSection } from '@/features/reviews/ReviewsSection';
 import { transparentHeader } from '@/navigation/headerOptions';
 import { spacing } from '@/theme';
 
@@ -60,7 +61,7 @@ export default function VetListingScreen() {
                 value: v.years_experience != null ? `${v.years_experience} yrs` : '–',
                 label: 'Experience',
               },
-              { value: `${v.service_radius_km} km`, label: 'Travels' },
+              ratingTile(v.rating, v.review_count ?? 0),
             ]}
           />
         }
@@ -116,6 +117,15 @@ export default function VetListingScreen() {
           <SectionHeader title="Available times" />
           <AvailabilityCard kind="vet" id={v.id} service={selected} />
         </View>
+
+        <ReviewsSection
+          kind="vet"
+          id={v.id}
+          name={v.display_name}
+          rating={v.rating}
+          count={v.review_count ?? 0}
+          recent={v.recent_reviews ?? []}
+        />
 
         {v.clinics.length ? (
           <View style={styles.section}>

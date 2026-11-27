@@ -14,6 +14,7 @@ from app.modules.media import models as media_models
 from app.modules.notifications import models as notifications_models
 from app.modules.pets import models as pets_models
 from app.modules.providers import models as providers_models
+from app.modules.reviews import models as reviews_models
 from app.modules.staff import models as staff_models
 from app.modules.users import models as users_models
 from app.modules.verification import models as verification_models
@@ -29,6 +30,7 @@ __all__ = [
     "notifications_models",
     "pets_models",
     "providers_models",
+    "reviews_models",
     "staff_models",
     "users_models",
     "verification_models",

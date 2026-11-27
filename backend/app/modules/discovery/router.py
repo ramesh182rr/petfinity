@@ -107,13 +107,15 @@ def search(
 )
 def clinic_detail(
     clinic_id: uuid.UUID,
-    _: CurrentUser,
+    user: CurrentUser,
     db: DbSession,
     area: AreaKey | None = None,
     lat: Lat = None,
     lng: Lng = None,
 ) -> ClinicDetail:
-    return discovery.clinic_detail(db, clinic_id, discovery.make_origin(area, lat, lng))
+    return discovery.clinic_detail(
+        db, clinic_id, discovery.make_origin(area, lat, lng), viewer_id=user.id
+    )
 
 
 @router.get(
@@ -124,13 +126,15 @@ def clinic_detail(
 )
 def vet_detail(
     profile_id: uuid.UUID,
-    _: CurrentUser,
+    user: CurrentUser,
     db: DbSession,
     area: AreaKey | None = None,
     lat: Lat = None,
     lng: Lng = None,
 ) -> VetDetail:
-    return discovery.vet_detail(db, profile_id, discovery.make_origin(area, lat, lng))
+    return discovery.vet_detail(
+        db, profile_id, discovery.make_origin(area, lat, lng), viewer_id=user.id
+    )
 
 
 def _slots(
@@ -156,7 +160,7 @@ def _slots(
 )
 def clinic_slots(
     clinic_id: uuid.UUID,
-    _: CurrentUser,
+    user: CurrentUser,
     db: DbSession,
     service_id: uuid.UUID,
     on: Annotated[date, Query(alias="date")],
@@ -172,7 +176,7 @@ def clinic_slots(
 )
 def vet_slots(
     profile_id: uuid.UUID,
-    _: CurrentUser,
+    user: CurrentUser,
     db: DbSession,
     service_id: uuid.UUID,
     on: Annotated[date, Query(alias="date")],

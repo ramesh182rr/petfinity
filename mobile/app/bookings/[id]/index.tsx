@@ -27,6 +27,7 @@ import {
 } from '@/features/bookings/format';
 import { useBooking, useCancelBooking, usePayBooking } from '@/features/bookings/hooks';
 import { Timeline } from '@/features/bookings/Timeline';
+import { MyReviewCard } from '@/features/reviews/MyReviewCard';
 import type { BookingDetail } from '@/features/bookings/types';
 import { formatRupees } from '@/features/catalog/format';
 import { HeroStats } from '@/features/discovery/DetailParts';
@@ -122,7 +123,8 @@ function outcomeText(booking: BookingDetail): string | null {
     default:
       break;
   }
-  if (booking.status === 'completed') return 'Hope your visit went well.';
+  if (booking.status === 'completed')
+    return 'Hope your visit went well. Thanks for choosing Petfinity.';
   if (booking.status === 'in_progress') return 'You’re checked in.';
   if (booking.status === 'no_show') return 'The clinic marked this visit as missed.';
   return null;
@@ -241,6 +243,18 @@ export default function BookingDetailScreen() {
         }
       >
         <StatusBanner booking={b} isNew={params.new === '1'} />
+
+        {b.review || b.allowed_actions.includes('review') ? (
+          <View style={styles.section}>
+            <SectionHeader title="Your review" />
+            <MyReviewCard
+              bookingId={b.id}
+              review={b.review}
+              canReview={b.allowed_actions.includes('review')}
+              listingName={b.listing.name}
+            />
+          </View>
+        ) : null}
 
         {showPayment ? (
           <View style={styles.section}>

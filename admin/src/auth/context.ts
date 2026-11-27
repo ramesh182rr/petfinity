@@ -8,6 +8,7 @@ export type SessionValue = {
   status: SessionStatus
   user: Me | null
   isAdmin: boolean
+  isModerator: boolean
   requestCode(email: string): Promise<{ destination_masked: string; resend_after_seconds: number }>
   verifyCode(email: string, code: string): Promise<void>
   signOut(): Promise<void>

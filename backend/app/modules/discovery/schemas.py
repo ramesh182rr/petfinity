@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from app.core.types import UtcDatetime
 from app.modules.catalog.models import ConfirmationMode, ServiceCategory, ServiceMode
 from app.modules.discovery.areas import AreaKey
+from app.modules.reviews.schemas import PublicReview
 
 
 class ListingKind(StrEnum):
@@ -33,6 +34,7 @@ class KindFilter(StrEnum):
 class SortOrder(StrEnum):
     DISTANCE = "distance"
     PRICE = "price"
+    RATING = "rating"
 
 
 class AreaOut(BaseModel):
@@ -82,6 +84,8 @@ class Listing(BaseModel):
     next_slot_at: UtcDatetime | None = Field(description="Earliest bookable slot within 7 days")
     languages: list[str]
     years_experience: int | None
+    rating: float | None = Field(default=None, description="Average of published reviews")
+    review_count: int = 0
 
 
 class SearchResponse(BaseModel):
@@ -150,6 +154,9 @@ class _Detail(BaseModel):
     hours: list[DayHours]
     closures: list[Closure] = Field(description="Days off and special hours, next 14 days")
     services: list[PublicService]
+    rating: float | None = None
+    review_count: int = 0
+    recent_reviews: list[PublicReview] = Field(default_factory=list, description="Newest 3")
 
 
 class ClinicDetail(_Detail):

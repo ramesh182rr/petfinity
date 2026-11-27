@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+  '/api/v1/admin/reviews': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Review moderation queue */
+    get: operations['moderation_queue_api_v1_admin_reviews_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/admin/reviews/{review_id}/decision': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Keep (publish) or remove a review */
+    post: operations['decide_api_v1_admin_reviews__review_id__decision_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/admin/staff-roles': {
     parameters: {
       query?: never
@@ -400,6 +434,24 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/bookings/{booking_id}/review': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** My review of this booking */
+    get: operations['my_review_api_v1_bookings__booking_id__review_get']
+    put?: never
+    /** Review a completed visit (within 30 days; one per booking) */
+    post: operations['create_review_api_v1_bookings__booking_id__review_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/clinics': {
     parameters: {
       query?: never
@@ -537,6 +589,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/discover/{kind}/{listing_id}/reviews': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Published reviews of a listed clinic or vet */
+    get: operations['listing_reviews_api_v1_discover__kind___listing_id__reviews_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/health': {
     parameters: {
       query?: never
@@ -636,6 +705,23 @@ export interface paths {
     post?: never
     /** Delete Exception */
     delete: operations['delete_exception_api_v1_manage__owner_type___owner_id__exceptions__exception_id__delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/{owner_type}/{owner_id}/reviews': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Provider: reviews of this listing, including ones hidden for moderation */
+    get: operations['provider_reviews_api_v1_manage__owner_type___owner_id__reviews_get']
+    put?: never
+    post?: never
+    delete?: never
     options?: never
     head?: never
     patch?: never
@@ -942,6 +1028,57 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/reviews/{review_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Edit my review (within 30 days of the visit) */
+    patch: operations['edit_review_api_v1_reviews__review_id__patch']
+    trace?: never
+  }
+  '/api/v1/reviews/{review_id}/reply': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Provider's public reply (one per review; editable) */
+    put: operations['reply_review_api_v1_reviews__review_id__reply_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/reviews/{review_id}/report': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Report a review (hides it until a moderator decides) */
+    post: operations['report_review_api_v1_reviews__review_id__report_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/verification/{subject_type}/{subject_id}': {
     parameters: {
       query?: never
@@ -1036,6 +1173,48 @@ export interface components {
      * @enum {string}
      */
     ActiveStatus: 'active' | 'suspended'
+    /** AdminReview */
+    AdminReview: {
+      /** Author Contact */
+      author_contact: string | null
+      /** Author Name */
+      author_name: string
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Flag Reason */
+      flag_reason: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Listing Name */
+      listing_name: string
+      /** Moderation Note */
+      moderation_note: string | null
+      /** Rating */
+      rating: number
+      /** Reply Text */
+      reply_text: string | null
+      /** Reports */
+      reports: components['schemas']['ReportSummary'][]
+      status: components['schemas']['ReviewStatus']
+      /** Text */
+      text: string | null
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+    }
+    /** AdminReviewPage */
+    AdminReviewPage: {
+      /** Items */
+      items: components['schemas']['AdminReview'][]
+    }
     /**
      * AreaKey
      * @enum {string}
@@ -1099,6 +1278,7 @@ export interface components {
       | 'check_in'
       | 'complete'
       | 'no_show'
+      | 'review'
     /** BookingCreate */
     BookingCreate: {
       /**
@@ -1184,6 +1364,8 @@ export interface components {
       policy: components['schemas']['PolicyOut']
       /** Response Deadline */
       response_deadline: string | null
+      /** @description The parent's review of this visit (parent view only) */
+      review?: components['schemas']['MyReview'] | null
       /** Service Id */
       service_id: string | null
       service_mode: components['schemas']['ServiceMode']
@@ -1283,6 +1465,8 @@ export interface components {
       policy: components['schemas']['PolicyOut']
       /** Response Deadline */
       response_deadline: string | null
+      /** @description The parent's review of this visit (parent view only) */
+      review?: components['schemas']['MyReview'] | null
       /** Service Id */
       service_id: string | null
       service_mode: components['schemas']['ServiceMode']
@@ -1467,6 +1651,18 @@ export interface components {
       open_now: boolean
       /** Postal Code */
       postal_code: string
+      /** Rating */
+      rating?: number | null
+      /**
+       * Recent Reviews
+       * @description Newest 3
+       */
+      recent_reviews?: components['schemas']['PublicReview'][]
+      /**
+       * Review Count
+       * @default 0
+       */
+      review_count: number
       /** Services */
       services: components['schemas']['PublicService'][]
       /** State */
@@ -1847,6 +2043,16 @@ export interface components {
       open_now: boolean
       /** Price From Minor */
       price_from_minor: number | null
+      /**
+       * Rating
+       * @description Average of published reviews
+       */
+      rating?: number | null
+      /**
+       * Review Count
+       * @default 0
+       */
+      review_count: number
       /** Service Count */
       service_count: number
       /**
@@ -1920,6 +2126,60 @@ export interface components {
      * @enum {string}
      */
     MemberRole: 'operator' | 'veterinarian'
+    /** ModerationIn */
+    ModerationIn: {
+      /**
+       * Action
+       * @enum {string}
+       */
+      action: 'keep' | 'remove'
+      /**
+       * Note
+       * @description Shown to the author when a review is removed
+       */
+      note?: string | null
+    }
+    /**
+     * MyReview
+     * @description The author's own view (also embedded in their booking).
+     */
+    MyReview: {
+      /**
+       * Booking Id
+       * Format: uuid
+       */
+      booking_id: string
+      /** Can Edit */
+      can_edit: boolean
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * Edit Until
+       * Format: date-time
+       */
+      edit_until: string
+      /** Edited */
+      edited: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Rating */
+      rating: number
+      reply: components['schemas']['ReplyOut'] | null
+      status: components['schemas']['ReviewStatus']
+      /**
+       * Status Note
+       * @description Why it's hidden or was removed
+       */
+      status_note: string | null
+      /** Text */
+      text: string | null
+    }
     /** NotificationOut */
     NotificationOut: {
       /** Body */
@@ -2328,11 +2588,99 @@ export interface components {
       /** Years Experience */
       years_experience?: number | null
     }
+    /** ProviderReview */
+    ProviderReview: {
+      /**
+       * Author Name
+       * @description e.g. "Arun K."
+       */
+      author_name: string
+      /** Can Reply */
+      can_reply: boolean
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Edited */
+      edited: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /**
+       * Is Mine
+       * @description Written by the signed-in user
+       * @default false
+       */
+      is_mine: boolean
+      /**
+       * Pets
+       * @description Species seen, e.g. "Dog"
+       */
+      pets: string | null
+      /** Rating */
+      rating: number
+      reply: components['schemas']['ReplyOut'] | null
+      /** Service Title */
+      service_title: string
+      status: components['schemas']['ReviewStatus']
+      /** Text */
+      text: string | null
+    }
+    /** ProviderReviewPage */
+    ProviderReviewPage: {
+      /** Items */
+      items: components['schemas']['ProviderReview'][]
+      summary: components['schemas']['ReviewSummary']
+    }
     /**
      * ProviderType
      * @enum {string}
      */
     ProviderType: 'veterinarian' | 'caretaker'
+    /**
+     * PublicReview
+     * @description What any signed-in user sees: no author account details beyond a short name.
+     */
+    PublicReview: {
+      /**
+       * Author Name
+       * @description e.g. "Arun K."
+       */
+      author_name: string
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Edited */
+      edited: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /**
+       * Is Mine
+       * @description Written by the signed-in user
+       * @default false
+       */
+      is_mine: boolean
+      /**
+       * Pets
+       * @description Species seen, e.g. "Dog"
+       */
+      pets: string | null
+      /** Rating */
+      rating: number
+      reply: components['schemas']['ReplyOut'] | null
+      /** Service Title */
+      service_title: string
+      /** Text */
+      text: string | null
+    }
     /** PublicService */
     PublicService: {
       category: components['schemas']['ServiceCategory']
@@ -2470,6 +2818,43 @@ export interface components {
       /** Refresh Token */
       refresh_token: string
     }
+    /** ReplyIn */
+    ReplyIn: {
+      /** Text */
+      text: string
+    }
+    /** ReplyOut */
+    ReplyOut: {
+      /**
+       * Replied At
+       * Format: date-time
+       */
+      replied_at: string
+      /** Text */
+      text: string
+    }
+    /** ReportIn */
+    ReportIn: {
+      /** Note */
+      note?: string | null
+      reason: components['schemas']['ReportReason']
+    }
+    /**
+     * ReportReason
+     * @enum {string}
+     */
+    ReportReason: 'fake' | 'abusive' | 'private_info' | 'spam' | 'other'
+    /** ReportSummary */
+    ReportSummary: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Note */
+      note: string | null
+      reason: components['schemas']['ReportReason']
+    }
     /** RescheduleIn */
     RescheduleIn: {
       /**
@@ -2477,6 +2862,13 @@ export interface components {
        * Format: date-time
        */
       start_at: string
+    }
+    /** ReviewCreate */
+    ReviewCreate: {
+      /** Rating */
+      rating: number
+      /** Text */
+      text?: string | null
     }
     /** ReviewDocumentView */
     ReviewDocumentView: {
@@ -2499,6 +2891,36 @@ export interface components {
       url: string
       /** Url Expires In */
       url_expires_in: number
+    }
+    /** ReviewPage */
+    ReviewPage: {
+      /** Items */
+      items: components['schemas']['PublicReview'][]
+      /** Next Before */
+      next_before: string | null
+      summary: components['schemas']['ReviewSummary']
+    }
+    /**
+     * ReviewStatus
+     * @enum {string}
+     */
+    ReviewStatus: 'published' | 'pending' | 'removed'
+    /** ReviewSummary */
+    ReviewSummary: {
+      /**
+       * Rating
+       * @description Average of published reviews, 1 decimal
+       */
+      rating: number | null
+      /** Review Count */
+      review_count: number
+    }
+    /** ReviewUpdate */
+    ReviewUpdate: {
+      /** Rating */
+      rating?: number | null
+      /** Text */
+      text?: string | null
     }
     /** RuleIn */
     RuleIn: {
@@ -2724,7 +3146,7 @@ export interface components {
      * SortOrder
      * @enum {string}
      */
-    SortOrder: 'distance' | 'price'
+    SortOrder: 'distance' | 'price' | 'rating'
     /**
      * Species
      * @enum {string}
@@ -2950,6 +3372,18 @@ export interface components {
       open_now: boolean
       /** Qualifications */
       qualifications: string | null
+      /** Rating */
+      rating?: number | null
+      /**
+       * Recent Reviews
+       * @description Newest 3
+       */
+      recent_reviews?: components['schemas']['PublicReview'][]
+      /**
+       * Review Count
+       * @default 0
+       */
+      review_count: number
       /** Service Radius Km */
       service_radius_km: number
       /** Services */
@@ -3027,6 +3461,162 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  moderation_queue_api_v1_admin_reviews_get: {
+    parameters: {
+      query?: {
+        status?: components['schemas']['ReviewStatus']
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AdminReviewPage']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  decide_api_v1_admin_reviews__review_id__decision_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        review_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ModerationIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AdminReviewPage']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   list_staff_roles_api_v1_admin_staff_roles_get: {
     parameters: {
       query?: never
@@ -4971,6 +5561,162 @@ export interface operations {
       }
     }
   }
+  my_review_api_v1_bookings__booking_id__review_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['MyReview']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  create_review_api_v1_bookings__booking_id__review_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        booking_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReviewCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['MyReview']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   create_clinic_api_v1_clinics_post: {
     parameters: {
       query?: never
@@ -5579,6 +6325,86 @@ export interface operations {
       }
     }
   }
+  listing_reviews_api_v1_discover__kind___listing_id__reviews_get: {
+    parameters: {
+      query?: {
+        before?: string | null
+        limit?: number
+      }
+      header?: never
+      path: {
+        kind: 'clinics' | 'vets'
+        listing_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReviewPage']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   health_api_v1_health_get: {
     parameters: {
       query?: never
@@ -6078,6 +6904,83 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  provider_reviews_api_v1_manage__owner_type___owner_id__reviews_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        owner_type: components['schemas']['OwnerType']
+        owner_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProviderReviewPage']
+        }
       }
       /** @description Unauthorized */
       401: {
@@ -7839,6 +8742,244 @@ export interface operations {
       }
       /** @description Too Many Requests */
       429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  edit_review_api_v1_reviews__review_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        review_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReviewUpdate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['MyReview']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  reply_review_api_v1_reviews__review_id__reply_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        review_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReplyIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProviderReview']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  report_review_api_v1_reviews__review_id__report_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        review_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
         headers: {
           [name: string]: unknown
         }

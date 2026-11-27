@@ -17,6 +17,8 @@ from app.modules.health.router import router as health_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.pets.router import router as pets_router
 from app.modules.providers.router import router as providers_router
+from app.modules.reviews.router import admin_router as reviews_admin_router
+from app.modules.reviews.router import router as reviews_router
 from app.modules.staff.router import router as staff_router
 from app.modules.users.router import router as users_router
 from app.modules.verification.admin_router import router as verification_admin_router
@@ -36,5 +38,7 @@ api_router.include_router(discovery_router)
 api_router.include_router(bookings_router)
 api_router.include_router(bookings_manage_router)
 api_router.include_router(notifications_router)
+api_router.include_router(reviews_router)
+api_router.include_router(reviews_admin_router)
 api_router.include_router(verification_router)
 api_router.include_router(verification_admin_router)

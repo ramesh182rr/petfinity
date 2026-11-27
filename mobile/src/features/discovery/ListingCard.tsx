@@ -47,6 +47,15 @@ export function ListingCard({ listing, onPress }: { listing: Listing; onPress: (
           <Text variant="caption" color="textMuted" numberOfLines={1}>
             {whereLabel(listing)}
           </Text>
+          {listing.review_count && listing.rating != null ? (
+            <View style={styles.rating} testID={`rating-${listing.id}`}>
+              <Ionicons name="star" size={14} color={colors.ratingStar} />
+              <Text variant="label">{listing.rating.toFixed(1)}</Text>
+              <Text variant="caption" color="textMuted">
+                ({listing.review_count})
+              </Text>
+            </View>
+          ) : null}
           <View style={styles.pills}>
             <StatusPill
               label={listing.open_now ? 'Open now' : 'Closed now'}
@@ -116,6 +125,7 @@ const styles = StyleSheet.create({
   main: { flex: 1, gap: spacing.xxs },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   name: { flexShrink: 1 },
+  rating: { flexDirection: 'row', alignItems: 'center', gap: spacing.xxs },
   pills: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginTop: spacing.xs },
   price: { alignItems: 'flex-end' },
   footer: {

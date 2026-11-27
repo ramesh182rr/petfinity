@@ -40,6 +40,13 @@ export function RootNavigator() {
         <Stack.Screen name="book/index" options={{ title: '' }} />
         <Stack.Screen name="bookings/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="bookings/[id]/reschedule" options={{ title: 'Reschedule' }} />
+        <Stack.Screen name="bookings/[id]/review" options={{ title: 'Rate your visit' }} />
+        <Stack.Screen name="reviews/[id]/report" options={{ title: 'Report review' }} />
+        <Stack.Screen name="discover/reviews" options={{ title: 'Reviews' }} />
+        <Stack.Screen
+          name="provider/manage/[ownerType]/[id]/reviews"
+          options={{ title: 'Reviews' }}
+        />
         <Stack.Screen name="discover/clinic/[id]" options={{ title: '' }} />
         <Stack.Screen name="discover/vet/[id]" options={{ title: '' }} />
         <Stack.Screen name="provider/index" options={{ title: '' }} />

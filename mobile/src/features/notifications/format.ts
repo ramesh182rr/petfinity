@@ -13,6 +13,11 @@ export function notificationIcon(kind: string): { icon: IconName; tone: IconBadg
     case 'booking_new':
     case 'booking_confirmed':
       return { icon: 'checkmark-circle', tone: 'sage' };
+    case 'review_new':
+    case 'review_reply':
+      return { icon: 'star', tone: 'peach' };
+    case 'review_removed':
+      return { icon: 'eye-off', tone: 'coral' };
     case 'booking_completed':
       return { icon: 'ribbon', tone: 'sage' };
     case 'booking_rescheduled':

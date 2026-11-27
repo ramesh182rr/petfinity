@@ -181,7 +181,8 @@ def on_booking_event(
         to_owner(
             "booking_completed",
             f"Thanks for visiting {ctx.listing}",
-            f"We hope {ctx.pets} is feeling great. Your visit is marked as completed.",
+            f"We hope {ctx.pets} is feeling great. Tap to rate your visit and help other "
+            "pet parents.",
         )
     elif event == "no_show":
         to_owner(

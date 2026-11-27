@@ -11,8 +11,9 @@ from app.api.deps import CurrentUser, DbSession
 from app.core import clock
 from app.core.errors import error_responses
 from app.modules.bookings import service as bookings
-from app.modules.bookings.models import Booking
+from app.modules.bookings.models import Booking, BookingStatus
 from app.modules.bookings.schemas import (
+    BookingAction,
     BookingCreate,
     BookingDetail,
     BookingEventOut,
@@ -32,6 +33,9 @@ from app.modules.catalog.router import ManagedOwner
 from app.modules.discovery.schemas import ListingKind
 from app.modules.notifications.router import push_after_response
 from app.modules.pets.models import Pet
+from app.modules.reviews import service as reviews
+from app.modules.reviews.models import Review
+from app.modules.reviews.router import to_my_review
 from app.modules.users.models import User
 
 # Booking changes create notifications; push them once the response has gone out.
@@ -48,6 +52,7 @@ def present(
     *,
     pets: list[Pet] | None = None,
     listing: tuple[ListingKind, str, str | None] | None = None,
+    review: Review | Literal[False] | None = False,
 ) -> BookingOut:
     now = clock.utcnow()
     if pets is None:
@@ -58,6 +63,15 @@ def present(
     address_hidden = provider_view and booking.status not in ADDRESS_VISIBLE_TO_PROVIDER
     owner = db.get(User, booking.owner_id) if provider_view else None
     snapshot = booking.cancellation_policy
+    actions = bookings.allowed_actions(booking, viewer.role, now)
+    my_review = None
+    if viewer.role is ViewerRole.OWNER:
+        if review is False:
+            review = reviews.by_booking(db, [booking.id]).get(booking.id)
+        if review is not None:
+            my_review = to_my_review(review, booking)
+        elif booking.status == BookingStatus.COMPLETED and now <= reviews.window_end(booking):
+            actions.append(BookingAction.REVIEW)
     return BookingOut(
         id=booking.id,
         booking_type=booking.booking_type,
@@ -89,7 +103,8 @@ def present(
         cancellation_outcome=booking.cancellation_outcome,
         cancel_reason=booking.cancel_reason,
         viewer_role=viewer.role,
-        allowed_actions=bookings.allowed_actions(booking, viewer.role, now),
+        review=my_review,
+        allowed_actions=actions,
         created_at=booking.created_at,
         updated_at=booking.updated_at,
     )
@@ -131,9 +146,20 @@ def present_list(
 ) -> BookingList:
     pets = bookings.pets_for(db, [b.id for b in items])
     names = bookings.listing_names(db, items)
+    mine = reviews.by_booking(db, [b.id for b in items]) if role is ViewerRole.OWNER else {}
     viewer = Viewer(user_id, role)
     return BookingList(
-        items=[present(db, b, viewer, pets=pets[b.id], listing=names[b.resource_id]) for b in items]
+        items=[
+            present(
+                db,
+                b,
+                viewer,
+                pets=pets[b.id],
+                listing=names[b.resource_id],
+                review=mine.get(b.id),
+            )
+            for b in items
+        ]
     )
 
 
