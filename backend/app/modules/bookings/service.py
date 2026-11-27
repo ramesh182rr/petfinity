@@ -44,6 +44,7 @@ from app.modules.clinics import service as clinics
 from app.modules.clinics.models import Clinic, MemberRole
 from app.modules.discovery import service as discovery
 from app.modules.discovery.schemas import ListingKind
+from app.modules.notifications import bookings as booking_notifications
 from app.modules.pets.models import Pet
 from app.modules.providers.models import ProviderProfile
 from app.modules.staff import service as staff
@@ -179,6 +180,15 @@ def _event(
             reason=reason,
             details=details,
         )
+    )
+    db.flush()  # the session doesn't autoflush; messages read the booking's pets
+    booking_notifications.on_booking_event(
+        db,
+        booking,
+        event,
+        to_status=to_status,
+        actor_role=actor.role.value if actor else "system",
+        reason=reason,
     )
 
 
@@ -610,6 +620,9 @@ def cancel(db: Session, user_id: uuid.UUID, booking_id: uuid.UUID, reason: str |
     else:
         outcome = CancellationOutcome.NOT_CHARGED
 
+    # Set before the event so its notification can describe the outcome.
+    booking.cancellation_outcome = outcome
+    booking.cancel_reason = reason
     _move(
         db,
         booking,
@@ -619,8 +632,6 @@ def cancel(db: Session, user_id: uuid.UUID, booking_id: uuid.UUID, reason: str |
         reason=reason,
         details={"outcome": outcome.value, "late": late},
     )
-    booking.cancellation_outcome = outcome
-    booking.cancel_reason = reason
     if viewer.role is ViewerRole.ADMIN:
         audit.record(
             db,

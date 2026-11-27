@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createQueryClient } from '@/api';
 import { bootstrapSession, useSession } from '@/features/auth/session';
+import { PushBridge } from '@/features/notifications/PushBridge';
 import { RootNavigator } from '@/navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -47,6 +48,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <RootNavigator />
+        <PushBridge />
       </SafeAreaProvider>
     </QueryClientProvider>
   );

@@ -29,6 +29,13 @@ class OtpDelivery(StrEnum):
     CONSOLE = "console"
 
 
+class PushBackend(StrEnum):
+    # MOCK: logs pushes instead of sending them. Refused in production.
+    LOG = "log"
+    # Expo Push Service (FCM/APNs behind it). Needs an EAS project in the app.
+    EXPO = "expo"
+
+
 class StorageBackend(StrEnum):
     # Files on the API server's disk, served through signed /dev-storage URLs.
     # Development only; refused in staging/production.
@@ -106,6 +113,11 @@ class Settings(BaseSettings):
     media_max_document_bytes: int = Field(default=10_000_000, ge=100_000, le=50_000_000)
     media_upload_url_ttl_seconds: int = Field(default=600, ge=60, le=3600)
     media_download_url_ttl_seconds: int = Field(default=3600, ge=60, le=86_400)
+
+    # Notifications (milestone 2.9, decision 0013)
+    push_backend: PushBackend = PushBackend.LOG
+    expo_access_token: SecretStr | None = None  # optional "enhanced push security" token
+    expo_push_url: str = "https://exp.host/--/api/v2/push/send"
 
     # Pets
     max_pets_per_owner: int = Field(default=30, ge=1, le=200)
@@ -189,6 +201,8 @@ class Settings(BaseSettings):
                 raise ValueError("LOG_JSON must be true in production")
         if self.app_env in HOSTED_ENVIRONMENTS and self.storage_backend is StorageBackend.LOCAL:
             raise ValueError("local file storage is not allowed in staging/production; use r2")
+        if self.app_env is Environment.PRODUCTION and self.push_backend is PushBackend.LOG:
+            raise ValueError("the mock push sender is not allowed in production; use expo")
         if self.app_env in HOSTED_ENVIRONMENTS and self.otp_delivery is OtpDelivery.CONSOLE:
             raise ValueError("the mock console OTP sender is not allowed in staging/production")
         return self

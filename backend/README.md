@@ -35,6 +35,7 @@ app/
                      # bookings/ (booking engine: capacity units, state machine, mock payments)
   dev/seed_demo.py   # demo discovery listings for local development (refuses outside local/development)
   jobs/expire_bookings.py  # cron: expire unanswered booking requests (uv run python -m app.jobs.expire_bookings)
+  jobs/notifications.py    # cron: booking reminders + push outbox (uv run python -m app.jobs.notifications)
   openapi_export.py  # writes openapi.json, the contract consumed by mobile/
 alembic/             # migrations (versions/ named YYYYMMDD_<rev>_<slug>.py)
 tests/               # pytest against real PostgreSQL

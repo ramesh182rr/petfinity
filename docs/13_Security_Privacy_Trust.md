@@ -32,6 +32,11 @@ The platform facilitates animal care and people entering homes or leaving pets w
   - Bookings are visible only to the parent, the listing's operators or vet, and admins; anyone else gets 404.
   - Every change is in `booking_events`; admin cancellations are also in the audit log.
   - Payments are mock-only and labelled as such.
+- Notifications (2.9, [0013](decisions/0013-notifications-and-push.md)):
+  - Messages never contain the home-visit address.
+  - Push tokens are tied to the signed-in account and released on sign-out.
+  - Permission is requested only on a user tap.
+  - Tapping a notification opens in-app routes only.
 - Lost-pet posts may reveal location; warn users and allow approximate location.
 - Moderation audit and appeal process.
 

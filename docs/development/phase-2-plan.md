@@ -1,7 +1,7 @@
 # Phase 2 — Vet discovery and appointment booking
 
 **Started:** 2026-11-25 (Phase 1b.6 observability skipped for now, at the product owner's request)
-**Status:** 2.1–2.8 complete (2026-11-27), plus a UI refresh across mobile and admin. 2.9 (notifications and reminders) is next.
+**Status:** 2.1–2.9 complete (2026-11-27), plus a UI refresh across mobile and admin. 2.10 (reviews) is next.
 **Goal:** a pet parent can find a **verified** vet or clinic, see real availability, and book an appointment (with mock payment). The provider can manage it, and the owner can review it afterwards.
 **Decisions it builds on:** 0004 (instant/request confirmation), 0005 (unified bookings), 0006 (roles), 0008 (storage), 0009 (admin web app), 0010 (Google Maps, list-first).
 

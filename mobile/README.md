@@ -35,6 +35,7 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
                         # manage/[ownerType]/[id]/{index,service,hours,day-off,bookings} (services, availability, inbox),
                         # booking/[id] (provider view of a booking: confirm, decline, check in, complete)
   discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
+  notifications.tsx     # notification inbox
   book/                 # review and book an appointment (pet, notes, address, policy)
   bookings/[id]/        # booking detail (status, mock payment, timeline, cancel) and reschedule
   (tabs)/               # Home, Discover (search + filters), Bookings (upcoming/past), Community, My Pets
@@ -51,6 +52,8 @@ src/
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
   features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation,
                         # SlotPicker (DayStrip, SlotGrid)
+  features/notifications/ # inbox API + hooks (unread badge), NotificationBell, push setup (expo-notifications),
+                        # PushBridge (re-register, open from tap, refresh on receive)
   features/bookings/    # booking API + hooks (idempotency key per attempt), BookingCard, status/payment/policy text
   features/discovery/   # launch areas, search store/hooks, ListingCard, detail parts, LocationField (area + GPS pin),
                         # one-off foreground location (expo-location)

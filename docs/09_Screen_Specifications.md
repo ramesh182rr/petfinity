@@ -134,8 +134,19 @@ Local/following tabs, post composer, post cards, likes/comments, report/block.
 ### 14. Create post
 Text, photo, pet attachment, audience/location scope, guidelines and preview.
 
-### 15. Notifications
-Booking events, caretaker offers, community interactions and settings.
+### 15. Notifications (implemented 2.9, `app/notifications.tsx`)
+- **Bell on the Home header:** next to the avatar, the same size, with a ring and a red unread badge ("9+" above nine). It opens the inbox. The count refreshes every minute and on focus.
+- **Inbox:**
+  - gradient hero: "3 new" or "All caught up", plus **Mark all read**
+  - **Turn on notifications** card, shown until push is granted; tapping it asks for permission. If permission is denied, or push isn't configured on this build, it explains that and notes that everything still shows in the inbox.
+  - **Today** and **Earlier** cards: rows with an icon badge per kind (request, confirmed, reminder, cancelled…), the title, body and relative time; unread rows are tinted and have a dot
+  - tapping a row marks it read and opens its booking (the parent or provider view)
+  - **Show older** paging, pull to refresh, and skeleton, error and empty states
+- **Push:**
+  - shown while the app is open as well
+  - tapping a push opens its route and marks it read
+  - a push that arrives refreshes the inbox and bookings
+  - the device token is released on sign-out
 
 ### 16. Profile/settings
 *1b.2: shows name, email/phone and Sign out.* User details, roles, saved providers, location, privacy, notification settings, support, policies, logout/delete account.

@@ -17,6 +17,7 @@ Each environment uses separate database, storage bucket, credentials and provide
 - Initial backend as Render Web Service.
 - Add worker only for scheduled/reminder tasks once needed.
 - **Cron (2.6):** run `uv run python -m app.jobs.expire_bookings` every 5 minutes (Render cron job) to mark unanswered booking requests `expired` ([0012](decisions/0012-booking-policy-payments-capacity.md)). Availability does not depend on it, so a missed run only delays the status change.
+- **Cron (2.9):** run `uv run python -m app.jobs.notifications` every 5 minutes, after the expiry job. It queues booking reminders and delivers pending pushes ([0013](decisions/0013-notifications-and-push.md)). Set `PUSH_BACKEND=expo` in production (the mock `log` sender is refused there).
 - Health endpoint and readiness checks.
 - Configure environment variables in Render dashboard; never commit secrets.
 - Review cold starts/availability and free-tier restrictions before production.

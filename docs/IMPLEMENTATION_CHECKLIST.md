@@ -47,7 +47,7 @@
 - [x] 2.6 Booking engine (API): bookings, capacity units with an exclusion constraint, idempotent create, instant/request state machine, expiry, cancellation policy, mock payments ([0012](decisions/0012-booking-policy-payments-capacity.md))
 - [x] 2.7 Booking flow (app): review and book, pending/confirmed states, mock pay now or at visit, Bookings tab, detail with timeline, cancel with outcome preview, reschedule
 - [x] 2.8 Provider inbox (app): workspace Appointments summary, Requests/Upcoming/Past inbox, confirm/decline with reasons, check-in, complete, no-show, provider cancel
-- [ ] 2.9 Notifications and reminders
+- [x] 2.9 Notifications and reminders: in-app inbox with unread badge, booking notifications for both sides, day-before and 2-hour reminders, push via Expo behind an adapter (mock in dev) ([0013](decisions/0013-notifications-and-push.md))
 - [ ] 2.10 Reviews
 
 ## Provider/admin

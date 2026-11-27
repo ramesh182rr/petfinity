@@ -13,3 +13,16 @@ jest.mock('expo-secure-store', () => {
     __store: store,
   };
 });
+
+// Native push module: no device in tests. Permission starts undetermined.
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  getPermissionsAsync: jest.fn(async () => ({ status: 'undetermined', canAskAgain: true })),
+  requestPermissionsAsync: jest.fn(async () => ({ status: 'denied' })),
+  setNotificationChannelAsync: jest.fn(async () => null),
+  getExpoPushTokenAsync: jest.fn(async () => ({ data: 'ExponentPushToken[test-token-123]' })),
+  addNotificationReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  useLastNotificationResponse: jest.fn(() => null),
+  AndroidImportance: { HIGH: 4 },
+}));
+jest.mock('expo-device', () => ({ isDevice: true }));

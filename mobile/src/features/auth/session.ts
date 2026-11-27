@@ -5,6 +5,7 @@ import { apiClient, isApiError } from '@/api';
 import * as authApi from './api';
 import { clearRefreshToken, loadRefreshToken, saveRefreshToken } from './tokenStorage';
 import type { Me, SignInResponse, TokenResponse } from './types';
+import { releasePush } from '@/features/notifications/push';
 
 export type SessionStatus = 'loading' | 'signedOut' | 'signedIn';
 
@@ -97,6 +98,7 @@ export function setUser(user: Me): void {
 }
 
 export async function signOut(): Promise<void> {
+  await releasePush(); // while still authenticated: stop pushes to this phone
   try {
     await authApi.logout();
   } catch {

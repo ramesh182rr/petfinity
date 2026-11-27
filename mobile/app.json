@@ -47,6 +47,13 @@
           "isAndroidBackgroundLocationEnabled": false,
           "isIosBackgroundLocationEnabled": false
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#6A2C7A",
+          "defaultChannel": "bookings"
+        }
       ]
     ],
     "experiments": {

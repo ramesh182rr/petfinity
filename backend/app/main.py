@@ -18,6 +18,7 @@ from app.core.logging import configure_logging
 from app.core.request_id import REQUEST_ID_HEADER, RequestIdMiddleware
 from app.db.session import create_db_engine, create_session_factory
 from app.modules.auth.otp_delivery import OtpSender, create_otp_sender
+from app.modules.notifications.push import PushSender, create_push_sender
 from app.modules.storage.base import ObjectStorage
 from app.modules.storage.dev_router import router as dev_storage_router
 from app.modules.storage.factory import create_storage
@@ -29,6 +30,7 @@ def create_app(
     *,
     otp_sender: OtpSender | None = None,
     storage: ObjectStorage | None = None,
+    push_sender: PushSender | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings)
@@ -56,6 +58,7 @@ def create_app(
     app.state.session_factory = create_session_factory(engine)
     app.state.otp_sender = otp_sender or create_otp_sender(settings)
     app.state.storage = storage or create_storage(settings)
+    app.state.push_sender = push_sender or create_push_sender(settings)
 
     register_error_handlers(app)
 

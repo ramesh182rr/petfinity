@@ -12,6 +12,7 @@ import {
   useHeroScroll,
 } from '@/components/ui';
 import { useSession } from '@/features/auth/session';
+import { NotificationBell } from '@/features/notifications/NotificationBell';
 import { PetSwitcher } from '@/features/pets/PetSwitcher';
 import { timeOfDayGreeting } from '@/lib/greeting';
 import { colors, spacing } from '@/theme';
@@ -37,14 +38,17 @@ export default function HomeScreen() {
           title={firstName ? `Hi, ${firstName}` : 'Welcome to Petfinity'}
           subtitle="Trusted care for every paw, close to home."
           accessory={
-            <Pressable
-              onPress={() => router.push('/profile')}
-              accessibilityRole="button"
-              accessibilityLabel="Profile and settings"
-              hitSlop={8}
-            >
-              <InitialsAvatar name={user?.display_name} />
-            </Pressable>
+            <View style={styles.accessory}>
+              <NotificationBell />
+              <Pressable
+                onPress={() => router.push('/profile')}
+                accessibilityRole="button"
+                accessibilityLabel="Profile and settings"
+                hitSlop={8}
+              >
+                <InitialsAvatar name={user?.display_name} />
+              </Pressable>
+            </View>
           }
           style={styles.hero}
         />
@@ -135,6 +139,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  accessory: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: spacing.xxl },
   hero: { paddingBottom: spacing.xxxl + spacing.xl },

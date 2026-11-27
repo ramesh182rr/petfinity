@@ -11,6 +11,7 @@ from app.modules.bookings import models as bookings_models
 from app.modules.catalog import models as catalog_models
 from app.modules.clinics import models as clinics_models
 from app.modules.media import models as media_models
+from app.modules.notifications import models as notifications_models
 from app.modules.pets import models as pets_models
 from app.modules.providers import models as providers_models
 from app.modules.staff import models as staff_models
@@ -25,6 +26,7 @@ __all__ = [
     "catalog_models",
     "clinics_models",
     "media_models",
+    "notifications_models",
     "pets_models",
     "providers_models",
     "staff_models",

@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Header, Response, status
+from fastapi import APIRouter, Depends, Header, Response, status
 
 from app.api.deps import CurrentUser, DbSession
 from app.core import clock
@@ -30,10 +30,14 @@ from app.modules.bookings.schemas import (
 from app.modules.bookings.service import ADDRESS_VISIBLE_TO_PROVIDER, Viewer
 from app.modules.catalog.router import ManagedOwner
 from app.modules.discovery.schemas import ListingKind
+from app.modules.notifications.router import push_after_response
 from app.modules.pets.models import Pet
 from app.modules.users.models import User
 
-router = APIRouter(prefix="/bookings", tags=["bookings"])
+# Booking changes create notifications; push them once the response has gone out.
+router = APIRouter(
+    prefix="/bookings", tags=["bookings"], dependencies=[Depends(push_after_response)]
+)
 _ERRORS = error_responses(400, 401, 404, 409, 422)
 
 
@@ -266,7 +270,11 @@ def payment(
     return _respond(db, user, bookings.pay(db, user.id, booking_id, data))
 
 
-manage_router = APIRouter(prefix="/manage/{owner_type}/{owner_id}", tags=["manage"])
+manage_router = APIRouter(
+    prefix="/manage/{owner_type}/{owner_id}",
+    tags=["manage"],
+    dependencies=[Depends(push_after_response)],
+)
 
 
 @manage_router.get(

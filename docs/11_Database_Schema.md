@@ -36,6 +36,8 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `booking_pets` (implemented 2.6): booking_id, pet_id (primary key on both). Vet appointments take one pet.
 - `booking_events` (implemented 2.6): booking_id, event (created/confirmed/declined/expired/cancelled/rescheduled/checked_in/completed/no_show/paid/pay_at_visit), from_status, to_status, actor_user_id, actor_role (owner/provider/admin/system), reason, details (JSONB), created_at. Append-only.
 - `payments` (implemented 2.6, mock ledger): booking_id, provider (`mock` only), kind (charge/refund), amount_minor, currency, status, reference (unique `mock_…`), created_at.
+- `notifications` (implemented 2.9, [0013](decisions/0013-notifications-and-push.md)): user_id, kind (booking_request, booking_new, booking_confirmed, booking_declined, booking_expired, booking_cancelled, booking_rescheduled, booking_completed, booking_no_show, reminder_24h, reminder_2h), title, body, data (JSONB: in-app `route`, booking_id), dedupe_key (unique per user when set), read_at, push_status (pending/sent/failed/skipped), push_attempts, created_at. Indexes: (user_id, created_at), partial unread, partial pending push.
+- `push_devices` (implemented 2.9): user_id, token (Expo push token, unique), platform (android/ios), created_at, last_seen_at, disabled_at (set on DeviceNotRegistered).
 - `reviews`: booking_id, author_id, provider_id, rating, text, moderation status.
 - `posts`, `post_media`, `comments`, `reactions`.
 - `reports`, `blocks`, `moderation_actions`.

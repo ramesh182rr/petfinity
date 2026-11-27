@@ -62,7 +62,8 @@ npm run android                 # first run builds the native dev client (severa
     adb shell cmd location providers set-test-provider-location $p --location 13.0067,80.2575 --accuracy 5
   done
   ```
-- `expo-location` is a native module. After pulling 2.5 for the first time, rebuild the dev client with `npm run android`.
+- **Notifications:** in dev the API uses `PUSH_BACKEND=log`, so pushes appear in the API terminal as `MOCK PUSH (not delivered)`. The in-app inbox (bell on Home) works without any keys. Real pushes need an EAS project and FCM key ([0013](../decisions/0013-notifications-and-push.md)). Run reminders by hand with `uv run python -m app.jobs.notifications`.
+- `expo-notifications` (2.9) and `expo-location` (2.5) are native modules: rebuild the dev client with `npm run android` after pulling.
 - **Physical device:** set `EXPO_PUBLIC_API_URL=http://<your-Mac-LAN-IP>:8000`, run the API with `--host 0.0.0.0`, and keep both devices on the same network.
 
 Run the checks:

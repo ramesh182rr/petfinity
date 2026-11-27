@@ -34,7 +34,7 @@
 12. Petfinity trademark, domain and app-store/social-handle clearance.
 13. ~~Admin/provider web technology~~: **decided.** React + Vite admin web app in `admin/` ([0009](decisions/0009-admin-web-app.md)).
 14. MVP community media scope and upload limits.
-15. SMS/email/push notification provider. **Needed before staging:** OTP delivery (SMS needs India DLT registration; start early).
+15. SMS/email/push notification provider. **Push decided:** Expo Push behind an adapter ([0013](decisions/0013-notifications-and-push.md)); needs an EAS project and FCM key. **Still needed before staging:** OTP delivery by SMS/email (SMS needs India DLT registration; start early).
 
 ## Decision log
 Recorded decisions live in [`docs/decisions/`](decisions/README.md).

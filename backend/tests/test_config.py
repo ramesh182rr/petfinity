@@ -60,7 +60,7 @@ R2_SETTINGS = {
 def test_mock_otp_sender_refused_in_hosted_environments() -> None:
     for env in (Environment.STAGING, Environment.PRODUCTION):
         with pytest.raises(ValidationError, match="mock console OTP sender"):
-            make_settings(app_env=env, log_json=True, **R2_SETTINGS)
+            make_settings(app_env=env, log_json=True, push_backend="expo", **R2_SETTINGS)
 
 
 def test_local_storage_refused_in_hosted_environments() -> None:
@@ -101,3 +101,8 @@ def test_production_requires_secure_cookies() -> None:
         make_settings(
             app_env=Environment.PRODUCTION, log_json=True, cookie_secure=False, **R2_SETTINGS
         )
+
+
+def test_mock_push_refused_in_production() -> None:
+    with pytest.raises(ValidationError, match="mock push sender"):
+        make_settings(app_env=Environment.PRODUCTION, log_json=True, **R2_SETTINGS)

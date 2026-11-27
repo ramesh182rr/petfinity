@@ -233,7 +233,19 @@ Care bookings (`POST /offers/{id}/accept`) arrive in Phase 3.
 - `POST /reports`
 - `POST /blocks`
 
-## Notifications & admin
+## Notifications (implemented 2.9, [decision 0013](decisions/0013-notifications-and-push.md))
+| Method and path | Purpose |
+|---|---|
+| `GET /notifications?before=&limit=` | Newest first. Returns `{items, unread_count, next_before}`; pass `next_before` as `before` for the next page |
+| `GET /notifications/unread-count` | `{unread_count}`, for the bell badge |
+| `POST /notifications/{id}/read` | Mark one notification read (404 if it isn't yours) |
+| `POST /notifications/read-all` | Mark all read |
+| `POST /me/push-devices` | `{token, platform}`. Registers an Expo push token (204, idempotent; the token moves to this account) |
+| `POST /me/push-devices/unregister` | `{token}`. Stops pushes to that phone for this account (204) |
+
+Notification `data.route` is an in-app path: `/bookings/{id}` for the parent, `/provider/booking/{id}` for the provider. Booking endpoints push new notifications right after responding; the cron job delivers anything left over.
+
+## Admin
 - `GET /notifications`, `PATCH /notifications/{id}/read`
 - `GET /admin/provider-verifications`
 - `POST /admin/providers/{id}/verification-decision`
