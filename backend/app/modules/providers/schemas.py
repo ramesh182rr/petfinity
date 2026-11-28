@@ -15,12 +15,14 @@ from pydantic import (
 
 from app.core.text import clean_required, clean_text
 from app.core.types import UtcDatetime
+from app.modules.care.models import HomeType
 from app.modules.discovery.areas import SERVICE_RADIUS_CHOICES, AreaKey
 from app.modules.providers.models import ProviderType
 from app.modules.verification.status import ActiveStatus, VerificationStatus
 
 Lang = Annotated[str, StringConstraints(min_length=2, max_length=30)]
 
+CARETAKER_FIELDS = ("home_type", "outdoor_space", "pets_at_home", "max_concurrent")
 CREDENTIAL_FIELDS = ("registration_number", "registration_council", "qualifications")
 LOCATION_FIELDS = ("area_key", "latitude", "longitude", "service_radius_km")
 Lat = Annotated[Decimal, Field(ge=-90, le=90, max_digits=9, decimal_places=6)]
@@ -44,6 +46,13 @@ class _ProfileFields(BaseModel):
     service_radius_km: int | None = Field(
         default=None, description=f"One of {', '.join(map(str, SERVICE_RADIUS_CHOICES))}"
     )
+    # Caretakers only (decision 0015).
+    home_type: HomeType | None = None
+    outdoor_space: bool | None = None
+    pets_at_home: Annotated[str, StringConstraints(max_length=120)] | None = None
+    max_concurrent: int | None = Field(
+        default=None, ge=1, le=5, description="Care bookings taken at the same time"
+    )
 
     @field_validator("service_radius_km")
     @classmethod
@@ -60,7 +69,14 @@ class _ProfileFields(BaseModel):
             raise ValueError("latitude and longitude must be provided together")
         return self
 
-    @field_validator("bio", "city", "registration_number", "registration_council", "qualifications")
+    @field_validator(
+        "bio",
+        "city",
+        "registration_number",
+        "registration_council",
+        "qualifications",
+        "pets_at_home",
+    )
     @classmethod
     def _text(cls, value: str | None) -> str | None:
         return clean_text(value)
@@ -119,6 +135,10 @@ class ProviderProfileResponse(BaseModel):
     latitude: Decimal | None
     longitude: Decimal | None
     service_radius_km: int | None
+    home_type: HomeType | None
+    outdoor_space: bool | None
+    pets_at_home: str | None
+    max_concurrent: int | None
     verification_status: VerificationStatus
     verified_at: UtcDatetime | None
     status: ActiveStatus

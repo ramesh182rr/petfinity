@@ -14,6 +14,10 @@ const base = {
   latitude: '13.040000',
   longitude: '80.230000',
   serviceRadiusKm: 15,
+  homeType: 'independent_house' as const,
+  outdoorSpace: true,
+  petsAtHome: '  One beagle ',
+  maxConcurrent: 2,
 };
 
 describe('provider profile payload', () => {
@@ -34,10 +38,16 @@ describe('provider profile payload', () => {
     });
   });
 
-  it('omits registration fields for caretakers', () => {
+  it('sends home and capacity, not registration, for caretakers', () => {
     const payload = toProfilePayload({ ...base, yearsExperience: '' }, 'caretaker');
     expect(payload).not.toHaveProperty('registration_number');
-    expect(payload).not.toHaveProperty('service_radius_km');
+    expect(payload).toMatchObject({
+      service_radius_km: 15,
+      home_type: 'independent_house',
+      outdoor_space: true,
+      pets_at_home: 'One beagle',
+      max_concurrent: 2,
+    });
     expect(payload.years_experience).toBeNull();
   });
 });

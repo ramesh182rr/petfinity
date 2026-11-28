@@ -21,7 +21,9 @@ import { formatDate, toIsoDate } from '@/features/pets/format';
 import { colors, radius, spacing, touchTarget } from '@/theme';
 
 export default function DayOffScreen() {
-  const params = useLocalSearchParams<{ ownerType: string; id: string }>();
+  // closedOnly: caretakers mark whole days off only (decision 0015).
+  const params = useLocalSearchParams<{ ownerType: string; id: string; closedOnly?: string }>();
+  const closedOnly = params.closedOnly === '1';
   const ownerType: OwnerType = params.ownerType === 'clinic' ? 'clinic' : 'provider_profile';
   const add = useAddException(ownerType, params.id);
   const tomorrow = new Date();
@@ -66,15 +68,17 @@ export default function DayOffScreen() {
             onChange={(_e, d) => d && setDay(d)}
           />
         ) : null}
-        <SegmentedControl
-          accessibilityLabel="Type"
-          value={kind}
-          onChange={setKind}
-          options={[
-            { value: 'closed', label: 'Closed all day' },
-            { value: 'custom_hours', label: 'Special hours' },
-          ]}
-        />
+        {closedOnly ? null : (
+          <SegmentedControl
+            accessibilityLabel="Type"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: 'closed', label: 'Closed all day' },
+              { value: 'custom_hours', label: 'Special hours' },
+            ]}
+          />
+        )}
         {kind === 'custom_hours' ? (
           <View style={styles.row}>
             <TimeField label="Opens" value={start} onChange={setStart} />

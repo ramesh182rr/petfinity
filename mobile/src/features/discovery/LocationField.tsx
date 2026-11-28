@@ -20,7 +20,7 @@ type Props = {
   /** Called with the chosen area so a form can prefill city/state. */
   onAreaPicked?: (area: Area) => void;
   /** Home-visit vets: how far they travel. */
-  radius?: { value: number | null; onChange: (km: number) => void };
+  radius?: { value: number | null; onChange: (km: number) => void; label?: string };
   pinHint: string;
   testID?: string;
 };
@@ -110,7 +110,7 @@ export function LocationField({ value, onChange, onAreaPicked, radius, pinHint, 
 
       {radius ? (
         <ChipGroup
-          label="How far will you travel for home visits?"
+          label={radius.label ?? 'How far will you travel for home visits?'}
           options={(areas.data?.service_radius_choices_km ?? [5, 10, 15, 25]).map(
             (km) => `${km} km`,
           )}

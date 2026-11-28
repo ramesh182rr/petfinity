@@ -15,7 +15,7 @@ This file governs work in this repository. `~/Github/CLAUDE.md` describes the un
 
 ## Working method
 - One milestone at a time. Do not start a new phase without the product owner's approval.
-- The current plan is in [`docs/development/phase-2-plan.md`](docs/development/phase-2-plan.md) (earlier: phase-1, phase-1b). Progress is tracked in [`docs/IMPLEMENTATION_CHECKLIST.md`](docs/IMPLEMENTATION_CHECKLIST.md).
+- The current plan is in [`docs/development/phase-3-plan.md`](docs/development/phase-3-plan.md) (earlier: phase-1, phase-1b, phase-2). Progress is tracked in [`docs/IMPLEMENTATION_CHECKLIST.md`](docs/IMPLEMENTATION_CHECKLIST.md).
 - Read the relevant `docs/` files before non-trivial work. [`docs/18_AI_Coding_Instructions.md`](docs/18_AI_Coding_Instructions.md) is the detailed rulebook.
 - Documented product decisions are authoritative. If two documents contradict each other, report it; don't silently pick one. Record new decisions in `docs/decisions/`.
 - Major product decisions belong to the product owner. Ask concisely, and only if the docs don't already answer the question.

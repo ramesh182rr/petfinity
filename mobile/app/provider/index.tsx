@@ -95,7 +95,7 @@ export default function ProviderHubScreen() {
                         router.push(
                           p.provider_type === 'veterinarian'
                             ? `/provider/manage/provider_profile/${p.id}`
-                            : `/provider/verify/provider_profile/${p.id}`,
+                            : `/provider/care/${p.id}`,
                         )
                       }
                     />
@@ -146,7 +146,7 @@ export default function ProviderHubScreen() {
                     tone="peach"
                     gradient="coral"
                     title="Caretaker"
-                    subtitle="Sitting, day care, boarding"
+                    subtitle="Visits, day care, boarding, sitting"
                     onPress={() =>
                       router.push({
                         pathname: '/provider/profile/new',

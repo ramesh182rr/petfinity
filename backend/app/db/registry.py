@@ -8,6 +8,7 @@ from app.db.base import Base
 from app.modules.audit import models as audit_models
 from app.modules.auth import models as auth_models
 from app.modules.bookings import models as bookings_models
+from app.modules.care import models as care_models
 from app.modules.catalog import models as catalog_models
 from app.modules.clinics import models as clinics_models
 from app.modules.media import models as media_models
@@ -24,6 +25,7 @@ __all__ = [
     "audit_models",
     "auth_models",
     "bookings_models",
+    "care_models",
     "catalog_models",
     "clinics_models",
     "media_models",

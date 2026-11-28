@@ -229,6 +229,16 @@ Bookings carry `review` (parent view) and the `review` action while one can be w
 
 Errors: `409 not_reviewable`, `409 review_window_closed`, `409 already_reviewed`, `409 review_removed`, `409 already_removed`, `422 own_review`, `422 reply_not_allowed`, `403 forbidden` (not staff).
 
+## Caretaker workspace (implemented 3.1, [decision 0015](decisions/0015-caretaker-marketplace.md))
+- `GET /manage/provider_profile/{id}/care`: `{services, missing, receiving_requests}`.
+  - `missing` lists what still stops requests from reaching the caretaker: `services`, `service_area`, `home_details` (only when day care or boarding is offered), `capacity`, `verification`.
+- `PUT /manage/provider_profile/{id}/care/services`: `{services: [{care_type, rate_minor, species, max_pets, notes?, active}]}`.
+  - Replaces the whole offering, one row per care type (422 `duplicate_care_type`).
+  - Each service returns `rate_unit` (visit/day/night).
+- Caretaker profiles accept `home_type`, `outdoor_space`, `pets_at_home` and `max_concurrent`, plus the shared area, pin and radius fields. Other profiles get 422 `caretaker_only`.
+- Caretakers use `/manage/provider_profile/{id}/exceptions` for whole days off only (422 `days_off_only` for special hours). Vet-style services, hours and slots still return 422 `services_not_supported`.
+- Caretaker verification requires `identity` and `address_proof` documents.
+
 ## Caretaker requests/offers
 - `POST /caretaker-requests`
 - `GET /caretaker-requests/{id}`

@@ -32,6 +32,10 @@ The platform facilitates animal care and people entering homes or leaving pets w
   - Bookings are visible only to the parent, the listing's operators or vet, and admins; anyone else gets 404.
   - Every change is in `booking_events`; admin cancellations are also in the audit log.
   - Payments are mock-only and labelled as such.
+- Caretakers (3.1, [0015](decisions/0015-caretaker-marketplace.md)):
+  - Verification needs identity and address proof.
+  - Home details are shown to pet parents only after booking.
+  - Their base pin is never public.
 - Reviews (2.10, [0014](decisions/0014-reviews-and-moderation.md)):
   - Only verified visits: one review per completed booking.
   - Authors appear as first name and last initial; no contact details.

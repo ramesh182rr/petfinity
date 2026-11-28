@@ -20,7 +20,15 @@ export default function NewProviderProfileScreen() {
         onSubmit={(payload) =>
           create.mutate(
             { ...payload, provider_type: type, display_name: payload.display_name ?? '' },
-            { onSuccess: (p) => router.replace(`/provider/verify/provider_profile/${p.id}`) },
+            {
+              onSuccess: (p) =>
+                router.replace(
+                  // Caretakers start at their workspace: its checklist leads to verification.
+                  p.provider_type === 'caretaker'
+                    ? `/provider/care/${p.id}`
+                    : `/provider/verify/provider_profile/${p.id}`,
+                ),
+            },
           )
         }
       />

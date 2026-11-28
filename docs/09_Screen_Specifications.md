@@ -228,6 +228,20 @@ The vet's pin is private.
   - Payment from the provider's view ("Collect payment at the visit", "Paid online (mock)", …)
   - Timeline showing who did what
 
+*Implemented in 3.1 (caretakers, [0015](decisions/0015-caretaker-marketplace.md)):*
+- The hub's Caretaker tile reads "Visits, day care, boarding, sitting". A new caretaker profile opens the caretaker workspace.
+- **Profile form (caretaker):**
+  - **Where you work:** area chips, private GPS pin, and "How far will you travel or accept pets from?"
+  - **Your home and capacity:** apartment or independent house, outdoor space yes/no, pets already at home, and bookings at the same time (1–5)
+- **Caretaker workspace** (`app/provider/care/[id]/index.tsx`):
+  - gradient hero: Services, At once and Verification tiles
+  - **Get ready for requests** checklist (each step opens the right screen), or a **You're receiving requests · Live** card
+  - **Your services:** icon badges, species, pet limit, and rate per visit, day or night
+  - **Area, home and capacity**
+  - **Days off** (whole days only)
+  - pull to refresh, refresh on focus
+- **Your services** (`app/provider/care/[id]/services.tsx`): a card per care type with an Offer switch. When on, it shows a starting rate (₹, per unit), pet types and pets per booking, with inline errors.
+
 *Still planned:*
 - Booking/request inbox
 - Booking detail and status actions

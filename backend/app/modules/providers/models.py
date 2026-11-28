@@ -12,6 +12,7 @@ from decimal import Decimal
 from enum import StrEnum
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -52,6 +53,11 @@ class ProviderProfile(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     latitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
     longitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
     service_radius_km: Mapped[int | None] = mapped_column(Integer)
+    # Caretakers only (decision 0015): their home, for day care and boarding, and capacity.
+    home_type: Mapped[str | None] = mapped_column(String(20))
+    outdoor_space: Mapped[bool | None] = mapped_column(Boolean)
+    pets_at_home: Mapped[str | None] = mapped_column(String(120))
+    max_concurrent: Mapped[int | None] = mapped_column(Integer)
     # Veterinarian credentials (verified against the state veterinary council register).
     registration_number: Mapped[str | None] = mapped_column(String(50))
     registration_council: Mapped[str | None] = mapped_column(String(120))
@@ -77,6 +83,13 @@ class ProviderProfile(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             "(latitude IS NULL OR "
             "(latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180))",
             name="valid_coordinates",
+        ),
+        CheckConstraint(
+            "home_type IS NULL OR home_type IN ('apartment', 'independent_house')",
+            name="valid_home_type",
+        ),
+        CheckConstraint(
+            "max_concurrent IS NULL OR max_concurrent BETWEEN 1 AND 5", name="valid_max_concurrent"
         ),
         CheckConstraint(
             "service_radius_km IS NULL OR service_radius_km BETWEEN 1 AND 50",

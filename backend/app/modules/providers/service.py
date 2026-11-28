@@ -12,6 +12,7 @@ from app.modules.audit import service as audit
 from app.modules.discovery.areas import resolve_area
 from app.modules.providers.models import ProviderProfile, ProviderType
 from app.modules.providers.schemas import (
+    CARETAKER_FIELDS,
     CREDENTIAL_FIELDS,
     LOCATION_FIELDS,
     ProviderProfileCreate,
@@ -50,6 +51,17 @@ def find_for_user(
     return db.scalars(stmt).first()
 
 
+def _caretaker_fields_only(provider_type: str, values: dict[str, object]) -> None:
+    if provider_type != ProviderType.CARETAKER and any(
+        values.get(f) is not None for f in CARETAKER_FIELDS
+    ):
+        raise AppError(
+            "caretaker_only",
+            "Home and capacity details apply to caretaker profiles only.",
+            status_code=422,
+        )
+
+
 def create(db: Session, user_id: uuid.UUID, data: ProviderProfileCreate) -> ProviderProfile:
     if find_for_user(db, user_id, data.provider_type) is not None:
         raise AppError(
@@ -57,6 +69,7 @@ def create(db: Session, user_id: uuid.UUID, data: ProviderProfileCreate) -> Prov
             f"You already have a {data.provider_type.value} profile.",
             status_code=409,
         )
+    _caretaker_fields_only(data.provider_type, data.model_dump(exclude_none=True))
     values = data.model_dump(exclude_none=True)
     values["area_key"] = resolve_area(
         values.get("area_key"), data.latitude, data.longitude, city=data.city
@@ -85,6 +98,7 @@ def update(
 ) -> ProviderProfile:
     profile = get_owned(db, user_id, profile_id, for_update=True)
     changes = data.changes()
+    _caretaker_fields_only(profile.provider_type, changes)
     if "languages" in changes and changes["languages"] is None:
         changes["languages"] = []
     credential_change = any(

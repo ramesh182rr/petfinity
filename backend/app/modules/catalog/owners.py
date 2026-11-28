@@ -25,6 +25,7 @@ class Owner:
     id: uuid.UUID
     timezone: str
     name: str
+    is_caretaker: bool = False
 
     @property
     def is_clinic(self) -> bool:
@@ -47,11 +48,17 @@ def resolve_owner(
     owner_id: uuid.UUID,
     *,
     for_update: bool = False,
+    allow_caretaker: bool = False,
 ) -> Owner:
+    """`allow_caretaker`: caretakers may use days off (not services, hours or slots)."""
     if owner_type is OwnerType.CLINIC:
         clinic = clinics.require_operator(db, user_id, owner_id, for_update=for_update)
         return Owner(owner_type, clinic.id, clinic.timezone, clinic.name)
     profile = providers.get_owned(db, user_id, owner_id, for_update=for_update)
+    if profile.provider_type == ProviderType.CARETAKER and allow_caretaker:
+        return Owner(
+            owner_type, profile.id, DEFAULT_TIMEZONE, profile.display_name, is_caretaker=True
+        )
     if profile.provider_type != ProviderType.VETERINARIAN:
         raise AppError(
             "services_not_supported",

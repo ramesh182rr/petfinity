@@ -33,7 +33,8 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   pets/                 # new, [id] (profile), [id]/edit
   provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
                         # manage/[ownerType]/[id]/{index,service,hours,day-off,bookings} (services, availability, inbox),
-                        # booking/[id] (provider view of a booking: confirm, decline, check in, complete)
+                        # booking/[id] (provider view of a booking: confirm, decline, check in, complete),
+                        # care/[id]/{index,services} (caretaker workspace and services)
   discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
   notifications.tsx     # notification inbox
   reviews/[id]/report   # report a review
@@ -53,6 +54,7 @@ src/
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
   features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation,
                         # SlotPicker (DayStrip, SlotGrid)
+  features/care/        # caretaker workspace: care services API/hooks, care types, readiness, drafts
   features/reviews/     # review API + hooks, Stars/StarInput (ui), ReviewCard, RatingSummary, ReviewsSection,
                         # MyReviewCard
   features/notifications/ # inbox API + hooks (unread badge), NotificationBell, push setup (expo-notifications),

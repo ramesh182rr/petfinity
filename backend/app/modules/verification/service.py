@@ -50,7 +50,8 @@ def requirements(subject: Subject) -> Requirements:
             [DocumentType.IDENTITY, DocumentType.VET_REGISTRATION],
             ["registration_number", "registration_council"],
         )
-    return Requirements([DocumentType.IDENTITY], [])
+    # Caretakers enter homes or host pets (decision 0015): identity and address proof.
+    return Requirements([DocumentType.IDENTITY, DocumentType.ADDRESS_PROOF], [])
 
 
 def resolve_subject(

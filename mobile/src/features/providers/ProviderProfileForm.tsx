@@ -30,6 +30,10 @@ const schema = z.object({
   latitude: z.string().nullable(),
   longitude: z.string().nullable(),
   serviceRadiusKm: z.number().nullable(),
+  homeType: z.enum(['apartment', 'independent_house']).nullable(),
+  outdoorSpace: z.boolean().nullable(),
+  petsAtHome: z.string().trim().max(120),
+  maxConcurrent: z.number().nullable(),
 });
 type Values = z.infer<typeof schema>;
 
@@ -43,14 +47,20 @@ export function toProfilePayload(values: Values, type: ProviderType): ProviderPr
     languages: values.languages,
     city: nullIfEmpty(values.city),
   };
+  // Both vets (home visits) and caretakers have a private base and a travel radius.
+  base.area_key = (values.areaKey as AreaKey | null) ?? null;
+  base.latitude = values.latitude;
+  base.longitude = values.longitude;
+  base.service_radius_km = values.serviceRadiusKm;
   if (type === 'veterinarian') {
     base.registration_number = nullIfEmpty(values.registrationNumber);
     base.registration_council = nullIfEmpty(values.registrationCouncil);
     base.qualifications = nullIfEmpty(values.qualifications);
-    base.area_key = (values.areaKey as AreaKey | null) ?? null;
-    base.latitude = values.latitude;
-    base.longitude = values.longitude;
-    base.service_radius_km = values.serviceRadiusKm;
+  } else {
+    base.home_type = values.homeType;
+    base.outdoor_space = values.outdoorSpace;
+    base.pets_at_home = nullIfEmpty(values.petsAtHome);
+    base.max_concurrent = values.maxConcurrent;
   }
   return base;
 }
@@ -87,14 +97,28 @@ export function ProviderProfileForm({
       latitude: initial?.latitude ?? null,
       longitude: initial?.longitude ?? null,
       serviceRadiusKm: initial?.service_radius_km ?? 10,
+      homeType: initial?.home_type ?? null,
+      outdoorSpace: initial?.outdoor_space ?? null,
+      petsAtHome: initial?.pets_at_home ?? '',
+      maxConcurrent: initial?.max_concurrent ?? null,
     },
   });
   const e = formState.errors;
   const isVet = type === 'veterinarian';
-  const [areaKey, latitude, longitude, radiusKm, city] = useWatch({
-    control,
-    name: ['areaKey', 'latitude', 'longitude', 'serviceRadiusKm', 'city'],
-  });
+  const [areaKey, latitude, longitude, radiusKm, city, homeType, outdoorSpace, maxConcurrent] =
+    useWatch({
+      control,
+      name: [
+        'areaKey',
+        'latitude',
+        'longitude',
+        'serviceRadiusKm',
+        'city',
+        'homeType',
+        'outdoorSpace',
+        'maxConcurrent',
+      ],
+    });
   const submit = handleSubmit((values) => onSubmit(toProfilePayload(values, type)));
 
   const field = (
@@ -188,24 +212,71 @@ export function ProviderProfileForm({
         </FormSection>
       ) : null}
 
-      {isVet ? (
+      <FormSection
+        title={isVet ? 'Home visits' : 'Where you work'}
+        note={
+          isVet
+            ? 'Pet parents inside your travel radius can find you. Your pin is private: they only see the area and radius.'
+            : 'Requests inside your travel radius reach you. Your pin is private: pet parents only see your area.'
+        }
+      >
+        <LocationField
+          testID="provider-location"
+          value={{ areaKey: areaKey as AreaKey | null, latitude, longitude }}
+          onChange={(next) => {
+            setValue('areaKey', next.areaKey);
+            setValue('latitude', next.latitude);
+            setValue('longitude', next.longitude);
+          }}
+          onAreaPicked={(area) => {
+            if (!city.trim()) setValue('city', area.name);
+          }}
+          radius={{
+            value: radiusKm,
+            onChange: (km) => setValue('serviceRadiusKm', km),
+            label: isVet ? undefined : 'How far will you travel or accept pets from?',
+          }}
+          pinHint={
+            isVet
+              ? "Pin where you start your visits for accurate matching. Until then we use the area's centre."
+              : "Pin your home for accurate matching. Until then we use the area's centre."
+          }
+        />
+      </FormSection>
+
+      {!isVet ? (
         <FormSection
-          title="Home visits"
-          note="Pet parents inside your travel radius can find you. Your pin is private: they only see the area and radius."
+          title="Your home and capacity"
+          note="Shown to pet parents only after they book with you. Needed for day care and boarding."
         >
-          <LocationField
-            testID="provider-location"
-            value={{ areaKey: areaKey as AreaKey | null, latitude, longitude }}
-            onChange={(next) => {
-              setValue('areaKey', next.areaKey);
-              setValue('latitude', next.latitude);
-              setValue('longitude', next.longitude);
-            }}
-            onAreaPicked={(area) => {
-              if (!city.trim()) setValue('city', area.name);
-            }}
-            radius={{ value: radiusKm, onChange: (km) => setValue('serviceRadiusKm', km) }}
-            pinHint="Pin where you start your visits for accurate matching. Until then we use the area's centre."
+          <ChipGroup
+            label="Your home"
+            options={['Apartment', 'Independent house']}
+            selected={
+              homeType ? [homeType === 'apartment' ? 'Apartment' : 'Independent house'] : []
+            }
+            onToggle={(label) =>
+              setValue('homeType', label === 'Apartment' ? 'apartment' : 'independent_house')
+            }
+            testID="provider-home-type"
+          />
+          <ChipGroup
+            label="Outdoor space (garden, terrace, yard)"
+            options={['Yes', 'No']}
+            selected={outdoorSpace == null ? [] : [outdoorSpace ? 'Yes' : 'No']}
+            onToggle={(label) => setValue('outdoorSpace', label === 'Yes')}
+            testID="provider-outdoor"
+          />
+          {field('petsAtHome', 'Pets already at home (optional)', {
+            maxLength: 120,
+            placeholder: 'e.g. one friendly beagle',
+          })}
+          <ChipGroup
+            label="Bookings you can take at the same time"
+            options={['1', '2', '3', '4', '5']}
+            selected={maxConcurrent ? [String(maxConcurrent)] : []}
+            onToggle={(n) => setValue('maxConcurrent', Number(n))}
+            testID="provider-capacity"
           />
         </FormSection>
       ) : null}

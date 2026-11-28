@@ -39,6 +39,16 @@ def current_owner(
 ManagedOwner = Annotated[Owner, Depends(current_owner)]
 
 
+def days_off_owner(
+    owner_type: OwnerType, owner_id: uuid.UUID, db: DbSession, user: CurrentUser
+) -> Owner:
+    return resolve_owner(db, user.id, owner_type, owner_id, allow_caretaker=True)
+
+
+# Days off are shared by vets, clinics and caretakers (decision 0015).
+DaysOffOwner = Annotated[Owner, Depends(days_off_owner)]
+
+
 @router.get("/services", response_model=list[ServiceResponse], responses=_ERRORS)
 def list_services(owner: ManagedOwner, db: DbSession) -> list[ServiceResponse]:
     return [ServiceResponse.model_validate(s) for s in catalog.list_services(db, owner)]
@@ -112,7 +122,7 @@ def put_hours(
     responses=_ERRORS,
     summary="Upcoming days off and special hours",
 )
-def list_exceptions(owner: ManagedOwner, db: DbSession) -> list[ExceptionOut]:
+def list_exceptions(owner: DaysOffOwner, db: DbSession) -> list[ExceptionOut]:
     return [ExceptionOut.model_validate(e) for e in catalog.list_exceptions(db, owner)]
 
 
@@ -123,7 +133,7 @@ def list_exceptions(owner: ManagedOwner, db: DbSession) -> list[ExceptionOut]:
     responses=_ERRORS,
 )
 def add_exception(
-    body: ExceptionIn, owner: ManagedOwner, db: DbSession, user: CurrentUser
+    body: ExceptionIn, owner: DaysOffOwner, db: DbSession, user: CurrentUser
 ) -> ExceptionOut:
     exception = catalog.add_exception(db, owner, user.id, body)
     db.commit()
@@ -134,7 +144,7 @@ def add_exception(
     "/exceptions/{exception_id}", status_code=status.HTTP_204_NO_CONTENT, responses=_ERRORS
 )
 def delete_exception(
-    exception_id: uuid.UUID, owner: ManagedOwner, db: DbSession, user: CurrentUser
+    exception_id: uuid.UUID, owner: DaysOffOwner, db: DbSession, user: CurrentUser
 ) -> Response:
     catalog.delete_exception(db, owner, user.id, exception_id)
     db.commit()

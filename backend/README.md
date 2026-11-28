@@ -33,7 +33,8 @@ app/
   modules/<name>/    # one folder per domain module (router, schemas, service, models)
                      # e.g. discovery/ (launch areas, search, public listing pages), catalog/ (services, hours, slots),
                      # bookings/ (booking engine: capacity units, state machine, mock payments),
-                     # reviews/ (verified reviews, screening, reports, replies, moderation)
+                     # reviews/ (verified reviews, screening, reports, replies, moderation),
+                     # care/ (caretaker services, readiness; requests and offers next)
   dev/seed_demo.py   # demo discovery listings for local development (refuses outside local/development)
   jobs/expire_bookings.py  # cron: expire unanswered booking requests (uv run python -m app.jobs.expire_bookings)
   jobs/notifications.py    # cron: booking reminders + push outbox (uv run python -m app.jobs.notifications)

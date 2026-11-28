@@ -640,6 +640,40 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/manage/provider_profile/{profile_id}/care': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Caretaker: care services and what's still needed before requests arrive */
+    get: operations['get_care_api_v1_manage_provider_profile__profile_id__care_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/provider_profile/{profile_id}/care/services': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Caretaker: replace the offered care types, rates and limits */
+    put: operations['put_services_api_v1_manage_provider_profile__profile_id__care_services_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/manage/{owner_type}/{owner_id}/availability': {
     parameters: {
       query?: never
@@ -1527,6 +1561,81 @@ export interface components {
      * @enum {string}
      */
     CancellationOutcome: 'not_charged' | 'full_refund' | 'late_no_refund'
+    /** CareServiceIn */
+    CareServiceIn: {
+      /**
+       * Active
+       * @default true
+       */
+      active: boolean
+      care_type: components['schemas']['CareType']
+      /**
+       * Max Pets
+       * @description Pets in one booking
+       * @default 2
+       */
+      max_pets: number
+      /** Notes */
+      notes?: string | null
+      /**
+       * Rate Minor
+       * @description Paise per visit / day / night
+       */
+      rate_minor: number
+      /** Species */
+      species: ('dog' | 'cat' | 'other')[]
+    }
+    /** CareServiceOut */
+    CareServiceOut: {
+      /** Active */
+      active: boolean
+      care_type: components['schemas']['CareType']
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Max Pets */
+      max_pets: number
+      /** Notes */
+      notes: string | null
+      /** Rate Minor */
+      rate_minor: number
+      /**
+       * Rate Unit
+       * @enum {string}
+       */
+      rate_unit: 'visit' | 'day' | 'night'
+      /** Species */
+      species: string[]
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+    }
+    /** CareServicesIn */
+    CareServicesIn: {
+      /** Services */
+      services: components['schemas']['CareServiceIn'][]
+    }
+    /**
+     * CareType
+     * @enum {string}
+     */
+    CareType: 'home_visit' | 'day_care' | 'boarding' | 'house_sitting'
+    /** CareWorkspace */
+    CareWorkspace: {
+      /**
+       * Missing
+       * @description What still stops this caretaker from receiving requests
+       */
+      missing: ('services' | 'service_area' | 'home_details' | 'capacity' | 'verification')[]
+      /** Receiving Requests */
+      receiving_requests: boolean
+      /** Services */
+      services: components['schemas']['CareServiceOut'][]
+    }
     /**
      * Channel
      * @enum {string}
@@ -1986,6 +2095,11 @@ export interface components {
        */
       submitted_at: string
     }
+    /**
+     * HomeType
+     * @enum {string}
+     */
+    HomeType: 'apartment' | 'independent_house'
     /** HoursRange */
     HoursRange: {
       /**
@@ -2492,12 +2606,22 @@ export interface components {
       city?: string | null
       /** Display Name */
       display_name: string
+      home_type?: components['schemas']['HomeType'] | null
       /** Languages */
       languages?: string[] | null
       /** Latitude */
       latitude?: number | string | null
       /** Longitude */
       longitude?: number | string | null
+      /**
+       * Max Concurrent
+       * @description Care bookings taken at the same time
+       */
+      max_concurrent?: number | null
+      /** Outdoor Space */
+      outdoor_space?: boolean | null
+      /** Pets At Home */
+      pets_at_home?: string | null
       provider_type: components['schemas']['ProviderType']
       /** Qualifications */
       qualifications?: string | null
@@ -2527,6 +2651,7 @@ export interface components {
       created_at: string
       /** Display Name */
       display_name: string
+      home_type: components['schemas']['HomeType'] | null
       /**
        * Id
        * Format: uuid
@@ -2538,6 +2663,12 @@ export interface components {
       latitude: string | null
       /** Longitude */
       longitude: string | null
+      /** Max Concurrent */
+      max_concurrent: number | null
+      /** Outdoor Space */
+      outdoor_space: boolean | null
+      /** Pets At Home */
+      pets_at_home: string | null
       provider_type: components['schemas']['ProviderType']
       /** Qualifications */
       qualifications: string | null
@@ -2568,12 +2699,22 @@ export interface components {
       city?: string | null
       /** Display Name */
       display_name?: string | null
+      home_type?: components['schemas']['HomeType'] | null
       /** Languages */
       languages?: string[] | null
       /** Latitude */
       latitude?: number | string | null
       /** Longitude */
       longitude?: number | string | null
+      /**
+       * Max Concurrent
+       * @description Care bookings taken at the same time
+       */
+      max_concurrent?: number | null
+      /** Outdoor Space */
+      outdoor_space?: boolean | null
+      /** Pets At Home */
+      pets_at_home?: string | null
       /** Qualifications */
       qualifications?: string | null
       /** Registration Council */
@@ -6481,6 +6622,144 @@ export interface operations {
       }
       /** @description A dependency is unavailable */
       503: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  get_care_api_v1_manage_provider_profile__profile_id__care_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        profile_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareWorkspace']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  put_services_api_v1_manage_provider_profile__profile_id__care_services_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        profile_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CareServicesIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareWorkspace']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
         headers: {
           [name: string]: unknown
         }

@@ -923,6 +923,201 @@
         "title": "CancellationOutcome",
         "type": "string"
       },
+      "CareServiceIn": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/CareType"
+          },
+          "max_pets": {
+            "default": 2,
+            "description": "Pets in one booking",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Max Pets",
+            "type": "integer"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "rate_minor": {
+            "description": "Paise per visit / day / night",
+            "maximum": 5000000.0,
+            "minimum": 0.0,
+            "title": "Rate Minor",
+            "type": "integer"
+          },
+          "species": {
+            "items": {
+              "enum": [
+                "dog",
+                "cat",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Species",
+            "type": "array"
+          }
+        },
+        "required": [
+          "care_type",
+          "rate_minor",
+          "species"
+        ],
+        "title": "CareServiceIn",
+        "type": "object"
+      },
+      "CareServiceOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/CareType"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "max_pets": {
+            "title": "Max Pets",
+            "type": "integer"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "rate_minor": {
+            "title": "Rate Minor",
+            "type": "integer"
+          },
+          "rate_unit": {
+            "enum": [
+              "visit",
+              "day",
+              "night"
+            ],
+            "title": "Rate Unit",
+            "type": "string"
+          },
+          "species": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Species",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "care_type",
+          "rate_minor",
+          "rate_unit",
+          "species",
+          "max_pets",
+          "notes",
+          "active",
+          "updated_at"
+        ],
+        "title": "CareServiceOut",
+        "type": "object"
+      },
+      "CareServicesIn": {
+        "additionalProperties": false,
+        "properties": {
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/CareServiceIn"
+            },
+            "maxItems": 4,
+            "title": "Services",
+            "type": "array"
+          }
+        },
+        "required": [
+          "services"
+        ],
+        "title": "CareServicesIn",
+        "type": "object"
+      },
+      "CareType": {
+        "enum": [
+          "home_visit",
+          "day_care",
+          "boarding",
+          "house_sitting"
+        ],
+        "title": "CareType",
+        "type": "string"
+      },
+      "CareWorkspace": {
+        "properties": {
+          "missing": {
+            "description": "What still stops this caretaker from receiving requests",
+            "items": {
+              "enum": [
+                "services",
+                "service_area",
+                "home_details",
+                "capacity",
+                "verification"
+              ],
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "receiving_requests": {
+            "title": "Receiving Requests",
+            "type": "boolean"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/CareServiceOut"
+            },
+            "title": "Services",
+            "type": "array"
+          }
+        },
+        "required": [
+          "services",
+          "missing",
+          "receiving_requests"
+        ],
+        "title": "CareWorkspace",
+        "type": "object"
+      },
       "Channel": {
         "enum": [
           "email",
@@ -2391,6 +2586,14 @@
         ],
         "title": "HistoryEntry",
         "type": "object"
+      },
+      "HomeType": {
+        "enum": [
+          "apartment",
+          "independent_house"
+        ],
+        "title": "HomeType",
+        "type": "string"
       },
       "HoursRange": {
         "properties": {
@@ -3917,6 +4120,16 @@
             "title": "Display Name",
             "type": "string"
           },
+          "home_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "languages": {
             "anyOf": [
               {
@@ -3965,6 +4178,43 @@
               }
             ],
             "title": "Longitude"
+          },
+          "max_concurrent": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Care bookings taken at the same time",
+            "title": "Max Concurrent"
+          },
+          "outdoor_space": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outdoor Space"
+          },
+          "pets_at_home": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pets At Home"
           },
           "provider_type": {
             "$ref": "#/components/schemas/ProviderType"
@@ -4081,6 +4331,16 @@
             "title": "Display Name",
             "type": "string"
           },
+          "home_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -4114,6 +4374,39 @@
               }
             ],
             "title": "Longitude"
+          },
+          "max_concurrent": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Concurrent"
+          },
+          "outdoor_space": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outdoor Space"
+          },
+          "pets_at_home": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pets At Home"
           },
           "provider_type": {
             "$ref": "#/components/schemas/ProviderType"
@@ -4212,6 +4505,10 @@
           "latitude",
           "longitude",
           "service_radius_km",
+          "home_type",
+          "outdoor_space",
+          "pets_at_home",
+          "max_concurrent",
           "verification_status",
           "verified_at",
           "status",
@@ -4271,6 +4568,16 @@
             ],
             "title": "Display Name"
           },
+          "home_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "languages": {
             "anyOf": [
               {
@@ -4319,6 +4626,43 @@
               }
             ],
             "title": "Longitude"
+          },
+          "max_concurrent": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Care bookings taken at the same time",
+            "title": "Max Concurrent"
+          },
+          "outdoor_space": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outdoor Space"
+          },
+          "pets_at_home": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pets At Home"
           },
           "qualifications": {
             "anyOf": [
@@ -10939,6 +11283,192 @@
         "summary": "Readiness check (database)",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/v1/manage/provider_profile/{profile_id}/care": {
+      "get": {
+        "operationId": "get_care_api_v1_manage_provider_profile__profile_id__care_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareWorkspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: care services and what's still needed before requests arrive",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/manage/provider_profile/{profile_id}/care/services": {
+      "put": {
+        "operationId": "put_services_api_v1_manage_provider_profile__profile_id__care_services_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareServicesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareWorkspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: replace the offered care types, rates and limits",
+        "tags": [
+          "care"
         ]
       }
     },

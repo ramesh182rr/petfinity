@@ -82,3 +82,11 @@
 - [ ] App store materials
 - [ ] Support process
 - [ ] Production readiness and backups
+
+## Phase 3 — caretaker marketplace (see [development/phase-3-plan.md](development/phase-3-plan.md))
+- [x] 3.1 Caretaker services and profile: four care types with rates, species and pet limits; home and capacity; service area; days off; identity + address proof; workspace with readiness checklist
+- [ ] 3.2 Care requests (API)
+- [ ] 3.3 Offers and care bookings (API)
+- [ ] 3.4 Parent app: request and compare
+- [ ] 3.5 Caretaker app: requests and bookings
+- [ ] 3.6 Care updates, notifications, reviews

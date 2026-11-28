@@ -26,7 +26,7 @@
 4. Provider verification process and evidence sources.
 5. ~~Booking policy~~: **decided.** Instant or request per service ([0004](decisions/0004-booking-confirmation-model.md)).
 6. Vet booking monetisation: commission, lead fee, subscription, or hybrid.
-7. Caretaker cancellation/refund, emergency and incident policies.
+7. Caretaker cancellation/refund, emergency and incident policies. **Cancellation decided** ([0015](decisions/0015-caretaker-marketplace.md)): free until 48 h before, then 50%; no refund once care starts. Emergency and incident policies still open.
 8. Marketplace payment/payout gateway and platform capabilities for India.
 9. Teleconsultation/legal scope and provider requirements.
 10. Community moderation policy and age restrictions.

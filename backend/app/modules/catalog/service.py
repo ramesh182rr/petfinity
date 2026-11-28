@@ -210,6 +210,8 @@ def list_exceptions(
 def add_exception(
     db: Session, owner: Owner, user_id: uuid.UUID, data: ExceptionIn
 ) -> AvailabilityException:
+    if owner.is_caretaker and data.kind != ExceptionKind.CLOSED:
+        raise AppError("days_off_only", "Caretakers can mark whole days off only.", status_code=422)
     today = _today(owner)
     if data.on_date < today or data.on_date > today + timedelta(days=365):
         raise AppError(

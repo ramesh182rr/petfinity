@@ -128,7 +128,7 @@ def test_caretaker_and_clinic_requirements(api: TestClient, user: dict[str, str]
     clinic = api.post(CLINICS, json=CLINIC, headers=user).json()
     assert api.get(base("provider_profile", caretaker["id"]), headers=user).json()[
         "required_documents"
-    ] == ["identity"]
+    ] == ["identity", "address_proof"]  # decision 0015
     assert api.get(base("clinic", clinic["id"]), headers=user).json()["required_documents"] == [
         "clinic_registration"
     ]
