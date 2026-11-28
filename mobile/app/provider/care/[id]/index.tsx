@@ -135,6 +135,32 @@ export default function CareWorkspaceScreen() {
         )}
 
         <View style={styles.section}>
+          <SectionHeader title="Requests and bookings" />
+          <Card style={styles.list}>
+            <ListRow
+              icon="mail-unread"
+              tone="peach"
+              title="Care requests near you"
+              subtitle={
+                c.receiving_requests
+                  ? 'Open requests that fit your services, area and free dates.'
+                  : 'Finish the steps above to start receiving requests.'
+              }
+              onPress={() => go(`/provider/care/${id}/requests`)}
+              testID="care-open-feed"
+            />
+            <ListRow
+              icon="calendar"
+              tone="lavender"
+              title="Your care bookings"
+              subtitle="Check in, complete and see each booking’s details."
+              onPress={() => go(`/provider/manage/provider_profile/${id}/bookings`)}
+              testID="care-open-bookings"
+            />
+          </Card>
+        </View>
+
+        <View style={styles.section}>
           <SectionHeader
             title="Your services"
             actionLabel={c.services.length ? 'Edit' : 'Add'}

@@ -68,8 +68,8 @@ export default function HomeScreen() {
             tone="peach"
             gradient="coral"
             title="Find a caretaker"
-            subtitle="Sitting, day care and boarding"
-            onPress={() => router.push('/discover')}
+            subtitle="Visits, day care, boarding, sitting"
+            onPress={() => router.push('/care')}
             testID="action-find-caretaker"
           />
         </View>

@@ -22,6 +22,7 @@ import app.db.registry  # noqa: F401 - registers every model's mapper
 from app.core.clock import utcnow
 from app.core.config import Environment, get_settings
 from app.db.session import create_db_engine, create_session_factory
+from app.modules.care.models import CareService
 from app.modules.catalog.models import AvailabilityRule, Service
 from app.modules.clinics.models import Clinic, ClinicMember, MemberRole
 from app.modules.providers.models import ProviderProfile, ProviderType
@@ -193,6 +194,46 @@ VETS = [
 ]
 
 
+@dataclass
+class DemoCaretaker:
+    slug: str
+    name: str
+    lat: str
+    lng: str
+    years: int
+    bio: str
+    home_type: str
+    services: list[tuple[str, int, list[str]]]  # care type, rupees, species
+
+
+CARETAKERS = [
+    DemoCaretaker(
+        "meena",
+        "Meena Subramanian",
+        "13.000600",
+        "80.266200",
+        6,
+        "Grew up with dogs; now host up to two guests in a quiet home with a garden.",
+        "independent_house",
+        [
+            ("home_visit", 350, ["dog", "cat"]),
+            ("day_care", 700, ["dog"]),
+            ("boarding", 1000, ["dog", "cat"]),
+        ],
+    ),
+    DemoCaretaker(
+        "karthik",
+        "Karthik Raman",
+        "13.033900",
+        "80.269600",
+        3,
+        "Cat person and night owl. Happy to house-sit and stick to your routine.",
+        "apartment",
+        [("home_visit", 300, ["cat", "dog"]), ("house_sitting", 1400, ["cat", "dog"])],
+    ),
+]
+
+
 def _user(db: Session, slug: str, name: str) -> User:
     email = f"demo-{slug}@petfinity.dev"
     user = db.scalars(select(User).where(User.email == email)).first()
@@ -296,6 +337,42 @@ def seed(db: Session) -> int:
         fk = {"provider_profile_id": profile.id}
         db.add_all(_services(fk, v.services))
         db.add_all(_hours(fk, all_day=False))
+        created += 1
+    for ct in CARETAKERS:
+        user = _user(db, ct.slug, ct.name)
+        if db.scalars(select(ProviderProfile).where(ProviderProfile.user_id == user.id)).first():
+            continue
+        profile = ProviderProfile(
+            user_id=user.id,
+            provider_type=ProviderType.CARETAKER,
+            display_name=ct.name,
+            bio=ct.bio,
+            years_experience=ct.years,
+            languages=["Tamil", "English"],
+            city="Chennai",
+            area_key="chennai",
+            latitude=Decimal(ct.lat),
+            longitude=Decimal(ct.lng),
+            service_radius_km=10,
+            home_type=ct.home_type,
+            outdoor_space=ct.home_type != "apartment",
+            max_concurrent=2,
+            verification_status="verified",
+            verified_at=utcnow(),
+            status="active",
+        )
+        db.add(profile)
+        db.flush()
+        db.add_all(
+            CareService(
+                provider_profile_id=profile.id,
+                care_type=t,
+                rate_minor=r * 100,
+                species=sp,
+                max_pets=2,
+            )
+            for t, r, sp in ct.services
+        )
         created += 1
     return created
 

@@ -22,3 +22,4 @@ export { FormSection } from './FormSection';
 export { StatusBarScrim, useHeroScroll } from './StatusBarScrim';
 export { TimeField } from './TimeField';
 export { Stars, StarInput, ratingLabel } from './Stars';
+export { DateField } from './DateField';

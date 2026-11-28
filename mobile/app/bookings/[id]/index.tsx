@@ -59,7 +59,9 @@ function StatusBanner({ booking, isNew }: { booking: BookingDetail; isNew: boole
         <View style={styles.flex}>
           <Text variant="bodyStrong">You’re booked!</Text>
           <Text variant="caption" color="textMuted">
-            {booking.pets.map((p) => p.name).join(', ')} is seen on {formatWhen(booking.start_at)}.
+            {booking.pets.map((p) => p.name).join(', ')}
+            {booking.booking_type === 'care' ? '’s care starts on ' : ' is seen on '}
+            {formatWhen(booking.start_at)}.
           </Text>
         </View>
       </Card>
@@ -163,7 +165,7 @@ function PaymentCard({ booking }: { booking: BookingDetail }) {
             ) : null}
             {canChooseVisit ? (
               <Button
-                label="Pay at visit"
+                label={booking.booking_type === 'care' ? 'Pay in person' : 'Pay at visit'}
                 icon="storefront"
                 variant="secondary"
                 loading={pay.isPending && pay.variables === 'pay_at_visit'}

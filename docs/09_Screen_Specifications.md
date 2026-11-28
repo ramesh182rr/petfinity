@@ -122,11 +122,22 @@ Pet → service → slot → notes → policy and price review → confirmation 
   - pull to refresh, refresh on focus
 - Still to come: provider contact (with messaging, later) and support.
 
-### 11. Care request creation
-Care type, pet(s), dates, location, requirements, optional budget and submit confirmation.
+### 11. Care request creation (implemented 3.4, `app/care/index.tsx`, `app/care/new.tsx`)
+- **Find a caretaker** (Home → caretaker card): dusk hero, a **New request** card, then Open / Past requests. Each card shows the care type badge, units ("3 nights"), compact dates, pets and locality, and status pills ("2 offers", "Waiting for offers").
+- **New request:**
+  - care type as radio cards (Home visits, Day care, Boarding, House sitting), each saying where the care happens
+  - pet pills (up to 5)
+  - date and time pairs with sensible defaults per type; visits a day (1–3) for home visits; a "That's 3 nights." estimate
+  - area + GPS pin, locality, full address (home visits and house sitting only); the note says caretakers see only the area and locality until booked
+  - notes and an optional budget (digits only)
+  - a summary card ("up to 5 offers within 24 hours, nothing charged until you book") and **Post request**
+  - inline errors for pets, dates (overnight care needs a night), area, locality, address and budget; "Add your pet first" empty state
 
-### 12. Offers list/detail
-Compare offers; provider verification, profile, reviews, price, details and availability; select offer.
+### 12. Offers list/detail (implemented 3.4, `app/care/[id].tsx`)
+- Hero with the status pill and Offers / Pets / Budget tiles; a banner for booked, waiting, compare ("offers close in…") or ended.
+- **Offer cards:** avatar, verified shield, stars or "New on Petfinity", experience / stays done / area pills, home type and outdoor space for day care and boarding, the caretaker's message, and **Accept · ₹X**.
+- Accept asks for confirmation (price, units, 48-hour free cancellation then 50%, address shared once booked), then opens the new care booking. Other offers show "Not chosen".
+- Request details and **Withdraw request** (pending offers are declined).
 
 ### 13. Community feed
 Local/following tabs, post composer, post cards, likes/comments, report/block.
@@ -242,10 +253,14 @@ The vet's pin is private.
   - pull to refresh, refresh on focus
 - **Your services** (`app/provider/care/[id]/services.tsx`): a card per care type with an Offer switch. When on, it shows a starting rate (₹, per unit), pet types and pets per booking, with inline errors.
 
+*Implemented in 3.5 (caretaker requests):*
+- The workspace has a **Requests and bookings** section: the request feed and the booking inbox.
+- **Care requests** (`app/provider/care/[id]/requests.tsx`): dusk hero with Open now / Waiting / Won tiles, an Open requests / My offers switch, and cards with units, dates, pets, locality and rounded distance, plus a closing-time or offer-status pill and the budget or your price. Unverified caretakers get a "Get verified to see requests" state.
+- **Request detail** (`app/provider/care/[id]/request/[rid].tsx`): hero with Care / Away / Budget tiles; a status banner ("You offered ₹1,700", or "They chose you" with **Open booking**); the pets (breed, age, weight, sex, neutered, temperament) and notes; an offer composer prefilled from your starting rate, with an optional message, **Send / Update offer** and **Withdraw**.
+- Care bookings use the provider booking inbox and booking detail (confirmed straight away; no reschedule).
+
 *Still planned:*
-- Booking/request inbox
-- Booking detail and status actions
-- Care request browse/respond (caretaker)
+- Reviews and profile analytics (limited MVP)
 - Reviews and profile analytics (limited MVP)
 
 *Reviews (implemented 2.10, [0014](decisions/0014-reviews-and-moderation.md)):*

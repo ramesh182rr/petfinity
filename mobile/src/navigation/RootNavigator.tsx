@@ -68,6 +68,11 @@ export function RootNavigator() {
         <Stack.Screen name="provider/booking/[id]" options={{ title: '' }} />
         <Stack.Screen name="provider/care/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="provider/care/[id]/services" options={{ title: 'Your services' }} />
+        <Stack.Screen name="provider/care/[id]/requests" options={{ title: '' }} />
+        <Stack.Screen name="provider/care/[id]/request/[rid]" options={{ title: '' }} />
+        <Stack.Screen name="care/index" options={{ title: '' }} />
+        <Stack.Screen name="care/new" options={{ title: 'New care request' }} />
+        <Stack.Screen name="care/[id]" options={{ title: '' }} />
         <Stack.Screen
           name="provider/manage/[ownerType]/[id]/day-off"
           options={{ title: 'Day off or special hours' }}

@@ -87,6 +87,6 @@
 - [x] 3.1 Caretaker services and profile: four care types with rates, species and pet limits; home and capacity; service area; days off; identity + address proof; workspace with readiness checklist
 - [x] 3.2 Care requests (API): request with pets, dates, area and private address; matching to eligible caretakers (type, species, pet count, radius, days off, capacity); 24 h / 5-offer close; cancel; expiry
 - [x] 3.3 Offers and care bookings (API): one offer per caretaker (edit, withdraw, re-offer), compare, accept → confirmed care booking with capacity units, 48 h / 50% policy, no reschedule, address and name revealed after acceptance
-- [ ] 3.4 Parent app: request and compare
-- [ ] 3.5 Caretaker app: requests and bookings
+- [x] 3.4 Parent app: request and compare: Find a caretaker (Open/Past requests), new request form (care type, pets, dates and times, visits a day, area + pin, locality, address, notes, budget), request detail comparing offers (verified badge, rating, experience, stays done, home details, message), accept → confirmed care booking, withdraw request
+- [x] 3.5 Caretaker app: requests and bookings: nearby request feed (Open requests / My offers, Open now / Waiting / Won), request detail with pets and notes, offer composer (prefilled from the starting rate, send, update, withdraw), not-verified state; care bookings use the provider booking inbox and actions
 - [ ] 3.6 Care updates, notifications, reviews

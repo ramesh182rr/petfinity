@@ -61,7 +61,7 @@ function Editor({ id, services }: { id: string; services: CareService[] }) {
                 <TextField
                   label={`Starting rate per ${t.unit}`}
                   value={d.rate}
-                  onChangeText={(rate) => update(t.value, { rate })}
+                  onChangeText={(rate) => update(t.value, { rate: rate.replace(/[^0-9]/g, '') })}
                   keyboardType="number-pad"
                   maxLength={6}
                   prefix={<Text variant="bodyStrong">₹</Text>}

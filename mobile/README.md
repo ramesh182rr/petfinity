@@ -34,7 +34,9 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
   provider/             # hub, profile/{new,[id]}, clinic/{new,[id]}, verify/[subjectType]/[id],
                         # manage/[ownerType]/[id]/{index,service,hours,day-off,bookings} (services, availability, inbox),
                         # booking/[id] (provider view of a booking: confirm, decline, check in, complete),
-                        # care/[id]/{index,services} (caretaker workspace and services)
+                        # care/[id]/{index,services,requests,request/[rid]} (caretaker workspace, services,
+                        # request feed and offer composer)
+  care/                 # index (Find a caretaker: my requests), new (post a request), [id] (compare offers, accept)
   discover/             # area (city / near me / radius), clinic/[id], vet/[id] public listing pages
   notifications.tsx     # notification inbox
   reviews/[id]/report   # report a review
@@ -45,7 +47,8 @@ app/                    # routes only (Expo Router) — do NOT create src/app/
 src/
   theme/                # design tokens: colors (semantic), typography, spacing, radius, elevation
   components/ui/        # Text, Button, Card, Chip, IconBadge, Screen, HeroHeader/HeroScreen, ActionCard,
-                        # ListRow, InfoRow, StatTile, StatusPill, InitialsAvatar, ChipGroup, FormSection, Decor, TimeField
+                        # ListRow, InfoRow, StatTile, StatusPill, InitialsAvatar, ChipGroup, FormSection, Decor, TimeField,
+                        # DateField
   components/states/    # LoadingState, Skeleton, EmptyState, ErrorState
   api/                  # client (error envelope → ApiError), query client, generated/ types
   config/env.ts         # validated EXPO_PUBLIC_* config
@@ -54,7 +57,8 @@ src/
   features/providers/   # provider profiles, clinics, verification documents (picker + signed upload)
   features/catalog/     # services, hours, days off, slot preview: API, hooks, money/time formatting, week validation,
                         # SlotPicker (DayStrip, SlotGrid)
-  features/care/        # caretaker workspace: care services API/hooks, care types, readiness, drafts
+  features/care/        # care services, requests and offers: API/hooks, care types, formatting, readiness,
+                        # drafts, requestForm (defaults, unit estimate, validation)
   features/reviews/     # review API + hooks, Stars/StarInput (ui), ReviewCard, RatingSummary, ReviewsSection,
                         # MyReviewCard
   features/notifications/ # inbox API + hooks (unread badge), NotificationBell, push setup (expo-notifications),

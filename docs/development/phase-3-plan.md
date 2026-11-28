@@ -1,7 +1,7 @@
 # Phase 3 — Caretaker marketplace
 
 **Started:** 2026-11-27 (approved by the product owner)
-**Status:** 3.1–3.3 complete (2026-11-28). 3.4 (parent app: request and compare) is next.
+**Status:** 3.1–3.5 complete (2026-11-28). 3.6 (care updates, notifications, reviews) is next.
 **Goal:** a pet parent can post a care request, compare offers from verified caretakers nearby, accept one and get the care. The caretaker can manage the booking from check-in to completion, and the parent can review it afterwards.
 **Decisions it builds on:** 0004, 0005, 0006, 0011, 0012, 0013, 0014, and **0015** (care types, open requests, 48-hour cancellation).
 
