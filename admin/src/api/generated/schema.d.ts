@@ -452,6 +452,75 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/care-requests': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** My care requests */
+    get: operations['my_requests_api_v1_care_requests_get']
+    put?: never
+    /** Post a care request to nearby verified caretakers */
+    post: operations['create_request_api_v1_care_requests_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/care-requests/{request_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** My care request */
+    get: operations['my_request_api_v1_care_requests__request_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/care-requests/{request_id}/cancel': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Withdraw an open request (pending offers are declined) */
+    post: operations['cancel_request_api_v1_care_requests__request_id__cancel_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/care-requests/{request_id}/offers/{offer_id}/accept': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Accept an offer: creates a confirmed care booking and declines the rest */
+    post: operations['accept_offer_api_v1_care_requests__request_id__offers__offer_id__accept_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/clinics': {
     parameters: {
       query?: never
@@ -652,6 +721,58 @@ export interface paths {
     put?: never
     post?: never
     delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/provider_profile/{profile_id}/care/requests': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Caretaker: open requests you could take, or ones you've offered on */
+    get: operations['request_feed_api_v1_manage_provider_profile__profile_id__care_requests_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/provider_profile/{profile_id}/care/requests/{request_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Caretaker: one request (area only; the address comes with a booking) */
+    get: operations['request_detail_api_v1_manage_provider_profile__profile_id__care_requests__request_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/manage/provider_profile/{profile_id}/care/requests/{request_id}/offer': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Caretaker: send or update your offer (total price and a message) */
+    put: operations['put_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_put']
+    post?: never
+    /** Caretaker: withdraw your pending offer */
+    delete: operations['delete_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_delete']
     options?: never
     head?: never
     patch?: never
@@ -1402,7 +1523,12 @@ export interface components {
       review?: components['schemas']['MyReview'] | null
       /** Service Id */
       service_id: string | null
-      service_mode: components['schemas']['ServiceMode']
+      /**
+       * Service Mode
+       * @enum {string}
+       */
+      service_mode:
+        'in_clinic' | 'home_visit' | 'teleconsult' | 'day_care' | 'boarding' | 'house_sitting'
       /** Service Title */
       service_title: string
       /**
@@ -1503,7 +1629,12 @@ export interface components {
       review?: components['schemas']['MyReview'] | null
       /** Service Id */
       service_id: string | null
-      service_mode: components['schemas']['ServiceMode']
+      /**
+       * Service Mode
+       * @enum {string}
+       */
+      service_mode:
+        'in_clinic' | 'home_visit' | 'teleconsult' | 'day_care' | 'boarding' | 'house_sitting'
       /** Service Title */
       service_title: string
       /**
@@ -1560,7 +1691,249 @@ export interface components {
      * CancellationOutcome
      * @enum {string}
      */
-    CancellationOutcome: 'not_charged' | 'full_refund' | 'late_no_refund'
+    CancellationOutcome: 'not_charged' | 'full_refund' | 'late_no_refund' | 'late_half_refund'
+    /** CareOfferOut */
+    CareOfferOut: {
+      caretaker: components['schemas']['OfferCaretaker']
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Message */
+      message: string | null
+      /** Price Minor */
+      price_minor: number
+      status: components['schemas']['CareOfferStatus']
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+    }
+    /**
+     * CareOfferStatus
+     * @enum {string}
+     */
+    CareOfferStatus: 'pending' | 'accepted' | 'declined' | 'withdrawn'
+    /** CarePetOut */
+    CarePetOut: {
+      /** Age Years */
+      age_years: number | null
+      /** Breed */
+      breed: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+      /** Neutered */
+      neutered: boolean | null
+      /** Sex */
+      sex: string
+      /** Species */
+      species: string
+      /** Temperament */
+      temperament: string | null
+      /** Weight Kg */
+      weight_kg: number | null
+    }
+    /** CareRequestFeed */
+    CareRequestFeed: {
+      /** Items */
+      items: components['schemas']['CareRequestForCaretaker'][]
+    }
+    /**
+     * CareRequestForCaretaker
+     * @description A caretaker's view: the area, never the address, pin or the parent's name.
+     */
+    CareRequestForCaretaker: {
+      /** Accepting Offers */
+      accepting_offers: boolean
+      /** Area Name */
+      area_name: string | null
+      /**
+       * Booking Id
+       * @description Set when your offer was accepted
+       */
+      booking_id: string | null
+      /** Budget Minor */
+      budget_minor: number | null
+      care_type: components['schemas']['CareType']
+      /**
+       * Distance Km
+       * @description Rounded to whole km, at least 1
+       */
+      distance_km: number
+      /**
+       * End At
+       * Format: date-time
+       */
+      end_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Locality */
+      locality: string
+      my_offer: components['schemas']['MyOffer'] | null
+      /** Notes */
+      notes: string | null
+      /** Offer Count */
+      offer_count: number
+      /**
+       * Offers Close At
+       * Format: date-time
+       */
+      offers_close_at: string
+      /** Pets */
+      pets: components['schemas']['CarePetOut'][]
+      /**
+       * Start At
+       * Format: date-time
+       */
+      start_at: string
+      status: components['schemas']['CareRequestStatus']
+      /**
+       * Suggested Price Minor
+       * @description Your starting rate times the units
+       */
+      suggested_price_minor: number | null
+      /**
+       * Unit
+       * @enum {string}
+       */
+      unit: 'visit' | 'day' | 'night'
+      /** Units */
+      units: number
+      /** Visits Per Day */
+      visits_per_day: number | null
+    }
+    /** CareRequestIn */
+    CareRequestIn: {
+      /**
+       * Address
+       * @description Home visits and house sitting. Shared only with the caretaker you book.
+       */
+      address?: string | null
+      area_key: components['schemas']['AreaKey']
+      /** Budget Minor */
+      budget_minor?: number | null
+      care_type: components['schemas']['CareType']
+      /**
+       * End At
+       * Format: date-time
+       * @description Pick-up / last visit day / check-out
+       */
+      end_at: string
+      /** Latitude */
+      latitude?: number | string | null
+      /** Locality */
+      locality: string
+      /** Longitude */
+      longitude?: number | string | null
+      /** Notes */
+      notes?: string | null
+      /** Pet Ids */
+      pet_ids: string[]
+      /**
+       * Start At
+       * Format: date-time
+       * @description Drop-off / first visit / check-in
+       */
+      start_at: string
+      /**
+       * Visits Per Day
+       * @description Home visits only (required for them)
+       */
+      visits_per_day?: number | null
+    }
+    /** CareRequestList */
+    CareRequestList: {
+      /** Items */
+      items: components['schemas']['CareRequestOut'][]
+    }
+    /**
+     * CareRequestOut
+     * @description The parent's own view.
+     */
+    CareRequestOut: {
+      /** Accepting Offers */
+      accepting_offers: boolean
+      /** Address */
+      address: string | null
+      /** Area Key */
+      area_key: string
+      /** Area Name */
+      area_name: string | null
+      /** Booking Id */
+      booking_id: string | null
+      /** Budget Minor */
+      budget_minor: number | null
+      care_type: components['schemas']['CareType']
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * End At
+       * Format: date-time
+       */
+      end_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Latitude */
+      latitude: number | null
+      /** Locality */
+      locality: string
+      /** Longitude */
+      longitude: number | null
+      /** Notes */
+      notes: string | null
+      /** Offer Count */
+      offer_count: number
+      /** Offers */
+      offers: components['schemas']['CareOfferOut'][]
+      /**
+       * Offers Close At
+       * Format: date-time
+       */
+      offers_close_at: string
+      /** Pets */
+      pets: components['schemas']['CarePetOut'][]
+      /**
+       * Start At
+       * Format: date-time
+       */
+      start_at: string
+      status: components['schemas']['CareRequestStatus']
+      /**
+       * Unit
+       * @enum {string}
+       */
+      unit: 'visit' | 'day' | 'night'
+      /** Units */
+      units: number
+      /** Visits Per Day */
+      visits_per_day: number | null
+    }
+    /**
+     * CareRequestStatus
+     * @enum {string}
+     */
+    CareRequestStatus: 'open' | 'booked' | 'cancelled' | 'expired'
     /** CareServiceIn */
     CareServiceIn: {
       /**
@@ -2188,7 +2561,7 @@ export interface components {
      * ListingKind
      * @enum {string}
      */
-    ListingKind: 'clinic' | 'vet'
+    ListingKind: 'clinic' | 'vet' | 'caretaker'
     /** ListingRef */
     ListingRef: {
       /**
@@ -2252,6 +2625,24 @@ export interface components {
        * @description Shown to the author when a review is removed
        */
       note?: string | null
+    }
+    /** MyOffer */
+    MyOffer: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Message */
+      message: string | null
+      /** Price Minor */
+      price_minor: number
+      status: components['schemas']['CareOfferStatus']
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
     }
     /**
      * MyReview
@@ -2330,6 +2721,59 @@ export interface components {
       next_before: string | null
       /** Unread Count */
       unread_count: number
+    }
+    /**
+     * OfferCaretaker
+     * @description What a parent sees when comparing offers (no address, no pin, no contact).
+     */
+    OfferCaretaker: {
+      /** Area Name */
+      area_name: string | null
+      /** Bio */
+      bio: string | null
+      /**
+       * Completed Care
+       * @description Completed care bookings on Petfinity
+       */
+      completed_care: number
+      /** Display Name */
+      display_name: string
+      /** Home Type */
+      home_type: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Languages */
+      languages: string[]
+      /** Outdoor Space */
+      outdoor_space: boolean | null
+      /** Pets At Home */
+      pets_at_home: string | null
+      /**
+       * Rate Minor
+       * @description Their starting rate for this care type
+       */
+      rate_minor: number | null
+      /** Rating */
+      rating: number | null
+      /** Review Count */
+      review_count: number
+      /** Verified At */
+      verified_at: string | null
+      /** Years Experience */
+      years_experience: number | null
+    }
+    /** OfferIn */
+    OfferIn: {
+      /** Message */
+      message?: string | null
+      /**
+       * Price Minor
+       * @description Total for the whole request
+       */
+      price_minor: number
     }
     /**
      * Origin
@@ -2414,7 +2858,14 @@ export interface components {
      * PaymentStatus
      * @enum {string}
      */
-    PaymentStatus: 'not_due' | 'unpaid' | 'pay_at_visit' | 'paid' | 'refunded' | 'not_refunded'
+    PaymentStatus:
+      | 'not_due'
+      | 'unpaid'
+      | 'pay_at_visit'
+      | 'paid'
+      | 'refunded'
+      | 'not_refunded'
+      | 'partially_refunded'
     /** PersonSummary */
     PersonSummary: {
       /** Display Name */
@@ -5858,6 +6309,344 @@ export interface operations {
       }
     }
   }
+  my_requests_api_v1_care_requests_get: {
+    parameters: {
+      query?: {
+        scope?: 'active' | 'past'
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestList']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  create_request_api_v1_care_requests_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CareRequestIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestOut']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  my_request_api_v1_care_requests__request_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        request_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestOut']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  cancel_request_api_v1_care_requests__request_id__cancel_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        request_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestOut']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  accept_offer_api_v1_care_requests__request_id__offers__offer_id__accept_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        request_id: string
+        offer_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BookingDetail']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   create_clinic_api_v1_clinics_post: {
     parameters: {
       query?: never
@@ -6650,6 +7439,281 @@ export interface operations {
         content: {
           'application/json': components['schemas']['CareWorkspace']
         }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  request_feed_api_v1_manage_provider_profile__profile_id__care_requests_get: {
+    parameters: {
+      query?: {
+        scope?: 'open' | 'offered'
+      }
+      header?: never
+      path: {
+        profile_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestFeed']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  request_detail_api_v1_manage_provider_profile__profile_id__care_requests__request_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        profile_id: string
+        request_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestForCaretaker']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  put_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        profile_id: string
+        request_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OfferIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CareRequestForCaretaker']
+        }
+      }
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  delete_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        profile_id: string
+        request_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Unauthorized */
       401: {

@@ -29,7 +29,7 @@ from app.modules.bookings.schemas import (
     ViewerRole,
 )
 from app.modules.bookings.service import ADDRESS_VISIBLE_TO_PROVIDER, Viewer
-from app.modules.catalog.router import ManagedOwner
+from app.modules.catalog.router import DaysOffOwner
 from app.modules.discovery.schemas import ListingKind
 from app.modules.notifications.router import push_after_response
 from app.modules.pets.models import Pet
@@ -310,7 +310,7 @@ manage_router = APIRouter(
     summary="Provider inbox: requests to answer, upcoming and past bookings for this listing",
 )
 def listing_bookings(
-    owner: ManagedOwner,
+    owner: DaysOffOwner,  # vets, clinics and caretakers
     db: DbSession,
     user: CurrentUser,
     scope: Literal["requests", "upcoming", "past"] = "upcoming",

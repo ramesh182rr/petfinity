@@ -23,6 +23,7 @@ from app.modules.reviews.schemas import PublicReview
 class ListingKind(StrEnum):
     CLINIC = "clinic"
     VET = "vet"
+    CARETAKER = "caretaker"  # care bookings only; caretakers aren't in vet discovery
 
 
 class KindFilter(StrEnum):

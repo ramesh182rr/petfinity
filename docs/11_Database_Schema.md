@@ -37,6 +37,16 @@ Use UUID primary keys, timestamps (`created_at`, `updated_at`), soft-delete wher
 - `booking_events` (implemented 2.6): booking_id, event (created/confirmed/declined/expired/cancelled/rescheduled/checked_in/completed/no_show/paid/pay_at_visit), from_status, to_status, actor_user_id, actor_role (owner/provider/admin/system), reason, details (JSONB), created_at. Append-only.
 - `payments` (implemented 2.6, mock ledger): booking_id, provider (`mock` only), kind (charge/refund), amount_minor, currency, status, reference (unique `mock_…`), created_at.
 - `care_services` (implemented 3.1, [0015](decisions/0015-caretaker-marketplace.md)): provider_profile_id, care_type (home_visit/day_care/boarding/house_sitting; unique per caretaker), rate_minor (per visit, day or night), species (dog/cat/other), max_pets (1–10 per booking), notes, active, timestamps.
+- `care_requests` (implemented 3.2, [0015](decisions/0015-caretaker-marketplace.md)):
+  - owner_id, care_type, start_at/end_at (UTC), visits_per_day (home visits only, 1–3)
+  - area_key and locality (visible to caretakers); latitude/longitude and address (private until booked)
+  - notes, budget_minor
+  - status (open/booked/cancelled/expired), offers_close_at (24 h after posting, or 1 h before the start)
+  - timestamps
+  - Indexes: (status, start_at), (area_key, status).
+- `care_request_pets` (implemented 3.2): request_id, pet_id (primary key on both); 1–5 pets.
+- `care_offers` (implemented 3.3): request_id, provider_profile_id (unique together), price_minor (total), message, status (pending/accepted/declined/withdrawn), timestamps.
+- `bookings` care columns (3.3): care_request_id, care_offer_id (unique), with the check `care_has_offer`. Care bookings set `service_mode` to the care type. `payment_status` gains `partially_refunded`; `cancellation_outcome` gains `late_half_refund`.
 - `notifications` (implemented 2.9, [0013](decisions/0013-notifications-and-push.md)): user_id, kind (booking_request, booking_new, booking_confirmed, booking_declined, booking_expired, booking_cancelled, booking_rescheduled, booking_completed, booking_no_show, reminder_24h, reminder_2h), title, body, data (JSONB: in-app `route`, booking_id), dedupe_key (unique per user when set), read_at, push_status (pending/sent/failed/skipped), push_attempts, created_at. Indexes: (user_id, created_at), partial unread, partial pending push.
 - `push_devices` (implemented 2.9): user_id, token (Expo push token, unique), platform (android/ios), created_at, last_seen_at, disabled_at (set on DeviceNotRegistered).
 - `reviews` (implemented 2.10, [0014](decisions/0014-reviews-and-moderation.md)):

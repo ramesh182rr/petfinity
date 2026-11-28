@@ -29,7 +29,7 @@
 - **Privacy:**
   - Before acceptance, caretakers see only the request's area (locality and an approximate distance) and the pets' basic details.
   - The exact address and the parent's name are shared only with the accepted caretaker, once the booking is confirmed.
-  - The caretaker's own home address (day care and boarding) is shared with the parent only after confirmation.
+  - When comparing offers, parents see the caretaker's home type, outdoor space and pets at home, but never their address or pin. The caretaker's address (day care and boarding) is shared only after confirmation.
 - **Capacity:** each caretaker sets how many bookings they take at once (1–5). Overlapping care bookings use the booking engine's capacity units, so a caretaker can't be double-booked beyond their limit.
 - **Meet-and-greet:** for house sitting and first-time boarding, the request screen encourages a meet-and-greet (shown as advice, not enforced).
 

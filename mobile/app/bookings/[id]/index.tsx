@@ -116,6 +116,8 @@ function outcomeText(booking: BookingDetail): string | null {
   switch (booking.cancellation_outcome) {
     case 'full_refund':
       return 'Cancelled in time. Your mock payment was refunded in full.';
+    case 'late_half_refund':
+      return 'Cancelled less than 48 hours before, so half of a payment is refunded.';
     case 'late_no_refund':
       return 'Cancelled less than 2 hours before, so this counts as a late cancellation.';
     case 'not_charged':
@@ -223,7 +225,9 @@ export default function BookingDetailScreen() {
       <HeroScreen
         testID="booking-detail"
         underHeader
-        eyebrow={homeVisit ? 'Home visit' : 'Appointment'}
+        eyebrow={
+          b.booking_type === 'care' ? 'Care booking' : homeVisit ? 'Home visit' : 'Appointment'
+        }
         title={b.service_title}
         subtitle={b.listing.name}
         overlap
@@ -277,15 +281,18 @@ export default function BookingDetailScreen() {
               tone="sage"
               title={b.listing.name}
               subtitle={b.listing.locality ?? undefined}
-              onPress={() =>
-                router.push(
-                  b.listing.kind === 'clinic'
-                    ? { pathname: '/discover/clinic/[id]', params: { id: b.listing.id } }
-                    : { pathname: '/discover/vet/[id]', params: { id: b.listing.id } },
-                )
+              onPress={
+                b.listing.kind === 'caretaker' // caretaker profiles open in 3.4
+                  ? undefined
+                  : () =>
+                      router.push(
+                        b.listing.kind === 'clinic'
+                          ? { pathname: '/discover/clinic/[id]', params: { id: b.listing.id } }
+                          : { pathname: '/discover/vet/[id]', params: { id: b.listing.id } },
+                      )
               }
             />
-            {homeVisit && b.visit_address ? (
+            {b.visit_address ? (
               <ListRow
                 icon="location"
                 tone="coral"

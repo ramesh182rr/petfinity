@@ -85,8 +85,8 @@
 
 ## Phase 3 — caretaker marketplace (see [development/phase-3-plan.md](development/phase-3-plan.md))
 - [x] 3.1 Caretaker services and profile: four care types with rates, species and pet limits; home and capacity; service area; days off; identity + address proof; workspace with readiness checklist
-- [ ] 3.2 Care requests (API)
-- [ ] 3.3 Offers and care bookings (API)
+- [x] 3.2 Care requests (API): request with pets, dates, area and private address; matching to eligible caretakers (type, species, pet count, radius, days off, capacity); 24 h / 5-offer close; cancel; expiry
+- [x] 3.3 Offers and care bookings (API): one offer per caretaker (edit, withdraw, re-offer), compare, accept → confirmed care booking with capacity units, 48 h / 50% policy, no reschedule, address and name revealed after acceptance
 - [ ] 3.4 Parent app: request and compare
 - [ ] 3.5 Caretaker app: requests and bookings
 - [ ] 3.6 Care updates, notifications, reviews

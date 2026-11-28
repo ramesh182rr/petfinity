@@ -47,6 +47,7 @@ export const PAYMENT_LABEL: Record<PaymentStatus, string> = {
   paid: 'Paid (mock)',
   refunded: 'Refunded (mock)',
   not_refunded: 'Not refunded (late cancellation)',
+  partially_refunded: 'Half refunded (mock, late cancellation)',
 };
 
 const pad = (n: number) => String(n).padStart(2, '0');

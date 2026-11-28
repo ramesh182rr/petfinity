@@ -45,6 +45,7 @@ const PAYMENT_FOR_PROVIDER: Record<BookingDetail['payment_status'], string> = {
   paid: 'Paid online (mock)',
   refunded: 'Refunded to the pet parent (mock)',
   not_refunded: 'Late cancellation: not refunded (mock)',
+  partially_refunded: 'Late cancellation: half refunded (mock)',
 };
 
 function ReasonPanel({

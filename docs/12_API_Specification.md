@@ -239,14 +239,66 @@ Errors: `409 not_reviewable`, `409 review_window_closed`, `409 already_reviewed`
 - Caretakers use `/manage/provider_profile/{id}/exceptions` for whole days off only (422 `days_off_only` for special hours). Vet-style services, hours and slots still return 422 `services_not_supported`.
 - Caretaker verification requires `identity` and `address_proof` documents.
 
-## Caretaker requests/offers
-- `POST /caretaker-requests`
-- `GET /caretaker-requests/{id}`
-- `GET /caretaker-requests/{id}/offers`
-- `POST /caretaker-requests/{id}/offers`
-- `POST /offers/{id}/accept` (creates a `confirmed` care booking; declines competing offers)
-- `POST /offers/{id}/decline`
-- `GET /provider/requests` (matching requests)
+## Care requests and offers (implemented 3.2–3.3, [decision 0015](decisions/0015-caretaker-marketplace.md))
+**Parent:**
+
+| Method and path | Purpose |
+|---|---|
+| `POST /care-requests` | `{care_type, pet_ids (1–5), start_at, end_at, visits_per_day? (home visits only), area_key, locality, latitude?, longitude?, address? (required for home visits and house sitting), notes?, budget_minor?}`. Returns 201 `CareRequestOut` |
+| `GET /care-requests?scope=active\|past` | My requests, with offers (cheapest first) |
+| `GET /care-requests/{id}` | One request with its offers |
+| `POST /care-requests/{id}/cancel` | Withdraw an open request; pending offers are declined |
+| `POST /care-requests/{id}/offers/{offer_id}/accept` | Creates a **confirmed care booking** (201 `BookingDetail`; 200 if repeated) and declines the other offers |
+
+Each offer includes the caretaker's name, experience, languages, bio, area, verified date, rating, completed care bookings, home type, outdoor space, pets at home and starting rate. It never includes their address or pin.
+
+**Caretaker:** verified and active only (otherwise 403 `not_verified`).
+
+| Method and path | Purpose |
+|---|---|
+| `GET /manage/provider_profile/{id}/care/requests?scope=open\|offered` | `open`: requests you could take, still taking offers and not yet offered on. `offered`: ones you've offered on, including `booking_id` once you win |
+| `GET /manage/provider_profile/{id}/care/requests/{rid}` | One request (404 unless you could take it or have offered) |
+| `PUT /manage/provider_profile/{id}/care/requests/{rid}/offer` | `{price_minor (total), message?}`. Send, or update while pending. You can offer again after withdrawing |
+| `DELETE /manage/provider_profile/{id}/care/requests/{rid}/offer` | Withdraw (204) |
+
+The caretaker's view of a request shows the locality, a whole-km distance, the pets (name, species, breed, sex, age, weight, neutered, temperament; no health records), the notes, the budget, `units` and `unit`, and `suggested_price_minor` (their rate times the units). It never shows the address, the pin or the parent's identity.
+
+**Who sees a request:** a verified, active caretaker who:
+- offers that care type for all the pets' species, and takes that many pets
+- has the request inside their travel radius
+- has no day off within the dates
+- has free capacity (`max_concurrent`)
+
+**Lifecycle:**
+- Offers close 24 hours after posting (or 1 hour before the start), or at 5 pending offers.
+- The parent can accept any pending offer until the start.
+- A request expires if offers close with none pending, or the start passes without a booking. The API checks this on reads; `app.jobs.expire_bookings` also runs it.
+
+**Care bookings:**
+- `booking_type: care`, `listing.kind: caretaker`, `service_mode` set to the care type, and a title such as "Boarding · 3 nights".
+- Cancellation policy: free until 48 hours before the start, then 50% back (`late_half_refund`, payment `partially_refunded` if paid); no cancellation once care has started; caretaker cancellations refund in full.
+- No reschedule (409 `action_not_allowed`).
+- The address and the parent's name are visible to the caretaker once the booking is confirmed.
+- Check-in, complete and no-show work as for vets.
+- The caretaker's inbox is `GET /manage/provider_profile/{id}/bookings`.
+
+**Errors:**
+
+| Code | Meaning |
+|---|---|
+| `422 too_soon` | Less than 3 hours' notice |
+| `422 too_far` | More than 60 days ahead |
+| `422 invalid_dates` | |
+| `422 too_long` | More than 30 days or nights |
+| `422 visits_required` / `422 visits_not_allowed` | |
+| `422 address_required` | |
+| `422 location_outside_area` | |
+| `422 pet_not_found` | |
+| `422 too_many_requests` | More than 5 open |
+| `409 request_closed` | |
+| `409 offers_closed` | |
+| `409 offer_unavailable` | |
+| `409 caretaker_unavailable` | Their capacity was just taken |
 
 ## Payment mock (implemented 2.6)
 - `POST /bookings/{id}/payment` (above) replaces the planned payment-intent and confirmation pair while payments are mocked.

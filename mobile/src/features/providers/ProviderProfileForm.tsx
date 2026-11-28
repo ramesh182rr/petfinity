@@ -247,7 +247,7 @@ export function ProviderProfileForm({
       {!isVet ? (
         <FormSection
           title="Your home and capacity"
-          note="Shown to pet parents only after they book with you. Needed for day care and boarding."
+          note="Your home type and outdoor space help pet parents compare offers. Your address is shared only after they book."
         >
           <ChipGroup
             label="Your home"

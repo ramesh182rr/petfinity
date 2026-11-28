@@ -33,3 +33,14 @@ POLICY_SNAPSHOT = {
     "late_cancellation": "no_refund",
     "provider_cancellation": "full_refund",
 }
+
+# Care bookings (decision 0015): free until 48 h before the start, then 50% back;
+# no cancellation once care has started. Caretaker cancellations refund in full.
+CARE_FREE_CANCELLATION_BEFORE = timedelta(hours=48)
+CARE_POLICY_SNAPSHOT = {
+    "version": 1,
+    "kind": "care",
+    "free_cancellation_hours_before": int(CARE_FREE_CANCELLATION_BEFORE.total_seconds() // 3600),
+    "late_cancellation": "half_refund",
+    "provider_cancellation": "full_refund",
+}

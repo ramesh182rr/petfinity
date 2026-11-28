@@ -491,7 +491,16 @@
             "title": "Service Id"
           },
           "service_mode": {
-            "$ref": "#/components/schemas/ServiceMode"
+            "enum": [
+              "in_clinic",
+              "home_visit",
+              "teleconsult",
+              "day_care",
+              "boarding",
+              "house_sitting"
+            ],
+            "title": "Service Mode",
+            "type": "string"
           },
           "service_title": {
             "title": "Service Title",
@@ -791,7 +800,16 @@
             "title": "Service Id"
           },
           "service_mode": {
-            "$ref": "#/components/schemas/ServiceMode"
+            "enum": [
+              "in_clinic",
+              "home_visit",
+              "teleconsult",
+              "day_care",
+              "boarding",
+              "house_sitting"
+            ],
+            "title": "Service Mode",
+            "type": "string"
           },
           "service_title": {
             "title": "Service Title",
@@ -918,9 +936,701 @@
         "enum": [
           "not_charged",
           "full_refund",
-          "late_no_refund"
+          "late_no_refund",
+          "late_half_refund"
         ],
         "title": "CancellationOutcome",
+        "type": "string"
+      },
+      "CareOfferOut": {
+        "properties": {
+          "caretaker": {
+            "$ref": "#/components/schemas/OfferCaretaker"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "price_minor": {
+            "title": "Price Minor",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CareOfferStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "price_minor",
+          "message",
+          "created_at",
+          "updated_at",
+          "caretaker"
+        ],
+        "title": "CareOfferOut",
+        "type": "object"
+      },
+      "CareOfferStatus": {
+        "enum": [
+          "pending",
+          "accepted",
+          "declined",
+          "withdrawn"
+        ],
+        "title": "CareOfferStatus",
+        "type": "string"
+      },
+      "CarePetOut": {
+        "properties": {
+          "age_years": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Years"
+          },
+          "breed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breed"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "neutered": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Neutered"
+          },
+          "sex": {
+            "title": "Sex",
+            "type": "string"
+          },
+          "species": {
+            "title": "Species",
+            "type": "string"
+          },
+          "temperament": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperament"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "species",
+          "breed",
+          "sex",
+          "age_years",
+          "weight_kg",
+          "neutered",
+          "temperament"
+        ],
+        "title": "CarePetOut",
+        "type": "object"
+      },
+      "CareRequestFeed": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CareRequestForCaretaker"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CareRequestFeed",
+        "type": "object"
+      },
+      "CareRequestForCaretaker": {
+        "description": "A caretaker's view: the area, never the address, pin or the parent's name.",
+        "properties": {
+          "accepting_offers": {
+            "title": "Accepting Offers",
+            "type": "boolean"
+          },
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "booking_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when your offer was accepted",
+            "title": "Booking Id"
+          },
+          "budget_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Minor"
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/CareType"
+          },
+          "distance_km": {
+            "description": "Rounded to whole km, at least 1",
+            "title": "Distance Km",
+            "type": "integer"
+          },
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "my_offer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MyOffer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "offer_count": {
+            "title": "Offer Count",
+            "type": "integer"
+          },
+          "offers_close_at": {
+            "format": "date-time",
+            "title": "Offers Close At",
+            "type": "string"
+          },
+          "pets": {
+            "items": {
+              "$ref": "#/components/schemas/CarePetOut"
+            },
+            "title": "Pets",
+            "type": "array"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CareRequestStatus"
+          },
+          "suggested_price_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your starting rate times the units",
+            "title": "Suggested Price Minor"
+          },
+          "unit": {
+            "enum": [
+              "visit",
+              "day",
+              "night"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "units": {
+            "title": "Units",
+            "type": "integer"
+          },
+          "visits_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visits Per Day"
+          }
+        },
+        "required": [
+          "id",
+          "care_type",
+          "status",
+          "start_at",
+          "end_at",
+          "visits_per_day",
+          "units",
+          "unit",
+          "pets",
+          "area_name",
+          "locality",
+          "distance_km",
+          "notes",
+          "budget_minor",
+          "offers_close_at",
+          "accepting_offers",
+          "offer_count",
+          "suggested_price_minor",
+          "my_offer",
+          "booking_id"
+        ],
+        "title": "CareRequestForCaretaker",
+        "type": "object"
+      },
+      "CareRequestIn": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Home visits and house sitting. Shared only with the caretaker you book.",
+            "title": "Address"
+          },
+          "area_key": {
+            "$ref": "#/components/schemas/AreaKey"
+          },
+          "budget_minor": {
+            "anyOf": [
+              {
+                "maximum": 20000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Minor"
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/CareType"
+          },
+          "end_at": {
+            "description": "Pick-up / last visit day / check-out",
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "locality": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Locality",
+            "type": "string"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "pet_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Pet Ids",
+            "type": "array"
+          },
+          "start_at": {
+            "description": "Drop-off / first visit / check-in",
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "visits_per_day": {
+            "anyOf": [
+              {
+                "maximum": 3.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Home visits only (required for them)",
+            "title": "Visits Per Day"
+          }
+        },
+        "required": [
+          "care_type",
+          "pet_ids",
+          "start_at",
+          "end_at",
+          "area_key",
+          "locality"
+        ],
+        "title": "CareRequestIn",
+        "type": "object"
+      },
+      "CareRequestList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CareRequestOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CareRequestList",
+        "type": "object"
+      },
+      "CareRequestOut": {
+        "description": "The parent's own view.",
+        "properties": {
+          "accepting_offers": {
+            "title": "Accepting Offers",
+            "type": "boolean"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "area_key": {
+            "title": "Area Key",
+            "type": "string"
+          },
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "booking_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Booking Id"
+          },
+          "budget_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Minor"
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/CareType"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "locality": {
+            "title": "Locality",
+            "type": "string"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "offer_count": {
+            "title": "Offer Count",
+            "type": "integer"
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/CareOfferOut"
+            },
+            "title": "Offers",
+            "type": "array"
+          },
+          "offers_close_at": {
+            "format": "date-time",
+            "title": "Offers Close At",
+            "type": "string"
+          },
+          "pets": {
+            "items": {
+              "$ref": "#/components/schemas/CarePetOut"
+            },
+            "title": "Pets",
+            "type": "array"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CareRequestStatus"
+          },
+          "unit": {
+            "enum": [
+              "visit",
+              "day",
+              "night"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "units": {
+            "title": "Units",
+            "type": "integer"
+          },
+          "visits_per_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visits Per Day"
+          }
+        },
+        "required": [
+          "id",
+          "care_type",
+          "status",
+          "start_at",
+          "end_at",
+          "visits_per_day",
+          "units",
+          "unit",
+          "pets",
+          "area_key",
+          "area_name",
+          "locality",
+          "address",
+          "latitude",
+          "longitude",
+          "notes",
+          "budget_minor",
+          "offers_close_at",
+          "accepting_offers",
+          "offer_count",
+          "offers",
+          "booking_id",
+          "created_at"
+        ],
+        "title": "CareRequestOut",
+        "type": "object"
+      },
+      "CareRequestStatus": {
+        "enum": [
+          "open",
+          "booked",
+          "cancelled",
+          "expired"
+        ],
+        "title": "CareRequestStatus",
         "type": "string"
       },
       "CareServiceIn": {
@@ -2814,7 +3524,8 @@
       "ListingKind": {
         "enum": [
           "clinic",
-          "vet"
+          "vet",
+          "caretaker"
         ],
         "title": "ListingKind",
         "type": "string"
@@ -2981,6 +3692,47 @@
           "action"
         ],
         "title": "ModerationIn",
+        "type": "object"
+      },
+      "MyOffer": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "price_minor": {
+            "title": "Price Minor",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CareOfferStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "price_minor",
+          "message",
+          "updated_at"
+        ],
+        "title": "MyOffer",
         "type": "object"
       },
       "MyReview": {
@@ -3158,6 +3910,184 @@
           "next_before"
         ],
         "title": "NotificationPage",
+        "type": "object"
+      },
+      "OfferCaretaker": {
+        "description": "What a parent sees when comparing offers (no address, no pin, no contact).",
+        "properties": {
+          "area_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Name"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "completed_care": {
+            "description": "Completed care bookings on Petfinity",
+            "title": "Completed Care",
+            "type": "integer"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "home_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Type"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "outdoor_space": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outdoor Space"
+          },
+          "pets_at_home": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pets At Home"
+          },
+          "rate_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Their starting rate for this care type",
+            "title": "Rate Minor"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating"
+          },
+          "review_count": {
+            "title": "Review Count",
+            "type": "integer"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          },
+          "years_experience": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Experience"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "years_experience",
+          "languages",
+          "bio",
+          "area_name",
+          "verified_at",
+          "rating",
+          "review_count",
+          "completed_care",
+          "home_type",
+          "outdoor_space",
+          "pets_at_home",
+          "rate_minor"
+        ],
+        "title": "OfferCaretaker",
+        "type": "object"
+      },
+      "OfferIn": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "price_minor": {
+            "description": "Total for the whole request",
+            "maximum": 20000000.0,
+            "minimum": 0.0,
+            "title": "Price Minor",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "price_minor"
+        ],
+        "title": "OfferIn",
         "type": "object"
       },
       "Origin": {
@@ -3346,7 +4276,8 @@
           "pay_at_visit",
           "paid",
           "refunded",
-          "not_refunded"
+          "not_refunded",
+          "partially_refunded"
         ],
         "title": "PaymentStatus",
         "type": "string"
@@ -9954,6 +10885,456 @@
         ]
       }
     },
+    "/api/v1/care-requests": {
+      "get": {
+        "operationId": "my_requests_api_v1_care_requests_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "default": "active",
+              "enum": [
+                "active",
+                "past"
+              ],
+              "title": "Scope",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My care requests",
+        "tags": [
+          "care"
+        ]
+      },
+      "post": {
+        "operationId": "create_request_api_v1_care_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post a care request to nearby verified caretakers",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-requests/{request_id}": {
+      "get": {
+        "operationId": "my_request_api_v1_care_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My care request",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-requests/{request_id}/cancel": {
+      "post": {
+        "operationId": "cancel_request_api_v1_care_requests__request_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Withdraw an open request (pending offers are declined)",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-requests/{request_id}/offers/{offer_id}/accept": {
+      "post": {
+        "operationId": "accept_offer_api_v1_care_requests__request_id__offers__offer_id__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Accept an offer: creates a confirmed care booking and declines the rest",
+        "tags": [
+          "care"
+        ]
+      }
+    },
     "/api/v1/clinics": {
       "post": {
         "operationId": "create_clinic_api_v1_clinics_post",
@@ -11369,6 +12750,403 @@
           }
         ],
         "summary": "Caretaker: care services and what's still needed before requests arrive",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/manage/provider_profile/{profile_id}/care/requests": {
+      "get": {
+        "operationId": "request_feed_api_v1_manage_provider_profile__profile_id__care_requests_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "default": "open",
+              "enum": [
+                "open",
+                "offered"
+              ],
+              "title": "Scope",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestFeed"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: open requests you could take, or ones you've offered on",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/manage/provider_profile/{profile_id}/care/requests/{request_id}": {
+      "get": {
+        "operationId": "request_detail_api_v1_manage_provider_profile__profile_id__care_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestForCaretaker"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: one request (area only; the address comes with a booking)",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/manage/provider_profile/{profile_id}/care/requests/{request_id}/offer": {
+      "delete": {
+        "operationId": "delete_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: withdraw your pending offer",
+        "tags": [
+          "care"
+        ]
+      },
+      "put": {
+        "operationId": "put_offer_api_v1_manage_provider_profile__profile_id__care_requests__request_id__offer_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRequestForCaretaker"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Caretaker: send or update your offer (total price and a message)",
         "tags": [
           "care"
         ]

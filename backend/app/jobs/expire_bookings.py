@@ -17,12 +17,14 @@ from app.core import clock
 from app.core.config import get_settings
 from app.db.session import create_db_engine, create_session_factory
 from app.modules.bookings.service import expire_overdue
+from app.modules.care.requests import expire_due as expire_care_requests
 
 
 def run(engine: Engine) -> int:
-    """Expire every overdue request; returns how many changed."""
+    """Expire overdue booking requests and stale care requests; returns how many changed."""
     factory = create_session_factory(engine)
-    total = 0
+    with factory() as db, db.begin():
+        total = expire_care_requests(db, clock.utcnow())
     while True:
         with factory() as db, db.begin():
             changed = expire_overdue(db, clock.utcnow())
@@ -33,7 +35,7 @@ def run(engine: Engine) -> int:
 
 def main() -> int:
     expired = run(create_db_engine(get_settings()))
-    print(f"Expired {expired} booking request(s).")
+    print(f"Expired {expired} booking or care request(s).")
     return 0
 
 

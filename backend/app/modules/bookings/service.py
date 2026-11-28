@@ -46,7 +46,7 @@ from app.modules.discovery import service as discovery
 from app.modules.discovery.schemas import ListingKind
 from app.modules.notifications import bookings as booking_notifications
 from app.modules.pets.models import Pet
-from app.modules.providers.models import ProviderProfile
+from app.modules.providers.models import ProviderProfile, ProviderType
 from app.modules.staff import service as staff
 from app.modules.staff.models import StaffRoleName
 
@@ -114,7 +114,10 @@ def viewer_for(db: Session, user_id: uuid.UUID, booking: Booking) -> Viewer:
 
 
 def free_cancellation_until(booking: Booking) -> datetime:
-    return booking.start_at - policy.FREE_CANCELLATION_BEFORE
+    """From the policy snapshot taken at booking time (2 h for vets, 48 h for care)."""
+    hours = booking.cancellation_policy.get("free_cancellation_hours_before")
+    window = timedelta(hours=hours) if isinstance(hours, int) else policy.FREE_CANCELLATION_BEFORE
+    return booking.start_at - window
 
 
 def allowed_actions(booking: Booking, role: ViewerRole, now: datetime) -> list[BookingAction]:
@@ -124,7 +127,8 @@ def allowed_actions(booking: Booking, role: ViewerRole, now: datetime) -> list[B
     if role is ViewerRole.OWNER:
         if status in (S.PENDING_PROVIDER, S.CONFIRMED) and upcoming:
             actions.append(BookingAction.CANCEL)
-            if now <= free_cancellation_until(booking):
+            is_care = booking.booking_type == BookingType.CARE  # care dates come from the offer
+            if not is_care and now <= free_cancellation_until(booking):
                 actions.append(BookingAction.RESCHEDULE)
         if status in (S.CONFIRMED, S.IN_PROGRESS):
             if booking.payment_status in (PaymentStatus.UNPAID, PaymentStatus.PAY_AT_VISIT):
@@ -531,7 +535,12 @@ def listing_names(
             names[clinic.id] = (ListingKind.CLINIC, clinic.name, clinic.locality)
     if vet_ids:
         for vet in db.scalars(select(ProviderProfile).where(ProviderProfile.id.in_(vet_ids))):
-            names[vet.id] = (ListingKind.VET, vet.display_name, vet.city)
+            kind = (
+                ListingKind.CARETAKER
+                if vet.provider_type == ProviderType.CARETAKER
+                else ListingKind.VET
+            )
+            names[vet.id] = (kind, vet.display_name, vet.city)
     return names
 
 
@@ -556,12 +565,14 @@ def payments_for(db: Session, booking_id: uuid.UUID) -> list[Payment]:
 # ---------------------------------------------------------------- transitions
 
 
-def _mock_payment(db: Session, booking: Booking, kind: str) -> Payment:
+def _mock_payment(
+    db: Session, booking: Booking, kind: str, *, amount: int | None = None
+) -> Payment:
     payment = Payment(
         booking_id=booking.id,
         provider="mock",
         kind=kind,
-        amount_minor=booking.amount_minor,
+        amount_minor=booking.amount_minor if amount is None else amount,
         currency=booking.currency,
         status="succeeded",
         reference=f"mock_{kind}_{uuid.uuid4().hex[:20]}",
@@ -609,6 +620,11 @@ def cancel(db: Session, user_id: uuid.UUID, booking_id: uuid.UUID, reason: str |
     paid = booking.payment_status == PaymentStatus.PAID
     if booking.status == S.PENDING_PROVIDER:
         outcome = CancellationOutcome.NOT_CHARGED
+    elif late and booking.booking_type == BookingType.CARE:
+        outcome = CancellationOutcome.LATE_HALF_REFUND
+        if paid:
+            _mock_payment(db, booking, "refund", amount=booking.amount_minor // 2)
+            booking.payment_status = PaymentStatus.PARTIALLY_REFUNDED
     elif late:
         outcome = CancellationOutcome.LATE_NO_REFUND
         if paid:
@@ -650,6 +666,10 @@ def reschedule(
 ) -> Booking:
     booking, viewer = _load_for(db, user_id, booking_id, for_update=True)
     now = clock.utcnow()
+    if booking.booking_type == BookingType.CARE:
+        raise _conflict(
+            "action_not_allowed", "Care dates come from the accepted offer and can't be moved."
+        )
     if (
         viewer.role is ViewerRole.OWNER
         and booking.status in (S.PENDING_PROVIDER, S.CONFIRMED)
@@ -743,3 +763,86 @@ def pay(db: Session, user_id: uuid.UUID, booking_id: uuid.UUID, data: PaymentIn)
         _event(db, booking, "pay_at_visit", actor=viewer)
     db.flush()
     return booking
+
+
+# ---------------------------------------------------------------- care bookings (3.3)
+
+
+def create_care_booking(
+    db: Session,
+    *,
+    owner_id: uuid.UUID,
+    caretaker_id: uuid.UUID,
+    capacity: int,
+    care_request_id: uuid.UUID,
+    care_offer_id: uuid.UUID,
+    care_type: str,
+    title: str,
+    price_minor: int,
+    start_at: datetime,
+    end_at: datetime,
+    pet_ids: list[uuid.UUID],
+    notes: str | None,
+    address: str | None,
+) -> tuple[Booking, bool]:
+    """Accepting an offer creates a confirmed care booking (decision 0004/0015).
+
+    Returns (booking, replayed): accepting the same offer twice returns the original.
+    The caretaker's capacity units guard against overlapping stays beyond their limit.
+    """
+    _lock_resource(db, caretaker_id)
+    existing = db.scalars(select(Booking).where(Booking.care_offer_id == care_offer_id)).first()
+    if existing is not None:
+        return existing, True
+    now = clock.utcnow()
+    busy = busy_by_resource(db, [caretaker_id], start_at, end_at, now).get(caretaker_id, [])
+    unit = free_unit(start_at, end_at, capacity, busy)
+    if unit is None:
+        raise _conflict(
+            "caretaker_unavailable",
+            "This caretaker has just been booked for those dates. Choose another offer.",
+        )
+    key = f"care-offer:{care_offer_id}"
+    booking = Booking(
+        booking_type=BookingType.CARE,
+        owner_id=owner_id,
+        provider_profile_id=caretaker_id,
+        service_id=None,
+        care_request_id=care_request_id,
+        care_offer_id=care_offer_id,
+        service_title=title,
+        service_mode=care_type,
+        confirmation_mode=ConfirmationMode.REQUEST,
+        amount_minor=price_minor,
+        currency="INR",
+        cancellation_policy=policy.CARE_POLICY_SNAPSHOT,
+        status=S.CONFIRMED,
+        start_at=start_at,
+        end_at=end_at,
+        timezone="Asia/Kolkata",
+        response_deadline=None,
+        resource_id=caretaker_id,
+        capacity_unit=unit,
+        owner_notes=(notes or None) and notes[:500],
+        visit_address=address,
+        payment_status=PaymentStatus.UNPAID,
+        idempotency_key=key,
+        request_hash=hashlib.sha256(key.encode()).hexdigest(),
+    )
+    try:
+        with db.begin_nested():
+            db.add(booking)
+            db.flush()
+    except IntegrityError as exc:  # pragma: no cover - guarded by the advisory lock
+        raise _conflict("caretaker_unavailable", "Those dates were just taken.") from exc
+    db.add_all(BookingPet(booking_id=booking.id, pet_id=pid) for pid in pet_ids)
+    _event(
+        db,
+        booking,
+        "created",
+        actor=Viewer(owner_id, ViewerRole.OWNER),
+        to_status=booking.status,
+        details={"offer_id": str(care_offer_id)},
+    )
+    db.flush()
+    return booking, False

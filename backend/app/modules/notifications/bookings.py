@@ -117,6 +117,13 @@ def on_booking_event(
                 f"{ctx.owner} asked for {ctx.when}. "
                 f"Reply by {_clock(booking.response_deadline, tz)}.",
             )
+        elif booking.booking_type == "care":
+            to_providers(
+                "booking_new",
+                f"Offer accepted: {ctx.pets}",
+                f"{ctx.owner} booked {booking.service_title} from {ctx.when}. "
+                "The full address is now in the booking.",
+            )
         else:
             to_providers(
                 "booking_new",

@@ -69,12 +69,14 @@ class PaymentStatus(StrEnum):
     PAID = "paid"  # mock charge succeeded
     REFUNDED = "refunded"  # mock refund
     NOT_REFUNDED = "not_refunded"  # paid, then cancelled late
+    PARTIALLY_REFUNDED = "partially_refunded"  # care: paid, cancelled inside 48 h (0015)
 
 
 class CancellationOutcome(StrEnum):
     NOT_CHARGED = "not_charged"
     FULL_REFUND = "full_refund"
     LATE_NO_REFUND = "late_no_refund"
+    LATE_HALF_REFUND = "late_half_refund"  # care, inside 48 h of the start (0015)
 
 
 class Booking(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -93,6 +95,13 @@ class Booking(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     service_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("services.id", ondelete="RESTRICT")
+    )
+    # Care bookings (decision 0015): created by accepting a caretaker's offer.
+    care_request_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("care_requests.id", ondelete="RESTRICT"), index=True
+    )
+    care_offer_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("care_offers.id", ondelete="RESTRICT"), unique=True
     )
     # Snapshots, so later edits to the service don't rewrite history.
     service_title: Mapped[str] = mapped_column(String(80), nullable=False)
@@ -116,7 +125,7 @@ class Booking(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     # Home visits: shown to the provider only once the booking is confirmed (doc 13).
     visit_address: Mapped[str | None] = mapped_column(String(300))
 
-    payment_status: Mapped[str] = mapped_column(String(16), nullable=False)
+    payment_status: Mapped[str] = mapped_column(String(20), nullable=False)
     cancellation_outcome: Mapped[str | None] = mapped_column(String(16))
     cancel_reason: Mapped[str | None] = mapped_column(String(300))
 
@@ -132,6 +141,10 @@ class Booking(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             "booking_type <> 'vet_appointment' OR service_id IS NOT NULL", name="vet_has_service"
         ),
         CheckConstraint(
+            "booking_type <> 'care' OR (care_offer_id IS NOT NULL AND care_request_id IS NOT NULL)",
+            name="care_has_offer",
+        ),
+        CheckConstraint(
             "resource_id = coalesce(clinic_id, provider_profile_id)", name="resource_is_listing"
         ),
         CheckConstraint("start_at < end_at", name="valid_range"),
@@ -143,7 +156,7 @@ class Booking(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         ),
         CheckConstraint(
             "payment_status IN ('not_due', 'unpaid', 'pay_at_visit', 'paid', 'refunded', "
-            "'not_refunded')",
+            "'not_refunded', 'partially_refunded')",
             name="valid_payment_status",
         ),
         ExcludeConstraint(

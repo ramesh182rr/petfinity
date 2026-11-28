@@ -11,12 +11,18 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstrai
 from app.core.text import clean_text
 from app.core.types import UtcDatetime
 from app.modules.bookings.models import BookingStatus, CancellationOutcome, PaymentStatus
-from app.modules.catalog.models import ConfirmationMode, ServiceMode
+from app.modules.catalog.models import ConfirmationMode
 from app.modules.discovery.schemas import ListingKind
 from app.modules.reviews.schemas import MyReview
 
 Note = Annotated[str, StringConstraints(max_length=500)]
 Reason = Annotated[str, StringConstraints(max_length=300)]
+
+
+# Vet modes, plus the care types for care bookings (decision 0015).
+BookingMode = Literal[
+    "in_clinic", "home_visit", "teleconsult", "day_care", "boarding", "house_sitting"
+]
 
 
 class BookingAction(StrEnum):
@@ -135,7 +141,7 @@ class BookingOut(BaseModel):
     listing: ListingRef
     service_id: uuid.UUID | None
     service_title: str
-    service_mode: ServiceMode
+    service_mode: BookingMode
     confirmation_mode: ConfirmationMode
     start_at: UtcDatetime
     end_at: UtcDatetime

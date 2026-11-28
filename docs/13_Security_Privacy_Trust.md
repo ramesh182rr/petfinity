@@ -36,6 +36,11 @@ The platform facilitates animal care and people entering homes or leaving pets w
   - Verification needs identity and address proof.
   - Home details are shown to pet parents only after booking.
   - Their base pin is never public.
+- Care requests (3.2–3.3):
+  - Caretakers see the locality and a whole-km distance, never the address, pin or the parent's name.
+  - Pets are shown without health records.
+  - The address and name are revealed only to the accepted caretaker, through the booking.
+  - Only verified caretakers who could actually take a request can see it.
 - Reviews (2.10, [0014](decisions/0014-reviews-and-moderation.md)):
   - Only verified visits: one review per completed booking.
   - Authors appear as first name and last initial; no contact details.
